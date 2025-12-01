@@ -2,28 +2,53 @@
   "expo": {
     "name": "careme360",
     "slug": "careme360",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/icon-careme.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "careme",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/images/icon-careme.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon-careme.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "notification": {
+        "icon": "./assets/images/notification-icon.png",
+        "color": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.andresfvb.careme360",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/images/icon-careme.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-video",
+      "expo-font"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2f2404fc-e5ce-413f-8529-53a64b3c89f6"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2f2404fc-e5ce-413f-8529-53a64b3c89f6"
     }
   }
 }

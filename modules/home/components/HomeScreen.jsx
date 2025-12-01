@@ -1,15 +1,15 @@
 import { View, Text, StyleSheet, Pressable, TextInput, Image } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import videoIntro from '../../assets/videos/intro-sesion.mp4';
-import imageLogo from '../../assets/images/logo-careme-black.png';
+import imageLogo from '../../../assets/images/logo-careme-black.png';
+import videoIntro from '../../../assets/videos/intro-sesion.mp4';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import Animated, { SharedTransition, useEvent } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { muteIcon, pauseIcon, playIcon, soundIcon } from '../../components/Icons';
-import { TextContent, TextTitles } from '../../components/TextCustom';
-export default function index() {
+import { muteIcon, pauseIcon, playIcon, soundIcon } from '../../../components/Icons';
+import { TextContent, TextTitles } from '../../../components/TextCustom';
+export default function HomeScreen() {
       const router = useRouter();
     const player = useVideoPlayer(videoIntro, player => {
       player.loop = true;

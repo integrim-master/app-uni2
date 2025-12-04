@@ -11,11 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Campana from "../../../assets/images/campana.jpg";
 import { AccesoDirecto } from "../components/Acess";
 import { Beneficios } from "../components/benefits";
-
 import SubtitleText from "@/components/shared/SubtitleText";
 import { useWindowDimensions } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
-
 import TitleText from "@/components/shared/TitleText";
 import HeaderSection from "../components/HeaderSection";
 import TabBar from "../components/TabBar";

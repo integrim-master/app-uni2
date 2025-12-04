@@ -1,24 +1,28 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AuthProvider } from "../context/AuthContext";
+import { LoadingProvider } from "../context/LoadingContext";
+import { NotificationsProvider } from "../context/NotificationsContext";
+import { ThemeProvider } from "../context/ThemeContext";
+import "../global.css";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+  
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <GestureHandlerRootView >
+        <ThemeProvider>
+          <LoadingProvider>
+            <AuthProvider>
+              <NotificationsProvider>
+                <Stack screenOptions={{ headerShown: false }}>
+
+                  <Stack.Screen name="(auth)/login" />
+              
+                </Stack>
+              </NotificationsProvider>
+            </AuthProvider>
+          </LoadingProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
   );
 }

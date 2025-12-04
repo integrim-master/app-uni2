@@ -1,48 +1,72 @@
 {
   "expo": {
-    "name": "app-careme",
-    "slug": "app-careme",
-    "version": "1.0.0",
+    "name": "careme360",
+    "slug": "careme360",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "appcareme",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/images/icon-careme.png",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "careme",
+    "splash": {
+      "image": "./assets/images/icon-careme.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/icon-careme.png",
+        "backgroundColor": "#ffffff"
+      },
+      "notification": {
+        "icon": "./assets/images/notification-icon.png",
+        "color": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.andresfvb.careme360",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon-careme.png",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router",
+      "expo-video",
+      "expo-font",
+      "expo-web-browser",
+      "expo-secure-store",
       [
-        "expo-splash-screen",
+        "expo-media-library",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+       [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
         }
       ]
     ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2f2404fc-e5ce-413f-8529-53a64b3c89f6"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2f2404fc-e5ce-413f-8529-53a64b3c89f6"
     }
   }
 }

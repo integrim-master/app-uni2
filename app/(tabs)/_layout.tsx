@@ -1,35 +1,81 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from 'expo-router'
+import React from 'react'
+import { ActivityIndicator, View } from 'react-native'
+import { CalendarIcon, CameraIcon, GiftIcon, HomeIcon, UserICon } from '../../components/Icons'
+import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function TabsLayout() {
+  const { loading, token, user } = useAuth();
+  const { colors } = useTheme();
+  
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  if (!token || !user) {
+    return null; 
+  }
+  
 
+  
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
+
+      <Tabs
+          screenOptions={{
+        headerShown: true,         
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
+        headerTitleAlign: 'left',
+        headerTintColor: colors.text,
+        tabBarStyle: {
+          backgroundColor: colors.card,
+          borderTopColor: colors.border,
+        },
+        headerStyle: {
+          backgroundColor: colors.backgroundLight, 
+        },
       }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Inicio",
+            tabBarIcon: ({color}) => <HomeIcon color={color}/>
+          }}
+        />
+        <Tabs.Screen
+          name="dates"
+          options={{
+            title: "Citas",
+            tabBarIcon: ({color}) => <CalendarIcon color={color}/>
+          }}
+        />
+        <Tabs.Screen
+          name="diagnostics"
+          options={{
+            title: "Diagnostico",
+            tabBarIcon: ({color}) => <CameraIcon color={color}/>
+          }}
+        />
+        <Tabs.Screen
+          name="benefits"
+          options={{
+            title: "Beneficios",
+            tabBarIcon: ({color}) => <GiftIcon color={color}/>
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Perfil",
+            tabBarIcon: ({color}) => <UserICon color={color}/>,
+          }}
+        />
+      </Tabs>
+
+  )
 }

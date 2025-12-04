@@ -31,8 +31,8 @@ const mockCitas = [
 ];
 
 export default function DatesScreen() {
-  const [selectedProcedimiento, setSelectedProcedimiento] = useState(null);
-  const [selectedEstado, setSelectedEstado] = useState(null);
+  const [selectedProcedimiento, setSelectedProcedimiento] = useState<string | null>(null);
+  const [selectedEstado, setSelectedEstado] = useState<string | null>(null);
   const { colors } = useTheme();
 
   const procedimientos = [...new Set(mockCitas.map(cita => cita.procedimiento))];
@@ -56,7 +56,7 @@ export default function DatesScreen() {
     }
   };
 
-  const renderCitaItem = ({ item }) => (
+  const renderCitaItem = ({ item }: any) => (
     <View style={[styles.citaCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.citaHeader}>
         <Text style={[styles.procedimientoText, { color: colors.text }]}>{item.procedimiento}</Text>

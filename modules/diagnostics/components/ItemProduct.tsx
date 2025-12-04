@@ -3,7 +3,6 @@ import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native
 import { ItemProductProps, Product } from '../types/diagnostics.types';
 
 export default function ItemProduct({ data, fondo, productReport }: ItemProductProps) {
-  // Filtrar productos que coincidan con los procedimientos del reporte
   const filteredProducts = data.filter(product => 
     productReport.some(proc => 
       product.categoria.toLowerCase().includes(proc.toLowerCase()) ||

@@ -1,12 +1,29 @@
-import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
-import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../../context/ThemeContext';
+import DiagnosticScreen from "@/modules/diagnostics/screens/DiagnosticScreen";
+import { CameraType, useCameraPermissions } from "expo-camera";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function Diagnostic() {
-  const [facing, setFacing] = useState<CameraType>('back');
-  const [permission, requestPermission] = useCameraPermissions();
   const { colors } = useTheme();
+  const [facing, setFacing] = useState<CameraType>("back");
+  const [permission, requestPermission] = useCameraPermissions();
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const steps = ["Paso 1", "Paso 2"];
 
   if (!permission) {
     return <View />;
@@ -14,78 +31,57 @@ export default function Diagnostic() {
 
   if (!permission.granted) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <Text style={[styles.message, { color: colors.text }]}>
           Necesitamos tu permiso para mostrar la cámara
         </Text>
-        <TouchableOpacity 
+        <Pressable
           style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={requestPermission}
         >
           <Text style={styles.text}>Conceder Permiso</Text>
-        </TouchableOpacity>
-      </View>
+        </Pressable>
+      </SafeAreaView>
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
-  }
-
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.cameraContainer, { borderColor: colors.border }]}>
-        <CameraView style={styles.camera} facing={facing} />
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[styles.button, { backgroundColor: colors.primary }]} 
-          onPress={toggleCameraFacing}
-        >
-          <Text style={styles.text}>Cambiar Cámara</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <DiagnosticScreen
+      currentStep={currentStep}
+      steps={steps}
+      nextStep={nextStep}
+      prevStep={prevStep}
+      permission={permission}
+      requestPermission={requestPermission}
+      facing={facing}
+      setFacing={setFacing}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   message: {
-    textAlign: 'center',
-    paddingBottom: 10,
+    textAlign: "center",
+    paddingBottom: 20,
     fontSize: 16,
-  },
-  cameraContainer: {
-    width: '90%',
-    height: '50%',
-    borderRadius: 20,
-    overflow: 'hidden',
-    backgroundColor: '#000',
-    borderWidth: 2,
-  },
-  camera: {
-    flex: 1,
-  },
-  buttonContainer: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
+    paddingHorizontal: 20,
   },
   button: {
-    padding: 10,
+    padding: 15,
     borderRadius: 8,
-    alignItems: 'center',
-    width: '50%',
+    alignItems: "center",
+    marginHorizontal: 20,
   },
   text: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
 });

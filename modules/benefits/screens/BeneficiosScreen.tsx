@@ -6,7 +6,7 @@ import { useTheme } from '../../../context/ThemeContext';
 import ItemUnique from '../components/ItemUnique';
 import { BenefitData } from '../types/benefits.types';
 
-// Datos mock de beneficios
+
 const mockBenefits: BenefitData[] = [
   {
     id: '1',

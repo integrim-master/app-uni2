@@ -1,47 +1,29 @@
-import { Tabs } from 'expo-router'
-import React from 'react'
-import { ActivityIndicator, View } from 'react-native'
-import { CalendarIcon, CameraIcon, GiftIcon, HomeIcon, UserICon } from '../../components/Icons'
-import { useAuth } from '../../context/AuthContext'
-import { useTheme } from '../../context/ThemeContext'
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { CalendarIcon, CameraIcon, GiftIcon, HomeIcon, UserICon } from '../../components/Icons';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function TabsLayout() {
-  const { loading, token, user } = useAuth();
   const { colors } = useTheme();
   
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
-  if (!token || !user) {
-    return null; 
-  }
-  
-
-  
   return (
-
       <Tabs
           screenOptions={{
         headerShown: true,         
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         headerTitleAlign: 'left',
-        headerTintColor: colors.text,
+        headerTintColor: 'white',
         tabBarStyle: {
           backgroundColor: colors.card,
           borderTopColor: colors.border,
         },
         headerStyle: {
-          backgroundColor: colors.backgroundLight, 
+          backgroundColor: colors.primary, 
         },
       }}>
         <Tabs.Screen
-          name="index"
+          name="home"
           options={{
             title: "Inicio",
             tabBarIcon: ({color}) => <HomeIcon color={color}/>

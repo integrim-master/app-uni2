@@ -26,10 +26,7 @@ export default function DiagnosticScreen(props: DiagnosticScreenProps) {
       case 1:
         return (
           <StepTwo
-            facing={facing}
-            setFacing={setFacing}
-            permission={permission}
-            requestPermission={requestPermission}
+          
           />
         );
       default:

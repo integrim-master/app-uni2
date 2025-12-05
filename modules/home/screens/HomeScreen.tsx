@@ -7,9 +7,8 @@ import {
   Text,
   View
 } from "react-native";
-
-import Campana from "@/assets/images/campana.jpg";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Campana from "../../../assets/images/campana.jpg";
 import { AccesoDirecto } from "../components/Acess";
 import { Beneficios } from "../components/benefits";
 import SubtitleText from "@/components/shared/SubtitleText";
@@ -33,7 +32,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
-  const [activeTab, setActiveTab] = React.useState("first");
+
+  const TAB_OPTIONS = [
+    { key: "first", label: "Accesos" },
+    { key: "second", label: "Citas" },
+    { key: "third", label: "Diagnóstico" },
+  ];
+  const [activeTab, setActiveTab] = React.useState<string>(TAB_OPTIONS[0].key);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -56,13 +61,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       case "second":
         return (
           <View style={styles.emptyContainer}>
-            <Text>Contenido de la Segunda Vista</Text>
+            <Text style={{ color: colors.text }}>Aquí irán tus citas</Text>
           </View>
         );
       case "third":
         return (
           <View style={styles.emptyContainer}>
-            <Text>Contenido de la Tercera Vista</Text>
+            <Text style={{ color: colors.text }}>Aquí irán tus diagnósticos</Text>
           </View>
         );
       default:
@@ -71,14 +76,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}>
       <HeaderSection fullName={fullName} />
 
-      <View style={[styles.tabSection, { paddingHorizontal: 16, marginTop: 16 }]}>
-        <SubtitleText style={[styles.sectionTitle, { color: colors.text }]}>
+      <View style={[styles.tabSection, { paddingHorizontal: 16, marginTop: 16 }]}> 
+        <SubtitleText style={[styles.sectionTitle, { color: colors.text }]}> 
           ¿Qué deseas hacer hoy?
         </SubtitleText>
-        <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <TabBar
+          options={TAB_OPTIONS}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
       </View>
 
       <View style={styles.contentView}>{renderContent()}</View>
@@ -191,24 +200,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   accessContainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
+    width: "100%",
     flexWrap: "wrap",
     gap: 10,
     marginTop: 10,
     padding: 10,
+    borderRadius: 16,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+
+    borderRadius: 16,
   },
   benefitsSection: {
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 20,
+    borderRadius: 16,
   },
   benefitsContent: {
     marginBottom: 24,

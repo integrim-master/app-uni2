@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import StepOne from "../components/StepOne";
 import StepTwo from "../components/StepTwo";
@@ -35,15 +35,14 @@ export default function DiagnosticScreen(props: DiagnosticScreenProps) {
   };
 
 
-
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
-      <ScrollView
+      <View
         style={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
+  
       >
         <View style={styles.stepContent}>{renderStepContent()}</View>
-      </ScrollView>
+      </View>
 
       <View style={styles.navigationContainer}>
         {currentStep > 0 && (
@@ -108,3 +107,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+ 

@@ -21,7 +21,7 @@ const BodyText: React.FC<BodyTextProps> = ({ style, children, color, ...props })
 const styles = StyleSheet.create({
   body: {
     fontSize: 16,
-    fontFamily: "Roboto-Regular",
+    fontFamily: "Nunito",
     color: "#333",
   },
 });

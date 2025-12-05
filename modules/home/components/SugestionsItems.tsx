@@ -5,12 +5,12 @@ import BodyText from "../../../components/shared/BodyText";
 import { useTheme } from '../../../context/ThemeContext';
 
 const SuggestionItem = ({ title }: { title: string }) => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   return (
-    <Pressable style={[styles.suggestionItemContainer, { backgroundColor: colors.primary }]}> 
+    <Pressable style={[styles.suggestionItemContainer, { backgroundColor: colors.card, borderWidth: isDark ? 1 : 0, borderColor: colors.border }]}> 
       <View style={styles.contentContainer}>
-        <Ionicons name="calendar" size={18} style={[styles.icon, { color: 'white' }]} />
-        <BodyText style={[styles.itemText, { color: 'white' }]}>{title}</BodyText>
+        <Ionicons name="calendar" size={18} style={[styles.icon, { color:colors.primary  }]} />
+        <BodyText style={[styles.itemText, { color: colors.primary }]}>{title}</BodyText>
       </View>
     </Pressable>
   );
@@ -25,6 +25,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
     borderRadius: 20, 
+    shadowColor: "white",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 8,
+    shadowRadius: 1,
+    elevation: 1,
 
   },
   contentContainer: {

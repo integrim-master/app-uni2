@@ -1,8 +1,8 @@
 import BodyText from '@/components/shared/BodyText';
 import TitleText from '@/components/shared/TitleText';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
 import SuggestionItem from '../components/SugestionsItems';
 
@@ -14,24 +14,28 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
   const { colors, isDark } = useTheme();
   
   return (
-    <View style={[styles.headerContainer, { backgroundColor: colors.card }]}> 
+    <View style={[styles.headerContainer, { backgroundColor: isDark ? colors.card : colors.primaryLight }]}> 
       <View style={styles.profileSection}> 
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems:'flex-start' }}>
-          <TitleText style={{ color: colors.text }}>
-            Hola, <Text style={[styles.primaryText, { color: colors.primaryDark }]}>{fullName}</Text> 
-          </TitleText>
-          <View
-            style={{
-              backgroundColor: isDark ? colors.card : colors.card,
-              borderRadius: 99,
-              padding: 5,
-            }}
-          >
-            <Ionicons name="notifications-outline" size={30} color={colors.primary} />
+        <View style={styles.logoNotifContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../../../assets/images/logo-careme-black.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.notifIconContainer}>
+            <Ionicons name="notifications-outline" size={28} color={colors.primary} />
           </View>
         </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems:'flex-start' }}>
+          <TitleText style={{ fontSize: 24,fontWeight:800, color: 'white' }}>
+            Hola, <Text style={[styles.primaryText, { color: isDark? colors.primaryLight:'white' }]}>{fullName}</Text> 
+          </TitleText>
+         
+        </View>
         <View style={ styles.suggestionsContainer }> 
-          <BodyText style={{ fontWeight: 500, color: colors.text }}>Tratamientos recomendados:</BodyText>
+          <BodyText style={{ fontWeight: 500, color:'white' }}>Tratamientos recomendados:</BodyText>
           <FlatList
             data={[
               { id: '1', title: 'Sugerencia 1' },
@@ -70,6 +74,36 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 10,
+  },
+  logoNotifContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+
+  },
+  logoContainer: {
+
+    padding: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoImage: {
+    width: 120,
+    height: 28,
+    borderRadius: 24,
+  },
+  notifIconContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 99,
+    padding: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 1,
+    elevation: 1,
   },
   suggestionsContainer: {
     display: 'flex',

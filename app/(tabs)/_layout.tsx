@@ -19,14 +19,15 @@ export default function TabsLayout() {
           borderTopColor: colors.border,
         },
         headerStyle: {
-          backgroundColor: colors.primary, 
+          backgroundColor: colors.primaryLight, 
         },
       }}>
         <Tabs.Screen
           name="home"
           options={{
             title: "Inicio",
-            tabBarIcon: ({color}) => <HomeIcon color={color}/>
+            tabBarIcon: ({color}) => <HomeIcon color={color}/>,
+            headerShown: false
           }}
         />
         <Tabs.Screen

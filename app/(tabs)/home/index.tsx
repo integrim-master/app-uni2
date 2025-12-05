@@ -2,11 +2,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { ScrollView } from 'react-native';
-import { CalendarIcon, GiftIcon, TimeIcon } from '../../components/Icons';
-import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
-import HomeScreen from '../../modules/home/screens/HomeScreen';
-import { BenefitData, ButtonData, CitaData } from '../../modules/home/types/home.types';
+import GiftIcon from '../../../assets/svg/Gift.svg';
+import SupportIcon from '../../../assets/svg/support.svg';
+import { useAuth } from '../../../context/AuthContext';
+import { useTheme } from '../../../context/ThemeContext';
+import HomeScreen from '../../../modules/home/screens/HomeScreen';
+import { BenefitData, ButtonData, CitaData } from '../../../modules/home/types/home.types';
 const mockCitas: CitaData[] = [
   {
     id: '1',
@@ -72,15 +73,15 @@ export default function Index() {
     { 
       item: "Agendar", 
       routPage: "dates", 
-      icon: CalendarIcon, 
+      icon: GiftIcon, 
       dark, 
       light, 
       colorFondo 
     },
        { 
-      item: "Agendar", 
-      routPage: "dates", 
-      icon: CalendarIcon, 
+      item: "Solicitudes", 
+      routPage: "home/support", 
+      icon:SupportIcon , 
       dark, 
       light, 
       colorFondo 
@@ -96,7 +97,7 @@ export default function Index() {
     { 
       item: "Historial", 
       routPage: "dates", 
-      icon: TimeIcon, 
+      icon: GiftIcon, 
       dark, 
       light, 
       colorFondo 

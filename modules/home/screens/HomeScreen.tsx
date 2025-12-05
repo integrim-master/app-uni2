@@ -3,17 +3,19 @@ import React from "react";
 import {
   ImageBackground,
   Pressable,
+  StyleSheet,
   Text,
   View
 } from "react-native";
 
+import Campana from "@/assets/images/campana.jpg";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Campana from "../../../assets/images/campana.jpg";
 import { AccesoDirecto } from "../components/Acess";
 import { Beneficios } from "../components/benefits";
 import SubtitleText from "@/components/shared/SubtitleText";
+import { useTheme } from "@/context/ThemeContext";
 import { useWindowDimensions } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
+
 import TitleText from "@/components/shared/TitleText";
 import HeaderSection from "../components/HeaderSection";
 import TabBar from "../components/TabBar";
@@ -37,18 +39,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     switch (activeTab) {
       case "first":
         return (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              flexWrap: "wrap", 
-              gap: 10, 
-              marginTop: 10,
-              padding: 10,
-            }}
-          >
+          <View style={styles.accessContainer}>
             {dataButtons.map((item, index) => (
               <AccesoDirecto
                 key={index}
@@ -64,13 +55,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         );
       case "second":
         return (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <View style={styles.emptyContainer}>
             <Text>Contenido de la Segunda Vista</Text>
           </View>
         );
       case "third":
         return (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <View style={styles.emptyContainer}>
             <Text>Contenido de la Tercera Vista</Text>
           </View>
         );
@@ -80,143 +71,193 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: colors.background, flex: 1 }}>
-
-
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <HeaderSection fullName={fullName} />
 
-      <View style={{ display: "flex", alignItems: "center", paddingHorizontal: 16, marginTop: 16 }}>
-        <SubtitleText style={{ marginBottom: 10, alignSelf: "flex-start", fontWeight: 600, color: colors.text }}>
+      <View style={[styles.tabSection, { paddingHorizontal: 16, marginTop: 16 }]}>
+        <SubtitleText style={[styles.sectionTitle, { color: colors.text }]}>
           ¿Qué deseas hacer hoy?
         </SubtitleText>
         <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
       </View>
 
-      <View style={{ flex: 1 }}>{renderContent()}</View>
+      <View style={styles.contentView}>{renderContent()}</View>
 
-      <View style={{ flex: 1, backgroundColor: colors.backgroundLight }}>
-        <View className="gap-8 pt-8 p-4">
-          <Stack.Screen
-            options={{
-              headerShown: false,
-            }}
-          />
+      <View style={[styles.benefitsSection, { backgroundColor: colors.backgroundLight }]}>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
 
-          {/* <View className="flex-row gap-5 justify-between">
-            {dataButtons.map((item, index) => (
-              <AccesoDirecto
-                key={index}
-                item={item.item}
-                icon={item.icon}
-                routPage={item.routPage}
-                dark={item.dark}
-                light={item.light}
-                colorFondo={item.colorFondo}
-              />
-            ))}
-          </View> */}
-
-          {/* <View className="gap-3">
-            <View className="justify-between flex-row items-center">
-              <Text className="text-black font-medium text-xl">Próximas Citas</Text>
-              <Link asChild href={`/(tabs)/citas`}>
-                <Pressable>
-                  {({ pressed }) => (
-                    <Text
-                      className={`text-xl font-normal ${
-                        pressed ? "opacity-50" : "opacity-100"
-                      } text-gray-500`}
-                    >
-                      Ver todas
-                    </Text>
-                  )}
-                </Pressable>
-              </Link>
-            </View>
-            <View className="bg-white rounded-3xl p-4">
-              <HistoryByDates dark={dark} citas={citas} />
-            </View>
-          </View> */}
-
-          <View className="gap-3">
-            <View className="justify-between flex-row items-center">
-              <TitleText style={
-                { color: colors.text }
-              } className="font-medium text-xl">Tus Beneficios</TitleText>
-              <Link asChild href={`/(tabs)/beneficios`}>
-                <Pressable>
-                  {({ pressed }) => (
-                    <Text
-                      style={{ color: colors.textSecondary, opacity: pressed ? 0.5 : 1 }}
-                      className="text-xl font-normal"
-                    >
-                      Ver todas
-                    </Text>
-                  )}
-                </Pressable>
-              </Link>
-            </View>
-            <Beneficios
-              dark={dark}
-              light={light}
-              transparent={colorFondo}
-              benefits={benefits}
-            />
+        <View style={styles.benefitsContent}>
+          <View style={styles.sectionHeader}>
+            <TitleText style={[styles.sectionTitleMain, { color: colors.text }]}>
+              Tus Beneficios
+            </TitleText>
+            <Link asChild href={`/(tabs)/beneficios`}>
+              <Pressable>
+                {({ pressed }) => (
+                  <Text
+                    style={[
+                      styles.seeAllLink,
+                      { color: colors.textSecondary, opacity: pressed ? 0.5 : 1 }
+                    ]}
+                  >
+                    Ver todas
+                  </Text>
+                )}
+              </Pressable>
+            </Link>
           </View>
+          <Beneficios
+            dark={dark}
+            light={light}
+            transparent={colorFondo}
+            benefits={benefits}
+          />
+        </View>
 
-          <View className="gap-3">
-            <View className="justify-between flex-row items-center">
-              <Text style={{ color: colors.text }} className="font-medium text-xl">
-                Promociones exclusivas
-              </Text>
+        <View style={styles.promotionSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitleMain, { color: colors.text }]}>
+              Promociones exclusivas
+            </Text>
+            <Link
+              asChild
+              href={`https://careme360.com/descubre-nuestras-promociones`}
+            >
+              <Pressable>
+                {({ pressed }) => (
+                  <Text
+                    style={[
+                      styles.seeAllLink,
+                      { color: colors.textSecondary, opacity: pressed ? 0.5 : 1 }
+                    ]}
+                  >
+                    Ver todas
+                  </Text>
+                )}
+              </Pressable>
+            </Link>
+          </View>
+          
+          <ImageBackground
+            style={styles.promotionBanner}
+            source={Campana}
+            resizeMode="cover"
+          >
+            <View style={styles.promotionOverlay}>
+              <Text style={styles.promotionTitle}>Extreme Young</Text>
               <Link
                 asChild
-                href={`https://careme360.com/descubre-nuestras-promociones`}
+                href={`https://wa.me/+573170366805?text=Hola%2C+quiero+saber+mas+informaci%C3%B3n+sobre+la+promoci%C3%B3n+de+EXTREME+YOUNG%2C+vengo+del+link+https%3A%2F%2Fcareme360.com%2Fpromocion%2Fextreme-young%2F`}
               >
                 <Pressable>
                   {({ pressed }) => (
                     <Text
-                      style={{ color: colors.textSecondary, opacity: pressed ? 0.5 : 1 }}
-                      className="text-xl font-normal"
+                      style={[
+                        styles.promotionButton,
+                        { opacity: pressed ? 0.5 : 1 }
+                      ]}
                     >
-                      Ver todas
+                      Solicitar ahora
                     </Text>
                   )}
                 </Pressable>
               </Link>
             </View>
-            <View className="flex-1 rounded-3xl">
-              <ImageBackground
-                style={{ borderRadius: 30 }}
-                className="w-full h-42 flex-1 justify-end items-start p-3"
-                source={Campana}
-                resizeMode="cover"
-              >
-                <Text className="text-white text-2xl font-bold">Extreme Yosung</Text>
-                <Link
-                  asChild
-                  href={`https://wa.me/+573170366805?text=Hola%2C+quiero+saber+mas+informaci%C3%B3n+sobre+la+promoci%C3%B3n+de+EXTREME+YOUNG%2C+vengo+del+link+https%3A%2F%2Fcareme360.com%2Fpromocion%2Fextreme-young%2F`}
-                >
-                  <Pressable>
-                    {({ pressed }) => (
-                      <Text
-                        className={`bg-white rounded-full p-3 text-black font-medium ${
-                          pressed ? "opacity-50" : "opacity-100"
-                        }`}
-                      >
-                        Solicitar ahora
-                      </Text>
-                    )}
-                  </Pressable>
-                </Link>
-              </ImageBackground>
-            </View>
-          </View>
+          </ImageBackground>
         </View>
       </View>
     </SafeAreaView>
   );
 };
 
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  tabSection: {
+    display: "flex",
+    alignItems: "center",
+  },
+  sectionTitle: {
+    marginBottom: 10,
+    alignSelf: "flex-start",
+    fontWeight: "600",
+  },
+  contentView: {
+    flex: 1,
+  },
+  accessContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 10,
+    padding: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  benefitsSection: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+  },
+  benefitsContent: {
+    marginBottom: 24,
+  },
+  promotionSection: {
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  sectionTitleMain: {
+    fontWeight: "600",
+    fontSize: 18,
+  },
+  seeAllLink: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  promotionBanner: {
+    borderRadius: 20,
+    width: "100%",
+    height: 140,
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+    padding: 16,
+    overflow: "hidden",
+  },
+  promotionOverlay: {
+    width: "100%",
+  },
+  promotionTitle: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  promotionButton: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    color: "#000",
+    fontWeight: "600",
+    fontSize: 14,
+    alignSelf: "flex-start",
+  },
+});
 
 export default HomeScreen;

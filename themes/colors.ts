@@ -49,7 +49,7 @@ export const LightTheme: ThemeColors = {
   backgroundLight: "#F9FAFB", // Fondo gris muy claro
   backgroundDark: "#E5E7EB", // Fondo gris claro
   backgroundSecondary: "#F3F4F6", // Fondo secundario
-  text: "#111827", // Texto negro
+  text: "#6B7280", // Texto negro
   textLight: "#6B7280", // Texto gris
   textDark: "#1F2937", // Texto gris oscuro
   textSecondary: "#9CA3AF", // Texto secundario

@@ -1,3 +1,5 @@
+import { CameraType, useCameraPermissions } from "expo-camera";
+
 export interface Report {
   id: string;
   fecha: string;
@@ -26,3 +28,14 @@ export interface ItemProductProps {
   fondo: string;
   productReport: string[];
 }
+
+export type DiagnosticScreenProps = {
+  currentStep: number;
+  steps: string[];
+  nextStep: () => void;
+  prevStep: () => void;
+  permission: ReturnType<typeof useCameraPermissions>[0];
+  requestPermission: () => void;
+  facing: CameraType;
+  setFacing: React.Dispatch<React.SetStateAction<CameraType>>;
+};

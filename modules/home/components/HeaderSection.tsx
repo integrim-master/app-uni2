@@ -11,19 +11,18 @@ type HeaderSectionProps = {
 };
 
 const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   
   return (
-    <View style={[styles.headerContainer, { backgroundColor: colors.primary }]}>
-        
-      <View style={styles.profileSection}>
+    <View style={[styles.headerContainer, { backgroundColor: colors.card }]}> 
+      <View style={styles.profileSection}> 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems:'flex-start' }}>
-         <TitleText style={{  color: '#FFFFFF' }}>
-          Hola, <Text style={[styles.primaryText, { color: colors.backgroundLight }]}>{fullName}</Text> 
-        </TitleText>
+          <TitleText style={{ color: colors.text }}>
+            Hola, <Text style={[styles.primaryText, { color: colors.primaryDark }]}>{fullName}</Text> 
+          </TitleText>
           <View
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: isDark ? colors.card : colors.card,
               borderRadius: 99,
               padding: 5,
             }}
@@ -31,9 +30,8 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
             <Ionicons name="notifications-outline" size={30} color={colors.primary} />
           </View>
         </View>
-       
-        <View style={styles.suggestionsContainer}>
-          <BodyText style={{ fontWeight: 800, color:colors.background }}>Sugeridos para ti :</BodyText>
+        <View style={ styles.suggestionsContainer }> 
+          <BodyText style={{ fontWeight: 500, color: colors.text }}>Tratamientos recomendados:</BodyText>
           <FlatList
             data={[
               { id: '1', title: 'Sugerencia 1' },

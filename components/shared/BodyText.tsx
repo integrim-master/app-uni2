@@ -1,9 +1,18 @@
 import React from "react";
 import { StyleSheet, Text, TextProps } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
 
-const BodyText: React.FC<TextProps> = ({ style, children, ...props }) => {
+interface BodyTextProps extends TextProps {
+  color?: string;
+}
+
+const BodyText: React.FC<BodyTextProps> = ({ style, children, color, ...props }) => {
+  const { colors } = useTheme();
   return (
-    <Text style={[styles.body, style]} {...props}>
+    <Text
+      style={[styles.body, { color: color || colors.text }, style]}
+      {...props}
+    >
       {children}
     </Text>
   );
@@ -11,10 +20,9 @@ const BodyText: React.FC<TextProps> = ({ style, children, ...props }) => {
 
 const styles = StyleSheet.create({
   body: {
-    fontSize: 16, // Tamaño estándar para texto normal
+    fontSize: 16,
     fontFamily: "Roboto-Regular",
     color: "#333",
- 
   },
 });
 

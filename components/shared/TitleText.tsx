@@ -11,9 +11,9 @@ const TitleText: React.FC<TextProps> = ({ style, children, ...props }) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 24, // Tamaño grande para títulos
-    fontFamily: "Roboto-Bold", // Cambia según tu fuente
-    color: "#000", // Color por defecto
+    fontSize: 24,
+    fontFamily: "Roboto-Bold", 
+    color: "#000", 
   },
 });
 

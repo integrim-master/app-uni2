@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../../../context/ThemeContext';
 import { BenefitData } from '../types/benefits.types';
 
 interface ItemUniqueProps {
@@ -21,13 +22,14 @@ export default function ItemUnique({
   loading,
   onPress 
 }: ItemUniqueProps) {
-  
+  const { colors } = useTheme();
+
   const getEstadoColor = (estado: string) => {
     switch (estado) {
-      case 'disponible': return '#10b981'; 
-      case 'usado': return '#6b7280'; 
-      case 'expirado': return '#ef4444'
-      default: return dark;
+      case 'disponible': return colors.primary;
+      case 'usado': return colors.primaryLight;
+      case 'expirado': return colors.primaryDark;
+      default: return colors.primary;
     }
   };
 
@@ -43,79 +45,136 @@ export default function ItemUnique({
   return (
     <Pressable
       onPress={() => onPress?.(data)}
-      style={{
-        backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 16,
-        marginHorizontal: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-        borderLeftWidth: 4,
-        borderLeftColor: getEstadoColor(data.estado)
-      }}
+      style={[styles.card,
+        {
+          borderLeftColor: getEstadoColor(data.estado),
+          backgroundColor: colors.card,
+          shadowColor: colors.shadow,
+        }
+      ]}
       disabled={loading || data.estado !== 'disponible'}
     >
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 4 }} numberOfLines={2}>
+      <View style={styles.topRow}>
+        <View style={styles.infoCol}>
+          <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
             {data.procedimiento}
           </Text>
-          <Text style={{ color: '#666', marginBottom: 8, fontSize: 14 }} numberOfLines={3}>
+          <Text style={[styles.desc, { color: colors.textSecondary }]} numberOfLines={3}>
             {data.descripcion}
           </Text>
         </View>
-        
-        <View style={{ 
-          backgroundColor: getEstadoColor(data.estado), 
-          paddingHorizontal: 8, 
-          paddingVertical: 4, 
-          borderRadius: 12,
-          minWidth: 80,
-          alignItems: 'center'
-        }}>
-          <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>
+        <View style={[styles.estadoBadge, { backgroundColor: getEstadoColor(data.estado) }]}> 
+          <Text style={[styles.estadoText, { color: colors.background }]}>
             {getEstadoTexto(data.estado)}
           </Text>
         </View>
       </View>
-      
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <View style={styles.bottomRow}>
         <View>
           {data.descuento && (
-            <Text style={{ color: dark, fontWeight: 'bold', fontSize: 14, marginBottom: 2 }}>
+            <Text style={[styles.discount, { color: colors.primaryDark }]}>
               {data.descuento}% de descuento
             </Text>
           )}
           {data.valor && (
-            <Text style={{ color: '#666', fontSize: 13 }}>
+            <Text style={[styles.value, { color: colors.textSecondary }]}>
               Valor: ${data.valor.toLocaleString()}
             </Text>
           )}
           {data.fechaExpiracion && (
-            <Text style={{ color: '#666', fontSize: 12 }}>
+            <Text style={[styles.expiry, { color: colors.primaryDark }]}>
               Expira: {new Date(data.fechaExpiracion).toLocaleDateString()}
             </Text>
           )}
         </View>
-        
         {loading ? (
-          <ActivityIndicator size="small" color={dark} />
+          <ActivityIndicator size="small" color={colors.primary} />
         ) : data.estado === 'disponible' ? (
-          <View style={{ 
-            backgroundColor: dark, 
-            paddingHorizontal: 12, 
-            paddingVertical: 6, 
-            borderRadius: 8 
-          }}>
-            <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>
-              Aplicar
-            </Text>
+          <View style={[styles.applyBtn, { backgroundColor: colors.primary }]}> 
+            <Text style={[styles.applyText, { color: colors.background }]}>Aplicar</Text>
           </View>
         ) : null}
       </View>
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    borderLeftWidth: 4,
+    flexDirection: 'column',
+    gap: 4,
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  infoCol: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: '#222',
+  },
+  desc: {
+    color: '#666',
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  estadoBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    minWidth: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  estadoText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  discount: {
+    color: '#B38E2C',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginBottom: 2,
+  },
+  value: {
+    color: '#666',
+    fontSize: 13,
+  },
+  expiry: {
+    color: '#B38E2C',
+    fontSize: 12,
+  },
+  applyBtn: {
+    backgroundColor: '#D4AF37',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  applyText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+});

@@ -8,7 +8,7 @@ const ItemsBenefits = memo(({ dark, light, transparent, data }: ItemsBenefitsPro
   const { colors } = useTheme();
   
   return (
-    <View style={[styles.itemContainer, { backgroundColor: colors.card, borderColor: colors.primary }]}>
+    <View style={[styles.itemContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.contentContainer}>
       <View style={[styles.containerIconFirst, { backgroundColor: `${colors.primary}20` }]}>
           <Ionicons name="gift-outline" size={25} color={colors.primary} />
@@ -65,9 +65,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 1.5,
     width: 280,
     marginHorizontal: 8,
+    marginVertical: 9,
   },
   contentContainer: {
     display: 'flex',

@@ -12,8 +12,8 @@ const SubtitleText: React.FC<TextProps> = ({ style, children, ...props }) => {
 const styles = StyleSheet.create({
   subtitle: {
     fontSize: 18, // Tamaño medio para subtítulos
-    fontFamily: "Roboto-Medium", // Cambia según tu fuente
-    color: "#555", // Color por defecto
+    fontFamily: "Nunito", // Cambia según tu fuente
+    color: "#555", // Color por Nunitoecto
   },
 });
 

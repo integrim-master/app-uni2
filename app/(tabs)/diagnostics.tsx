@@ -49,6 +49,7 @@ export default function Diagnostic() {
 
   return (
     <DiagnosticScreen
+    setCurrentStep={setCurrentStep}
       currentStep={currentStep}
       steps={steps}
       nextStep={nextStep}

@@ -4,7 +4,7 @@ import { ViewProps } from 'react-native';
 export interface ButtonData {
   item: string;
   routPage: string;
-  icon: ComponentType<any>; // Permite pasar width, height, etc.
+  icon: ComponentType<any>;
   dark: string;
   light: string;
   colorFondo: string;
@@ -12,9 +12,10 @@ export interface ButtonData {
 
 export interface AccesoDirectoProps {
   item: string;
-  icon: ComponentType<any>; // Permite pasar width, height, etc.
+  icon: ComponentType<any>; 
   routPage: string;
   dark: string;
+  width?: string;
   light: string;
   colorFondo: string;
 }

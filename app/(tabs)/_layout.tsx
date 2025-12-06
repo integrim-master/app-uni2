@@ -57,6 +57,7 @@ export default function TabsLayout() {
             title: "Perfil",
             tabBarIcon: ({color}) => <UserICon color={color}/>,
           }}
+          
         />
       </Tabs>
 

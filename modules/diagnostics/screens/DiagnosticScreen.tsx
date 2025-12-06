@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
@@ -13,10 +14,8 @@ export default function DiagnosticScreen(props: DiagnosticScreenProps) {
     steps,
     nextStep,
     prevStep,
-    permission,
-    requestPermission,
-    facing,
-    setFacing,
+    setCurrentStep
+
   } = props;
 
   const renderStepContent = () => {
@@ -34,7 +33,13 @@ export default function DiagnosticScreen(props: DiagnosticScreenProps) {
     }
   };
 
-
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setCurrentStep(0);
+      }
+    }, [])
+  );
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <View
@@ -44,38 +49,23 @@ export default function DiagnosticScreen(props: DiagnosticScreenProps) {
         <View style={styles.stepContent}>{renderStepContent()}</View>
       </View>
 
-      <View style={styles.navigationContainer}>
-        {currentStep > 0 && (
-          <Pressable
-            style={[styles.navButton, { backgroundColor: colors.primary }]}
-            onPress={prevStep}
-          >
-            <MaterialIcons name="arrow-back-ios" size={22} color="#fff" />
-          </Pressable>
-        )}
-
-        {currentStep < steps.length - 1 ? (
-          <Pressable
-            style={[
-              styles.navButton,
-              { backgroundColor: colors.primary, marginLeft: 10 },
-            ]}
-            onPress={nextStep}
-          >
-            <MaterialIcons name="arrow-forward-ios" size={22} color="#fff" />
-          </Pressable>
-        ) : (
-          <Pressable
-            style={[
-              styles.navButton,
-              { backgroundColor: colors.primary, marginLeft: 10 },
-            ]}
-            onPress={() => console.log("Diagnóstico completado")}
-          >
-            <MaterialIcons name="check-circle" size={24} color="#fff" />
-          </Pressable>
-        )}
-      </View>
+  
+      {currentStep > 1 &&  (
+        <Pressable
+          style={[styles.fabNav, { backgroundColor: colors.primary }]}
+          onPress={prevStep}
+        >
+          <MaterialIcons name="arrow-back-ios" size={28} color="#fff" />
+        </Pressable>
+      )}
+      {currentStep < steps.length - 1 && (
+        <Pressable
+          style={[styles.fabNav, { backgroundColor: colors.primary, right: 24, left: undefined }]}
+          onPress={nextStep}
+        >
+          <MaterialIcons name="arrow-forward-ios" size={28} color="#fff" />
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -93,18 +83,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
   },
-  navigationContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  navButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    borderRadius: 99,
-    minWidth: 50,
-    alignItems: "center",
+  fabNav: {
+    position: 'absolute',
+    bottom: 32,
+    left: 24,
+    zIndex: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
   },
 });
  

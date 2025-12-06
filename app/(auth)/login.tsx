@@ -102,12 +102,12 @@ const styles = StyleSheet.create({
     },
     welcomeText: {
         fontSize: 28,
-        fontWeight: '700',
+        fontWeight: '800',
         marginBottom: 8,
     },
     subtitleText: {
         fontSize: 14,
-        fontWeight: '400',
+        fontWeight: '600',
     },
     formContainer: {
         display: 'flex',

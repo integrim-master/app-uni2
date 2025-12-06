@@ -2,33 +2,25 @@ import { useTheme } from '@/context/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React, { memo } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
+import Giftsvg from '../../../assets/svg/Gift.svg';
 import { BeneficiosProps, ItemsBenefitsProps } from '../types/home.types';
-
 const ItemsBenefits = memo(({ dark, light, transparent, data }: ItemsBenefitsProps) => {
   const { colors } = useTheme();
   
   return (
-    <View style={[styles.itemContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-      <View style={styles.contentContainer}>
-      <View style={[styles.containerIconFirst, { backgroundColor: `${colors.primary}20` }]}>
-          <Ionicons name="gift-outline" size={25} color={colors.primary} />
+    <View style={[styles.itemContainer, { backgroundColor: colors.card, borderColor: colors.border }]}> 
+      <View style={[styles.iconLeft, { backgroundColor: `${colors.primary}20` }]}> 
+        <Giftsvg width={68} height={68} fill="white" />
       </View>
-      
-          <View style={styles.badgeText}>
-            <Text style={{ color: colors.text, fontWeight: '600' }}>{data.procedimiento}</Text>
-            <Text style={{ color: colors.textLight }}>
-              {data.descripcion}
-            </Text>
-  
+      <View style={styles.infoContent}>
+        <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{data.procedimiento}</Text>
+        <Text style={[styles.desc, { color: colors.textLight }]} numberOfLines={2}>{data.descripcion}</Text>
+        <View style={styles.usageRow}>
+          <Text style={[styles.usageText, { color: colors.primary }]}>Usos limitados</Text>
         </View>
-        <View style={styles.usageContainer}>
-          <Text style={[styles.usageText, { color: colors.primary }]}>
-            Usos limitados 
-          </Text>
-        <View style={[styles.containerIcon, { backgroundColor: colors.primary }]}>
-            <Ionicons name="chevron-forward-outline" size={20} color="#FFFFFF" />
-        </View>
-        </View>
+      </View>
+      <View style={[styles.actionCircle, { backgroundColor: colors.primary }]}> 
+        <Ionicons name="chevron-forward" size={26} color="white" />
       </View>
     </View>
   );
@@ -55,57 +47,66 @@ export function Beneficios({ dark, light, transparent, benefits }: BeneficiosPro
 
 const styles = StyleSheet.create({
   itemContainer: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 12,
+    padding: 22,
+    borderRadius: 22,
     borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1.5,
-    width: 280,
-    marginHorizontal: 8,
+    shadowOpacity: 0.10,
+    shadowRadius: 2,
+    elevation: 1,
+    width: 340,
+    marginHorizontal: 14,
     marginVertical: 9,
+    backgroundColor: '#fff',
+    gap: 18,
   },
-  contentContainer: {
-    display: 'flex',
-    gap: 20,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  iconLeft: {
+    width: 82,
+    height: 82,
+    borderRadius: 41,
+    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '',
-    marginBottom: 8,
-    padding: 8,
-    borderRadius: 8,
+    marginRight: 14,
   },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
+  actionCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  badgeText: {
+  infoContent: {
+    flex: 1,
     gap: 4,
+    justifyContent: 'center',
   },
-  usageContainer: {
-    display: 'flex',
+  title: {
+    fontWeight: '700',
+    fontSize: 16,
+    marginBottom: 2,
+  },
+  desc: {
+    fontSize: 13,
+    fontWeight: '400',
+    marginBottom: 6,
+  },
+  usageRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    gap: 6,
   },
   usageText: {
-    fontWeight: '800',
+    fontWeight: '700',
+    fontSize: 13,
   },
-  containerIcon: {
-    borderRadius: 999,
-    padding: 2,
-  },
-  containerIconFirst: {
-    borderRadius: 999,
-    padding: 4,
-  },
+
 });

@@ -1,9 +1,44 @@
 import { useTheme } from "@/context/ThemeContext";
 import LottieView from 'lottie-react-native';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from "react-native";
 
-const SendPhoto = () => {
+type SendPhotoProps = {
+    onComplete?: () => void;
+};
+
+const SendPhoto = ({ onComplete }: SendPhotoProps) => {
     const { colors } = useTheme();
+    const [messageIndex, setMessageIndex] = useState(0);
+    
+    const messages = [
+        "Enviando foto...",
+        "Analizando rostro...",
+        "Procesando datos...",
+        "Generando diagnóstico...",
+    ];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessageIndex((prev) => {
+                if (prev < messages.length - 1) {
+                    return prev + 1;
+                }
+                return prev;
+            });
+        }, 2000);
+
+        const timeout = setTimeout(() => {
+            clearInterval(interval);
+            onComplete?.();
+        }, 8000);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+        };
+    }, []);
+
     return (
         <View style={styles.container}>
             <View style={styles.animationWrapper}>
@@ -14,7 +49,7 @@ const SendPhoto = () => {
                     style={styles.animation}
                 />
             </View>
-            <Text style={[styles.text, { color: colors.text }]}>Enviando foto...</Text>
+            <Text style={[styles.text, { color: colors.text }]}>{messages[messageIndex]}</Text>
         </View>
     );
 };

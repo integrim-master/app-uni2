@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { FlatList, RefreshControl, Text, View } from 'react-native';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
+import { FlatList, RefreshControl, Text, View, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
 import ItemUnique from '../components/ItemUnique';
@@ -50,6 +51,27 @@ export default function BeneficiosScreen() {
   const { membership, refreshUserData, loading } = useAuth();
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
+  
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ['50%', '75%'], []);
+
+  const handleOpenBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.snapToIndex(0);
+  }, []);
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
 
   if (!membership) {
     return (
@@ -86,6 +108,28 @@ export default function BeneficiosScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+
+      <View style={[styles.headerContainer, { backgroundColor: colors.background }]}>
+        <View style={styles.searchFilterRow}>
+          <View style={[styles.searchContainer, { backgroundColor: colors.card || '#f0f0f0' }]}>
+            <Text style={[styles.searchIcon, { color: colors.textLight }]}>⌕</Text>
+            <TextInput
+              style={[styles.searchInput, { color: colors.text }]}
+              placeholder="Buscar beneficios..."
+              placeholderTextColor={colors.textLight}
+            />
+          </View>
+          
+          <TouchableOpacity
+            style={[styles.filterButton, { backgroundColor: colors.primary }]}
+            onPress={handleOpenBottomSheet}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.filterIcon}>⚙</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <FlatList
         data={benefits}
         keyExtractor={(item) => item.id}
@@ -119,6 +163,78 @@ export default function BeneficiosScreen() {
         contentContainerStyle={{ paddingVertical: 16 }}
         showsVerticalScrollIndicator={false}
       />
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.background }}
+        handleIndicatorStyle={{ backgroundColor: colors.textLight }}
+      >
+        <BottomSheetView style={[styles.bottomSheetContent, { backgroundColor: colors.background }]}>
+          <Text style={[styles.bottomSheetTitle, { color: colors.text }]}>
+            Filtros
+          </Text>
+      
+          <Text style={{ color: colors.text, textAlign: 'center', marginTop: 20 }}>
+      contenido de los filtros pa 
+          </Text>
+        </BottomSheetView>
+      </BottomSheet>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+  },
+  searchFilterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  searchContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    gap: 8,
+  },
+  searchIcon: {
+    fontSize: 20,
+    fontWeight: '400',
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    padding: 0,
+  },
+  filterButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterIcon: {
+    fontSize: 20,
+    color: '#fff',
+  },
+  bottomSheetContent: {
+    flex: 1,
+    padding: 20,
+  },
+  bottomSheetTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+});

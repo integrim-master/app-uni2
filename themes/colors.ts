@@ -27,6 +27,8 @@ export interface ThemeColors {
   card: string;
   shadow: string;
   blue: string;
+  textPrimary: string;
+  textSecondaryDorado?: string;
 }
 
 
@@ -54,6 +56,8 @@ export const LightTheme: ThemeColors = {
   textLight: "#6B7280", // Texto gris
   textDark: "#1F2937", // Texto gris oscuro
   textSecondary: "#9CA3AF", // Texto secundario
+  textPrimary: "#B38E2C", // Texto dorado
+  textSecondaryDorado: "#D4AF37", // Texto dorado claro
   border: "#E5E7EB", // Borde gris claro
   borderLight: "#F3F4F6", // Borde muy claro
   card: "white", 
@@ -91,7 +95,9 @@ export const DarkTheme: ThemeColors = {
   borderLight: "#4B5563", // Borde gris claro
   card: "#1F1F1F", // Tarjetas gris oscuro
   shadow: "#000000", // Sombra negra
-  blue :'#668CE8'
+  blue :'#668CE8',
+  textPrimary: "#B38E2C",
+  textSecondaryDorado :'#D4AF37'
 };
 
 // Para compatibilidad con código existente

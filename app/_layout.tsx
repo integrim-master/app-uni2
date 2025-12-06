@@ -4,6 +4,7 @@ import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "../global.css";
 
 import { AuthProvider } from "../context/AuthContext";
 import { LoadingProvider } from "../context/LoadingContext";

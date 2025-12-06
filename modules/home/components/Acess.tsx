@@ -16,12 +16,13 @@ export function AccesoDirecto({
   
   return (
     <Link asChild href={`/(tabs)/${routPage}`}>
-      <Pressable>
+      <Pressable className=''>
         {({ pressed }) => (
           <View style={[
             styles.container,
             { 
               backgroundColor: colors.card, 
+              borderColor: colors.border,
               opacity: pressed ? 0.5 : 1 
             }
           ]}>
@@ -39,7 +40,8 @@ export function AccesoDirecto({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    width: 170,
+    borderWidth: 1,
+    width: 174,
     height: 80,
     justifyContent: 'center',
     alignItems: 'center',
@@ -49,8 +51,8 @@ const styles = StyleSheet.create({
       height: 1,
     },
     shadowOpacity: 2,
-    shadowRadius: 3.84,
-    elevation: 2,
+    shadowRadius: 0.4,
+    elevation: 1,
 
     borderRadius: 12,
     paddingHorizontal: 40,

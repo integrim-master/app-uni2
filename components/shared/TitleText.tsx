@@ -12,7 +12,7 @@ const TitleText: React.FC<TextProps> = ({ style, children, ...props }) => {
 const styles = StyleSheet.create({
   title: {
     fontSize: 24,
-    fontFamily: "Nunito", 
+    fontFamily: "Roboto-Bold", 
     color: "#000", 
   },
 });

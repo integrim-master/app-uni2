@@ -1,8 +1,9 @@
 import EmptySvg from '@/assets/svg/Empty.svg';
+import BodyText from '@/components/shared/BodyText';
+import SubtitleText from '@/components/shared/SubtitleText';
 import TitleText from '@/components/shared/TitleText';
 import { useTheme } from "@/context/ThemeContext";
 import TabBar from "@/modules/home/components/TabBar";
-import { Colors } from '@/themes/colors';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -26,9 +27,12 @@ const Support: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}> 
       <View style={[styles.header, { backgroundColor: colors.primaryLight }]}> 
-        <Pressable style={[styles.newRequestButton, { backgroundColor: colors.blue, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}> 
-          <Ionicons name="add" size={22} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.newRequestText}>Nueva solicitud</Text> 
+        <Pressable style={[styles.newRequestButton, { backgroundColor: colors.backgroundSecondary, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}> 
+          <Ionicons name="add" size={22} color={colors.primaryDark} style={{ marginRight: 8 }} />
+          <Text style={[
+            styles.newRequestText ,
+            { color: colors.text }
+          ]}>Nueva solicitud</Text> 
         </Pressable> 
       </View> 
       <View style={styles.content}> 
@@ -37,18 +41,26 @@ const Support: React.FC = () => {
           activeTab={activeTab} 
           setActiveTab={setActiveTab} 
         /> 
-        {activeTab === "solicitudes" && ( 
-          <View style={styles.emptyContainer}> 
-            <EmptySvg width={220} height={22000} />
-            <TitleText style={styles.emptyText}>No tienes solicitudes</TitleText>
-          </View> 
-        )} 
-        {activeTab === "historial" && ( 
-          <View style={styles.emptyContainer}> 
-            <EmptySvg width={220} height={220} />
-            <Text style={styles.emptyText}>No hay historial</Text>
-          </View> 
-        )} 
+        {activeTab === "solicitudes" && (
+          <View style={styles.emptyContainer}>
+            <EmptySvg width={280} height={280} style={styles.emptyImage} />
+            <TitleText style={[styles.emptyTitle, { color: colors.primaryDark }]}>
+              ¡Sin solicitudes!
+            </TitleText>
+            <SubtitleText style={[styles.emptySubtitle, { color: colors.textLight }]}>
+              Aquí aparecerán tus solicitudes de soporte
+            </SubtitleText>
+           
+          </View>
+        )}
+        {activeTab === "historial" && (
+          <View style={styles.emptyContainer}>
+            <EmptySvg width={280} height={280} style={styles.emptyImage} />
+            <TitleText style={[styles.emptyTitle, { color: colors.primaryDark }]}>No hay historial</TitleText>
+            <SubtitleText style={[styles.emptySubtitle, { color: colors.text }]}>Tu historial de soporte aparecerá aquí</SubtitleText>
+            <BodyText style={[styles.emptyBody, { color: colors.textSecondary }]}>Cuando tengas solicitudes resueltas, podrás consultarlas en este espacio.</BodyText>
+          </View>
+        )}
       </View> 
     </View> 
   );
@@ -84,14 +96,31 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    paddingTop: 40,
+  
   },
-  emptyText: {
-    fontSize: 18,
-    color: Colors.secondaryDark,
-    fontWeight: 700,
+  emptyImage: {
+
+  },
+  emptyTitle: {
+    fontSize: 22,
+    fontWeight: '700',
     textAlign: 'center',
+    marginBottom: 4,
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  emptyBody: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 2,
+    marginBottom: 2,
+    paddingHorizontal: 16,
   },
 });
 

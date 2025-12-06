@@ -2,7 +2,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { ScrollView } from 'react-native';
-import GiftIcon from '../../../assets/svg/Gift.svg';
+import Blog from '../../../assets/svg/Blog.svg';
 import SupportIcon from '../../../assets/svg/support.svg';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
@@ -71,9 +71,9 @@ export default function Index() {
 
   const dataButtons: ButtonData[] = [
     { 
-      item: "Agendar", 
+      item: "Blog", 
       routPage: "dates", 
-      icon: GiftIcon, 
+      icon: Blog, 
       dark, 
       light, 
       colorFondo 
@@ -86,22 +86,7 @@ export default function Index() {
       light, 
       colorFondo 
     },
-    { 
-      item: "Beneficios", 
-      routPage: "beneficios", 
-      icon: GiftIcon, 
-      dark, 
-      light, 
-      colorFondo 
-    },
-    { 
-      item: "Historial", 
-      routPage: "dates", 
-      icon: GiftIcon, 
-      dark, 
-      light, 
-      colorFondo 
-    }
+    
   ];
 
   return (

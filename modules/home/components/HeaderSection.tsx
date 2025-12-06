@@ -19,8 +19,10 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
         <View style={styles.logoNotifContainer}>
           <View style={styles.logoContainer}>
             <Image
-              source={require('../../../assets/images/logo-careme-black.png')}
-              style={styles.logoImage}
+              source={  isDark ? require('../../../assets/images/logo-careme-white.png') : require('../../../assets/images/logo-careme-black.png')}
+              style={
+                isDark ? styles.logoImageDark : styles.logoImage
+              }
               resizeMode="contain"
             />
           </View>
@@ -75,6 +77,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 10,
   },
+  logoImageDark: {
+    width: 140,
+    height: 40,
+    borderRadius: 24,
+  
+  },
   logoNotifContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -108,7 +116,7 @@ const styles = StyleSheet.create({
   suggestionsContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 10,
+    gap: 20,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     marginBottom: 10,

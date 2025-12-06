@@ -31,6 +31,7 @@ export interface ItemProductProps {
 
 export type DiagnosticScreenProps = {
   currentStep: number;
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   steps: string[];
   nextStep: () => void;
   prevStep: () => void;

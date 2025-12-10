@@ -1,8 +1,8 @@
-import { LinearGradient } from "expo-linear-gradient"
-import React, { useEffect, useRef } from 'react'
-import { Animated, Dimensions, Image, StyleSheet, Text, View } from 'react-native'
-import Logo from '../../../assets/images/logo-careme-black.png'
-import { ChipIcon } from '../../../components/Icons'
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef } from "react";
+import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import Logo from "../../../assets/images/logo-careme-black.png";
+import { useTheme } from "../../../context/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -15,7 +15,6 @@ interface CardHomeProps {
   nombre: string;
 }
 
-
 interface ProgressBarProps {
   value: number;
   total: number;
@@ -23,17 +22,17 @@ interface ProgressBarProps {
   dark: string;
 }
 
-
 function ProgressBar({ value, total, light, dark }: ProgressBarProps) {
   const percentage = Math.min((value / total) * 100, 100);
-  
+
   return (
     <View className="w-full h-full relative" style={{ backgroundColor: light }}>
       <Animated.View
         className="h-full rounded-full"
         style={{
-          backgroundColor: dark,
           width: `${percentage}%`,
+          backgroundColor: dark,
+          borderRadius: 999,
         }}
       />
     </View>
@@ -48,6 +47,7 @@ export function CardHome({
   countBenefits,
   nombre,
 }: CardHomeProps) {
+  const { colors } = useTheme();
   const shimmerAnim = useRef(new Animated.Value(-1)).current;
 
   useEffect(() => {
@@ -62,73 +62,127 @@ export function CardHome({
 
   const translateX = shimmerAnim.interpolate({
     inputRange: [-1, 1],
-    outputRange: [-width, width], // se mueve de izquierda a derecha
+    outputRange: [-width, width],
   });
 
   return (
-    <View
-      className="rounded-3xl px-8 py-6 gap-4 overflow-hidden"
-      style={{ backgroundColor: "#171717" }}
-    >
-      {/* Reflejo */}
-      <Animated.View
+    <View style={{ position: "relative" }}>
+
+      <View
         style={{
           ...StyleSheet.absoluteFillObject,
-          transform: [{ translateX }],
+          borderRadius: 20,
+          backgroundColor: colors.primaryLight,
+          opacity: 0.70,
+          zIndex: -1,
+          shadowColor: colors.primary,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.9,
+          shadowRadius: 55,
+          elevation: 35,
+        }}
+      />
+
+
+      <LinearGradient
+        colors={[colors.primaryLight, colors.primary, '#D0993C']}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={{
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+          paddingHorizontal: 20,
+          paddingVertical: 24,
+          gap: 16,
+          overflow: "hidden",
+          shadowColor: colors.primary,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.85,
+          shadowRadius: 38,
+          elevation: 30,
         }}
       >
-        <LinearGradient
-          colors={["transparent", "rgba(255,255,255,0.2)", "transparent"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={{ flex: 1 }}
-        />
-      </Animated.View>
+        <Animated.View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            transform: [{ translateX }],
+          }}
+        >
+          <LinearGradient
+            colors={["transparent", "rgba(255,255,255,0.35)", "transparent"]}
+            start={{ x: 0, y: 0.2 }}
+            end={{ x: 1, y: 0.8 }}
+            style={{ flex: 1, width: "120%" }}
+          />
+        </Animated.View>
 
-      <View className="justify-between">
-        <View className="flex-row justify-between">
-          <Text
-            className="uppercase font-bold text-xl"
-            style={{ color: light }}
-          >
-            {membresia}
-          </Text>
-          <Image source={Logo} className='w-48 h-10' resizeMode='cover'/>
-        </View>
-        <View>
-          <ChipIcon color={"#F5CF86"} size={50} />
-        </View>
-        <View>
-          <View className="flex-row items-center gap-3">
-            <Text className="text-white text-sm">Válido hasta</Text>
-            <Text className="text-white text-base font-medium">01/07/2026</Text>
+        <View className="justify-between">
+          <View className="flex-row justify-between">
+            <Text
+              className="uppercase font-bold text-4xl"
+              style={{ color: colors.text }}
+            >
+              {membresia}
+            </Text>
+
+            <Image source={Logo} className="w-48 h-10" resizeMode="cover" />
           </View>
-          <Text className="text-white text-xl font-bold">{nombre}</Text>
-        </View>
-      </View>
 
-      <View className="gap-3">
-        <View className="flex-row justify-between">
-          <Text className="text-white text-lg font-medium">
-            Beneficios disponibles
-          </Text>
-          <Text className="text-lg font-semibold" style={{ color: light }}>
-            {countBenefits}/{amountBenefits}
-          </Text>
+          <View>
+            <View className="flex-row items-center gap-3">
+              <Text className="text-sm" style={{ color: colors.cardTextDark }}>
+                Válido hasta
+              </Text>
+              <Text className="text-base font-medium" style={{ color: colors.text }}>
+                01/07/2026
+              </Text>
+            </View>
+          </View>
         </View>
-        <View>
+
+        <View className="gap-3">
+          <View className="flex-row justify-between">
+            <Text className="text-lg font-medium" style={{ color: colors.cardTextDark }}>
+              Beneficios disponibles
+            </Text>
+            <Text className="text-lg font-semibold" style={{ color: colors.cardTextDark }}>
+              {countBenefits}/{amountBenefits}
+            </Text>
+          </View>
+
           <View
-            className="w-full h-3 rounded-full overflow-hidden border-hairline"
-            style={{ borderColor: light }}
+            className="w-full h-2 rounded-full overflow-hidden"
+            style={{ borderColor: colors.primaryLight }}
           >
             <ProgressBar
               value={countBenefits}
               total={amountBenefits}
-              light="#EEE"
-              dark="#D4AF37"
+              light={'white'}
+              dark={colors.cardTextDark}
             />
           </View>
         </View>
+      </LinearGradient>
+
+
+      <View
+        style={{
+          backgroundColor: colors.primaryLight,
+          padding: 12,
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          alignItems: 'center',
+          marginTop: 0,
+
+        }}
+      >
+        <Text className="text-sm" style={{ color: colors.cardTextDark }}>
+          ¡Te quedan 3 beneficios por canjear
+        </Text>
       </View>
     </View>
   );

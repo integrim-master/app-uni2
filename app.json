@@ -68,5 +68,23 @@
     "updates": {
       "url": "https://u.expo.dev/2f2404fc-e5ce-413f-8529-53a64b3c89f6"
     }
+  },
+  "react-native-toast-message": {
+    "position": "top",
+    "visibilityTime": 4000,
+    "autoHide": true,
+    "topOffset": 30,
+    "bottomOffset": 40,
+    "style": {
+      "borderRadius": 10,
+      "padding": 10
+    },
+    "text1Style": {
+      "fontSize": 16,
+      "fontWeight": "bold"
+    },
+    "text2Style": {
+      "fontSize": 14
+    }
   }
 }

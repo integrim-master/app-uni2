@@ -1,6 +1,7 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
 import React, { ReactNode } from 'react';
-import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, ViewStyle } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 
 
@@ -31,19 +32,14 @@ export function Card({
   const cardContent = (
     <Pressable onPress={onPress} className={className}>
       {({ pressed }) => (
-        <View
-          style={[
-            styles.container,
-            style,
-            {
-              backgroundColor: backgroundColor || colors.card,
-              borderColor: borderColor || colors.border,
-              opacity: pressed ? pressedOpacity : 1,
-            },
-          ]}
+        <LinearGradient
+          colors={colors.gradientCard || colors.gradientCard as  any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.container, style, { borderColor: borderColor || colors.border, opacity: pressed ? pressedOpacity : 1 }]}
         >
           {children}
-        </View>
+        </LinearGradient>
       )}
     </Pressable>
   );
@@ -58,8 +54,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderWidth: 1,
-    width: 174,
-    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -71,9 +65,7 @@ const styles = StyleSheet.create({
     shadowRadius: 0.4,
     elevation: 1,
     borderRadius: 12,
-    paddingHorizontal: 40,
-    paddingVertical: 8,
     gap: 8,
   },
-  // iconContainer eliminado
+
 });

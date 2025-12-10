@@ -2,11 +2,11 @@ import EmptySvg from '@/assets/svg/Empty.svg';
 import BodyText from '@/components/shared/BodyText';
 import SubtitleText from '@/components/shared/SubtitleText';
 import TitleText from '@/components/shared/TitleText';
-import { useTheme } from "@/context/ThemeContext";
 import TabBar from "@/modules/home/components/TabBar";
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
 
 
 
@@ -25,7 +25,7 @@ const Support: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>(TAB_OPTIONS[0].key);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}> 
+    <View style={[styles.container,]}> 
       <View style={[styles.header, { backgroundColor: colors.primaryLight }]}> 
         <Pressable style={[styles.newRequestButton, { backgroundColor: colors.backgroundSecondary, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}> 
           <Ionicons name="add" size={22} color={colors.primaryDark} style={{ marginRight: 8 }} />

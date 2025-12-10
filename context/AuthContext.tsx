@@ -105,7 +105,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const login = async (username: string, password: string): Promise<void> => {
         showLoading("Iniciando sesión...");
         try {
-            if (username === "demo" && password === "123456") {
+            if (username === "andres" && password === "123456") {
                 const dataMocked = {
                     token: "secure_token_" + Date.now(),
                     userInfo: {
@@ -130,6 +130,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 setUser(dataMocked.userInfo);
                 setToken(dataMocked.token);
                 setMembership(dataMocked.membership);
+            
                 await SecureStore.setItemAsync("wp_token", JSON.stringify(dataMocked));
             } else {
                 throw new Error("Credenciales inválidas. Use demo/123456");

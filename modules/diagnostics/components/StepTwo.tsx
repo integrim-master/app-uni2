@@ -2,6 +2,7 @@ import BodyText from '@/components/shared/BodyText';
 import SubtitleText from '@/components/shared/SubtitleText';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import LottieView from 'lottie-react-native';
 import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -18,13 +19,23 @@ import ResultView from './ResultView';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-export default function StepTwo() {
+type StepTwoProps = {
+  photoUri: string | null,
+  setPhotoUri: (uri: string | null) => void;
+};
+
+
+export default function StepTwo({
+  photoUri,
+  setPhotoUri,
+} : StepTwoProps) {
   const [facing, setFacing] = useState<CameraType>('front');
   const [permission, requestPermission] = useCameraPermissions();
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [showLoaderSendPhoto, setShowLoaderSendPhoto] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const cameraRef = useRef<CameraView>(null);
   const { colors } = useTheme();
 
@@ -32,7 +43,7 @@ export default function StepTwo() {
 
   if (!permission.granted) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}> 
+      <View style={[styles.container, ]}> 
         <MaterialIcons name="camera-alt" size={70} color={colors.primary} style={{ marginBottom: 20 }} />
 
         <SubtitleText style={[styles.permissionMessage, { color: colors.text }]}>
@@ -70,7 +81,11 @@ export default function StepTwo() {
   const handleSendPhoto = () => setShowLoaderSendPhoto(true);
   const handleAnalysisComplete = () => {
     setShowLoaderSendPhoto(false);
-    setShowResults(true);
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+      setShowResults(true);
+    }, 1800);
   };
   const handleReset = () => {
     setPhotoUri(null);
@@ -78,12 +93,27 @@ export default function StepTwo() {
     setShowLoaderSendPhoto(false);
   };
 
+
+  if (showSuccess) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}> 
+        <LottieView
+          source={require('../../../assets/animations/Success.json')}
+          autoPlay
+          loop={true}
+          style={{ width: 180, height: 180 }}
+        />
+      
+      </View>
+    );
+  }
+
   if (showResults && photoUri) {
     return <ResultView photoUri={photoUri} onReset={handleReset} />;
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}> 
+    <View style={[styles.container]}> 
       {showLoaderSendPhoto ? (
         <SendPhoto onComplete={handleAnalysisComplete} />
       ) : (
@@ -108,7 +138,6 @@ export default function StepTwo() {
               <>
                 <CameraView ref={cameraRef} style={styles.camera} facing={facing} />
 
-                {/* Marco guía reducido para pantallas pequeñas */}
                 <View style={styles.faceGuide}>
                   <View style={[styles.corner, styles.topLeft, { borderColor: colors.primary }]} />
                   <View style={[styles.corner, styles.topRight, { borderColor: colors.primary }]} />

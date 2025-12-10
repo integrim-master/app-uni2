@@ -1,6 +1,7 @@
+import { Screen } from "@/components/shared/Screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import StepOne from "../components/StepOne";
@@ -9,64 +10,60 @@ import { DiagnosticScreenProps } from "../types/diagnostics.types";
 
 export default function DiagnosticScreen(props: DiagnosticScreenProps) {
   const { colors } = useTheme();
-  const {
-    currentStep,
-    steps,
-    nextStep,
-    prevStep,
-    setCurrentStep
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
 
-  } = props;
+  const { currentStep, steps, nextStep, prevStep } = props;
+
+  useFocusEffect(
+    React.useCallback(() => {
+
+      return () => {
+      };
+    }, [])
+  );
 
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
         return <StepOne />;
       case 1:
-        return (
-          <StepTwo
-          
-          />
-        );
+        return <StepTwo photoUri={photoUri} setPhotoUri={setPhotoUri} />;
       default:
         return <StepOne />;
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        setCurrentStep(0);
-      }
-    }, [])
-  );
   return (
-    <View style={[styles.container, { backgroundColor: colors.card }]}>
-      <View
-        style={styles.contentContainer}
-  
-      >
-        <View style={styles.stepContent}>{renderStepContent()}</View>
-      </View>
+    <Screen>
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <View style={styles.stepContent}>
+            {renderStepContent()}
+          </View>
+        </View>
 
-  
-      {currentStep > 1 &&  (
-        <Pressable
-          style={[styles.fabNav, { backgroundColor: colors.primary }]}
-          onPress={prevStep}
-        >
-          <MaterialIcons name="arrow-back-ios" size={28} color="#fff" />
-        </Pressable>
-      )}
-      {currentStep < steps.length - 1 && (
-        <Pressable
-          style={[styles.fabNav, { backgroundColor: colors.primary, right: 24, left: undefined }]}
-          onPress={nextStep}
-        >
-          <MaterialIcons name="arrow-forward-ios" size={28} color="#fff" />
-        </Pressable>
-      )}
-    </View>
+        {currentStep > 0 && (
+          <Pressable
+            style={[styles.fabNav, { backgroundColor: colors.primary }]}
+            onPress={prevStep}
+          >
+            <MaterialIcons name="arrow-back-ios" size={28} color="#fff" />
+          </Pressable>
+        )}
+
+        {currentStep < steps.length - 1 && (
+          <Pressable
+            style={[
+              styles.fabNav,
+              { backgroundColor: colors.primary, right: 24, left: undefined },
+            ]}
+            onPress={nextStep}
+          >
+            <MaterialIcons name="arrow-forward-ios" size={28} color="#fff" />
+          </Pressable>
+        )}
+      </View>
+    </Screen>
   );
 }
 
@@ -84,20 +81,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   fabNav: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 32,
     left: 24,
     zIndex: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     elevation: 6,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
   },
 });
- 

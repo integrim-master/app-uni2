@@ -17,7 +17,7 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
       style={[
         styles.profileSection,
         {
-          backgroundColor: colors.card,
+
           borderColor: colors.border,
           shadowColor: colors.shadow,
         },

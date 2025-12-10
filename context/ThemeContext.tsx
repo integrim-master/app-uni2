@@ -13,7 +13,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemColorScheme = useColorScheme();
-  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>(systemColorScheme || 'light');
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('dark');
   const [manualOverride, setManualOverride] = useState(false);
   
 

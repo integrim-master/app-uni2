@@ -1,6 +1,6 @@
-import { useTheme } from '@/context/ThemeContext';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../../../context/ThemeContext';
 
 
 type TabOption = {

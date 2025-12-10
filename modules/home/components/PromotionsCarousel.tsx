@@ -1,17 +1,18 @@
-import { useTheme } from "@/context/ThemeContext";
+import PrimaryButton from "@/components/shared/PrimaryButton";
 import { Link } from "expo-router";
 import React from "react";
 import {
-    ImageBackground,
-    Pressable,
-    StyleSheet,
-    Text,
-    useWindowDimensions,
-    View,
+  ImageBackground,
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, { ICarouselInstance, Pagination } from "react-native-reanimated-carousel";
 import Campana from "../../../assets/images/campana.jpg";
+import { useTheme } from "../../../context/ThemeContext";
 
 export const PromotionsCarousel: React.FC = () => {
   const layout = useWindowDimensions();
@@ -88,7 +89,7 @@ export const PromotionsCarousel: React.FC = () => {
               <View
                 style={[
                   styles.overlayContrast,
-                  { backgroundColor: colors.blue, opacity: 0.25 },
+                  { backgroundColor: colors.backgroundDark, opacity: 0.45 },
                 ]}
               />
 
@@ -99,21 +100,7 @@ export const PromotionsCarousel: React.FC = () => {
                   asChild
                   href={`https://wa.me/+573170366805?text=Hola%2C+quiero+saber+mas+informaci%C3%B3n+sobre+la+promoci%C3%B3n+de+EXTREME+YOUNG%2C+vengo+del+link+https%3A%2F%2Fcareme360.com%2Fpromocion%2Fextreme-young%2F`}
                 >
-                  <Pressable>
-                    {({ pressed }) => (
-                      <Text
-                        style={[
-                          styles.promotionButton,
-                          {
-                            opacity: pressed ? 0.6 : 1,
-                            backgroundColor: colors.primaryLight,
-                          },
-                        ]}
-                      >
-                        Solicitar ahora
-                      </Text>
-                    )}
-                  </Pressable>
+                  <PrimaryButton title="Solicitar ahora" style={styles.promotionButton} />
                 </Link>
               </View>
             </ImageBackground>
@@ -200,16 +187,12 @@ const styles = StyleSheet.create({
   promotionButton: {
     color: "white",
     fontWeight: "600",
+    borderRadius: 22,
     fontSize: 14,
     paddingHorizontal: 18,
-    paddingVertical: 9,
-    borderRadius: 20,
     alignSelf: "flex-start",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
+
+
+
   },
 });

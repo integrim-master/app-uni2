@@ -1,7 +1,7 @@
-import { useTheme } from "@/context/ThemeContext";
 import LottieView from 'lottie-react-native';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from '../../../context/ThemeContext';
 
 type SendPhotoProps = {
     onComplete?: () => void;

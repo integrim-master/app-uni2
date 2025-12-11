@@ -1,11 +1,26 @@
 import TitleText from "@/components/shared/TitleText";
-import { useTheme } from "@/context/ThemeContext";
-import { router } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
 import { Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { useTheme } from "../../context/ThemeContext";
 
 const Login = () => {
     const { colors } = useTheme();
+    const {login} = useAuth();
+
+    const handleLogin = async () => {
+        try {
+            await login("andres", "123456");
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error de inicio de sesión',
+                text2: 'Usuario o contraseña incorrectos.',
+            });
+            
+        }
+    }
     
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
@@ -68,7 +83,7 @@ const Login = () => {
                         </Text>
                     </Pressable>
 
-                    <Pressable onPress={()=>router.replace('/home')} style={[styles.loginButton, { backgroundColor: colors.primary }]}>
+                    <Pressable onPress={handleLogin} style={[styles.loginButton, { backgroundColor: colors.primary }]}>
                         <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
                     </Pressable>
 

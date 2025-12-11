@@ -29,10 +29,16 @@ export interface ThemeColors {
   blue: string;
   textPrimary: string;
   textSecondaryDorado?: string;
+  gradientBackground: [string, string, string];
+  gradientCard: [string, string];
+  cardTextDark: string;
+  gradientCardStart: string;
+  gradientCardEnd: string;
 }
 
 
 export const LightTheme: ThemeColors = {
+  cardTextDark: "#694610",
   primary: "#D4AF37", 
   primaryLight: "#E8C066", // Dorado claro
   primaryDark: "#B38E2C", // Dorado oscuro
@@ -56,11 +62,16 @@ export const LightTheme: ThemeColors = {
   textLight: "#6B7280", // Texto gris
   textDark: "#1F2937", // Texto gris oscuro
   textSecondary: "#9CA3AF", // Texto secundario
-  textPrimary: "#B38E2C", // Texto dorado
+  textPrimary: "#E5BE83", // Texto dorado
   textSecondaryDorado: "#D4AF37", // Texto dorado claro
   border: "#E5E7EB", // Borde gris claro
   borderLight: "#F3F4F6", // Borde muy claro
   card: "white", 
+  gradientBackground: ["#F3F4F6", "#E5E7EB", "#E5E7EB"],
+  gradientCard: ["#FFFFFF", "#F9FAFB"],
+
+  gradientCardStart: "#FFFFFF",
+  gradientCardEnd: "#F9FAFB",
   shadow: "#000000", // Sombra negra
   blue: "#668CE8",
 };
@@ -68,37 +79,43 @@ export const LightTheme: ThemeColors = {
 
 // Paleta de Modo Oscuro - Negro, Gris y Dorado
 export const DarkTheme: ThemeColors = {
-  primary: "#D4AF37", 
-  primaryLight: "#E8C066", // Dorado claro
-  primaryDark: "#B38E2C", // Dorado oscuro
-  secondary: "#FFB22C", // Naranja dorado
+  cardTextDark: "#694610",
+  primary: "#E2B155",
+  primaryLight: "#E5BE83",
+  primaryDark: "#B38E2C",
+  secondary: "#FFB22C",
   secondaryLight: "#FFC966",
   secondaryDark: "#CC8E1F",
-  success: "#10B981", // Verde éxito más oscuro
+  success: "#10B981",
   successLight: "#34D399",
   successDark: "#059669",
-  danger: "#DC2626", // Rojo peligro más oscuro
+  danger: "#DC2626",
   dangerLight: "#EF4444",
   dangerDark: "#991B1B",
-  warning: "#F59E0B", // Amarillo advertencia
+  warning: "#F59E0B",
   warningLight: "#FBBF24",
   warningDark: "#D97706",
-  background: "#0F0F0F", // Fondo negro profundo
-  backgroundLight: "#1A1A1A", // Fondo gris muy oscuro
-  backgroundDark: "#050505", // Fondo negro puro
-  backgroundSecondary: "#262626", // Fondo secundario gris oscuro
-  text: "#F9FAFB", // Texto blanco
-  textLight: "#D1D5DB", // Texto gris claro
-  textDark: "#E5E7EB", // Texto gris muy claro
-  textSecondary: "#9CA3AF", // Texto secundario
-  border: "#374151", // Borde gris medio
-  borderLight: "#4B5563", // Borde gris claro
-  card: "#1F1F1F", // Tarjetas gris oscuro
-  shadow: "#000000", // Sombra negra
-  blue :'#668CE8',
-  textPrimary: "#B38E2C",
-  textSecondaryDorado :'#D4AF37'
+  background: "#0F0F0F",
+  backgroundLight: "#1A1A1A",
+  backgroundDark: "#302D34",
+  backgroundSecondary: "#262626",
+  gradientBackground: ["#302D34", "#272526", "#1E1E1C"],
+  gradientCard: ["#222222", "#393335"],
+  text: "#F9FAFB",
+  textLight: "#D1D5DB",
+  textDark: "#E5E7EB",
+  textSecondary: "#9CA3AF",
+  border: "#374151",
+  borderLight: "#4B5563",
+  card: "#1F1F1F",
+  shadow: "#000000",
+  blue: "#668CE8",
+  textPrimary: "#E5BE83",
+  textSecondaryDorado: "#D4AF37",
+  gradientCardStart: "#222222",
+  gradientCardEnd: "#393335",
 };
+
 
 // Para compatibilidad con código existente
 export const Colors = LightTheme;

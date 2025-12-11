@@ -1,7 +1,10 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
-import { FlatList, RefreshControl, Text, View, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Screen } from '@/components/shared/Screen';
+import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
+import { router } from 'expo-router';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { FlatList, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
 import ItemUnique from '../components/ItemUnique';
@@ -52,6 +55,7 @@ export default function BeneficiosScreen() {
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   
+  
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['50%', '75%'], []);
@@ -75,9 +79,11 @@ export default function BeneficiosScreen() {
 
   if (!membership) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: colors.background }}>
-        <Text style={{ color: colors.text }}>Cargando información de membresía...</Text>
-      </SafeAreaView>
+      <Screen>
+        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: 'transparent' }}>
+          <Text style={{ color: colors.text }}>Cargando información de membresía...</Text>
+        </SafeAreaView>
+      </Screen>
     );
   }
 
@@ -92,6 +98,7 @@ export default function BeneficiosScreen() {
   };
 
   const handleBenefitPress = (benefit: BenefitData) => {
+    router.push(`/benefits/${benefit.id}`);
     if (benefit.estado === 'disponible') {
       console.log('Aplicando beneficio pa', benefit.procedimiento);
 
@@ -100,97 +107,104 @@ export default function BeneficiosScreen() {
 
   if (!benefits || benefits.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: colors.background }}>
-        <Text style={{ color: colors.text }}>No hay beneficios disponibles.</Text>
-      </SafeAreaView>
+      <Screen>
+        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: 'transparent' }}>
+          <Text style={{ color: colors.text }}>No hay beneficios disponibles.</Text>
+        </SafeAreaView>
+      </Screen>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-
-      <View style={[styles.headerContainer, { backgroundColor: colors.background }]}>
-        <View style={styles.searchFilterRow}>
-          <View style={[styles.searchContainer, { backgroundColor: colors.card || '#f0f0f0' }]}>
-            <Text style={[styles.searchIcon, { color: colors.textLight }]}>⌕</Text>
-            <TextInput
-              style={[styles.searchInput, { color: colors.text }]}
-              placeholder="Buscar beneficios..."
-              placeholderTextColor={colors.textLight}
+    <Screen>
+      <View style={styles.container}>
+        <FlatList
+          ListHeaderComponent={
+            <View style={[styles.headerContainer, { backgroundColor: 'transparent' }]}> 
+              <View style={styles.searchFilterRow}>
+                <View style={[styles.searchContainer, { backgroundColor: colors.card || '#f0f0f0' }]}> 
+                  <Text style={[styles.searchIcon, { color: colors.textLight }]}>⌕</Text>
+                  <TextInput
+                    style={[styles.searchInput, { color: colors.text }]}
+                    placeholder="Buscar beneficios..."
+                    placeholderTextColor={colors.textLight}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={[styles.filterButton, { backgroundColor: colors.primary }]}
+                  onPress={handleOpenBottomSheet}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="filter" style={styles.filterIcon} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          }
+          data={benefits}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <ItemUnique
+              index={index}
+              dark={dark}
+              light={light}
+              transparent={transparent}
+              data={item}
+              loading={loading}
+              onPress={handleBenefitPress}
             />
-          </View>
-          
-          <TouchableOpacity
-            style={[styles.filterButton, { backgroundColor: colors.primary }]}
-            onPress={handleOpenBottomSheet}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.filterIcon}>⚙</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+          )}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+          ListEmptyComponent={
+            <View style={{ padding: 32, alignItems: 'center' }}>
+              <Text style={{ fontSize: 16, color: colors.textLight, textAlign: 'center' }}>
+                No cuentas con beneficios disponibles
+              </Text>
+            </View>
+          }
+          refreshControl={
+            <RefreshControl 
+              refreshing={refreshing} 
+              onRefresh={onRefresh} 
+              colors={[colors.primary]} 
+              tintColor={colors.primary}
+            />
+          }
+          contentContainerStyle={{ paddingVertical: 16 }}
+          showsVerticalScrollIndicator={false}
+        />
 
-      <FlatList
-        data={benefits}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <ItemUnique
-            index={index}
-            dark={dark}
-            light={light}
-            transparent={transparent}
-            data={item}
-            loading={loading}
-            onPress={handleBenefitPress}
-          />
-        )}
-        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-        ListEmptyComponent={
-          <View style={{ padding: 32, alignItems: 'center' }}>
-            <Text style={{ fontSize: 16, color: colors.textLight, textAlign: 'center' }}>
-              No cuentas con beneficios disponibles
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          enablePanDownToClose={true}
+          backdropComponent={renderBackdrop}
+          backgroundStyle={{ backgroundColor: colors.background }}
+          handleIndicatorStyle={{ backgroundColor: colors.textLight }}
+        >
+          <BottomSheetView style={[styles.bottomSheetContent, { backgroundColor: colors.background }]}> 
+            <Text style={[styles.bottomSheetTitle, { color: colors.text }]}> 
+              Filtros
             </Text>
-          </View>
-        }
-        refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
-            onRefresh={onRefresh} 
-            colors={[colors.primary]} 
-            tintColor={colors.primary}
-          />
-        }
-        contentContainerStyle={{ paddingVertical: 16 }}
-        showsVerticalScrollIndicator={false}
-      />
-
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose={true}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: colors.background }}
-        handleIndicatorStyle={{ backgroundColor: colors.textLight }}
-      >
-        <BottomSheetView style={[styles.bottomSheetContent, { backgroundColor: colors.background }]}>
-          <Text style={[styles.bottomSheetTitle, { color: colors.text }]}>
-            Filtros
-          </Text>
-      
-          <Text style={{ color: colors.text, textAlign: 'center', marginTop: 20 }}>
-      contenido de los filtros pa 
-          </Text>
-        </BottomSheetView>
-      </BottomSheet>
-    </SafeAreaView>
+            <Text style={{ color: colors.text, textAlign: 'center', marginTop: 20 }}>
+              contenido de los filtros
+            </Text>
+          </BottomSheetView>
+        </BottomSheet>
+      </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
   headerContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
+
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0,0,0,0.05)',
   },

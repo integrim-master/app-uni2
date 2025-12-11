@@ -1,13 +1,14 @@
-import { Ionicons } from '@expo/vector-icons';
+
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MenuSection } from '../../../components/shared/MenuSection';
+import { Screen } from '../../../components/shared/Screen';
 import { useTheme } from '../../../context/ThemeContext';
-import { MenuSection } from '../components/MenuSection';
 import { ProfileHeader } from '../components/ProfileHeader';
 
 export function ProfileScreen() {
   const { colors, toggleTheme, isDark } = useTheme();
-  const userName = 'Henry Stan';
+  const userName = 'Valeria contreras';
 
   const accountItems = [
     {
@@ -49,47 +50,26 @@ export function ProfileScreen() {
   ];
 
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '30%',
-          backgroundColor: colors.primaryLight,
-          zIndex: -2,
-        }}
-      />
-      <View
-        style={{
-          position: 'absolute',
-          top: '30%',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: colors.backgroundSecondary,
-          zIndex: -2,
-        }}
-      />
+    <Screen >
+
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.safeArea}>
           <ProfileHeader
             userName={userName}
-            onPress={() => console.log('Ver perfil')}
+            onPress={() => router.push('/profile/details')}
           />
 
           <MenuSection title="Cuenta" items={accountItems} />
           <MenuSection title="General" items={generalItems} />
           <MenuSection title="Soporte" items={supportItems} />
-
+{/* 
           <Pressable
             onPress={toggleTheme}
             style={[
               styles.themeButton,
               {
-                backgroundColor: colors.primaryDark,
+                backgroundColor: colors.primaryLight,
                 shadowColor: '#000',
               },
             ]}
@@ -103,7 +83,7 @@ export function ProfileScreen() {
             <Text style={styles.themeButtonText}>
               {isDark ? 'Modo claro' : 'Modo oscuro'}
             </Text>
-          </Pressable>
+          </Pressable> */}
 
           <View style={styles.logoutContainer}>
             <Pressable
@@ -118,13 +98,14 @@ export function ProfileScreen() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 70,
   },
   safeArea: {
     paddingHorizontal: 20,

@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
+// import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
 
 export type MenuItemProps = {
-  icon: string;
+  icon?: string;
+  title?: string;
   label: string;
   color: string;
   textColor: string;
@@ -20,32 +22,38 @@ export function MenuItem({
   textColor,
   borderColor,
   isLast,
+  title,
   onPress,
 }: MenuItemProps) {
   const { colors } = useTheme();
+  const Container = onPress ? Pressable : View;
   return (
-    <Pressable
-      onPress={onPress}
+    <Container
+      {...(onPress ? { onPress } : {})}
       style={[
         styles.menuItem,
         isLast && styles.menuItemLast,
-        {
-          borderColor,
-          backgroundColor: colors.backgroundLight,
-        },
+        { backgroundColor: 'transparent', borderColor: 'transparent', borderWidth: 0, borderRadius: 0, marginBottom: 0 },
       ]}
     >
       <View style={styles.menuContent}>
-        <Ionicons
-          name={icon as any}
-          size={24}
-          color={color}
-          style={styles.menuIcon}
-        />
-        <Text style={[styles.menuText, { color: textColor }]}>{label}</Text>
+        {icon && (
+          <Ionicons
+            name={icon as any}
+            size={24}
+            color={color}
+            style={styles.menuIcon}
+          />
+        )}
+        <View>
+          {title && (
+            <Text style={[styles.menuTitle, { color: colors.secondaryDark, opacity: 0.7 }]}>{title}</Text>
+          )}
+          <Text style={[styles.menuText, { color: textColor }]}>{label}</Text>
+        </View>
       </View>
-      <Ionicons name="chevron-forward" size={20} color={color} />
-    </Pressable>
+      {onPress && <Ionicons name="chevron-forward" size={20} color={color} />}
+    </Container>
   );
 }
 
@@ -55,7 +63,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    borderBottomWidth: 0.5,
   },
   menuItemLast: {
     borderBottomWidth: 0,
@@ -66,6 +73,11 @@ const styles = StyleSheet.create({
   },
   menuIcon: {
     marginRight: 16,
+  },
+  menuTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 2,
   },
   menuText: {
     fontSize: 16,

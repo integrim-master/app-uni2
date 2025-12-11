@@ -1,6 +1,6 @@
-import { useTheme } from "@/context/ThemeContext";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
 import { AccesoDirecto } from "./Acess";
 import { Card } from "./card";
 

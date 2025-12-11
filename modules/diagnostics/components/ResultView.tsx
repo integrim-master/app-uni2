@@ -1,9 +1,9 @@
 import BodyText from '@/components/shared/BodyText';
 import SubtitleText from '@/components/shared/SubtitleText';
 import TitleText from '@/components/shared/TitleText';
-import { useTheme } from '@/context/ThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../../../context/ThemeContext';
 
 type ResultViewProps = {
     photoUri: string;
@@ -31,7 +31,7 @@ export default function ResultView({ photoUri, onReset, onClose }: ResultViewPro
                 <MaterialIcons name="close" size={30} color={colors.primary} />
             </Pressable>
             <ScrollView 
-                style={[styles.container, { backgroundColor: colors.background }]}
+                style={[styles.container]}
                 contentContainerStyle={styles.contentContainer}
                 showsVerticalScrollIndicator={false}
             >

@@ -1,7 +1,6 @@
 
-import { StatusBar } from 'expo-status-bar';
+import { Screen } from '@/components/shared/Screen';
 import React, { useEffect } from 'react';
-import { ScrollView } from 'react-native';
 import Blog from '../../../assets/svg/Blog.svg';
 import SupportIcon from '../../../assets/svg/support.svg';
 import { useAuth } from '../../../context/AuthContext';
@@ -90,10 +89,8 @@ export default function Index() {
   ];
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }}
-    >
-   <StatusBar style={isDark ? "light" : "dark"} />
-      <HomeScreen
+      <Screen>
+  <HomeScreen
         user={user}
         fullName={fullName}
         dark={dark}
@@ -103,6 +100,7 @@ export default function Index() {
         citas={mockCitas}
         benefits={mockBenefits}
       />
-    </ScrollView>
+      </Screen>
+
   );
 }

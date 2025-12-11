@@ -1,7 +1,11 @@
-import React, { useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Screen } from "@/components/shared/Screen";
+import { Ionicons } from "@expo/vector-icons";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
-
+import CitaCard, { Cita } from "../components/CitaCard";
+import FiltersBottomSheet from "../components/FiltersBottomSheet";
 
 const mockCitas = [
   {
@@ -10,7 +14,7 @@ const mockCitas = [
     fecha: "2024-12-15",
     hora: "10:00",
     especialista: "Dr. García",
-    estado: "Confirmada"
+    estado: "Confirmada",
   },
   {
     id: 2,
@@ -18,7 +22,7 @@ const mockCitas = [
     fecha: "2024-12-20",
     hora: "14:30",
     especialista: "Terapeuta López",
-    estado: "Pendiente"
+    estado: "Pendiente",
   },
   {
     id: 3,
@@ -26,17 +30,20 @@ const mockCitas = [
     fecha: "2024-12-25",
     hora: "16:00",
     especialista: "Especialista Rodríguez",
-    estado: "Completada"
-  }
+    estado: "Completada",
+  },
 ];
 
 export default function DatesScreen() {
   const [selectedProcedimiento, setSelectedProcedimiento] = useState<string | null>(null);
   const [selectedEstado, setSelectedEstado] = useState<string | null>(null);
-  const { colors } = useTheme();
 
-  const procedimientos = [...new Set(mockCitas.map(cita => cita.procedimiento))];
-  const estados = [...new Set(mockCitas.map(cita => cita.estado))];
+  const { colors } = useTheme();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ['45%', '75%'], []);
+
+  const procedimientos = [...new Set(mockCitas.map((cita) => cita.procedimiento))];
+  const estados = [...new Set(mockCitas.map((cita) => cita.estado))];
 
   const filteredCitas = useMemo(() => {
     return mockCitas.filter((cita) => {
@@ -47,217 +54,142 @@ export default function DatesScreen() {
     });
   }, [selectedProcedimiento, selectedEstado]);
 
-  const getEstadoColor = (estado: string) => {
-    switch (estado) {
-      case "Confirmada": return colors.success;
-      case "Pendiente": return colors.warning;
-      case "Completada": return colors.textLight;
-      default: return colors.backgroundDark;
-    }
-  };
+  const openFilters = useCallback(() => {
+    bottomSheetRef.current?.snapToIndex(0);
+  }, []);
 
-  const renderCitaItem = ({ item }: any) => (
-    <View style={[styles.citaCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-      <View style={styles.citaHeader}>
-        <Text style={[styles.procedimientoText, { color: colors.text }]}>{item.procedimiento}</Text>
-        <View style={[styles.estadoBadge, { backgroundColor: getEstadoColor(item.estado) }]}>
-          <Text style={styles.estadoText}>{item.estado}</Text>
-        </View>
-      </View>
-      <Text style={[styles.especialistaText, { color: colors.textLight }]}>{item.especialista}</Text>
-      <View style={styles.fechaHoraContainer}>
-        <Text style={[styles.fechaText, { color: colors.text }]}>{item.fecha}</Text>
-        <Text style={[styles.horaText, { color: colors.text }]}>{item.hora}</Text>
-      </View>
-    </View>
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+        pressBehavior="close"
+      />
+    ),
+    []
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {mockCitas.length === 0 ? (
-        <Text style={[styles.noCitasText, { color: colors.textLight }]}>
-          No tienes citas
-        </Text>
-      ) : (
-        <>
-          <View style={styles.filtersContainer}>
-            <View style={styles.filterSection}>
-              <Text style={[styles.filterTitle, { color: colors.text }]}>
-                Filtrar por procedimiento
-              </Text>
-              <FlatList
-                horizontal
-                data={procedimientos}
-                keyExtractor={(item, index) => `procedimiento-${index}`}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => setSelectedProcedimiento(
-                      selectedProcedimiento === item ? null : item
-                    )}
-                    style={[
-                      styles.filterButton,
-                      { backgroundColor: colors.backgroundSecondary },
-                      selectedProcedimiento === item && { backgroundColor: colors.primary }
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.filterButtonText,
-                        { color: colors.text },
-                        selectedProcedimiento === item && { color: '#fff', fontWeight: '600' }
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
+    <Screen>
+      <View style={styles.container}> 
+      <View style={[styles.header, { backgroundColor: colors.card + '20' }]}> 
+        <View style={styles.headerContent}>
+          <Ionicons name="calendar" size={32} color={colors.primary} style={{ marginRight: 10 }} />
+          <View>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>Mis citas</Text>
+            <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>Gestiona y revisa tus próximas citas</Text>
+          </View>
+        </View>
+        <Pressable
+          style={[styles.filterButton, { backgroundColor: colors.primary }]}
+          onPress={openFilters}
+        >
+          <Ionicons name="filter" size={22} color="#fff" />
+        </Pressable>
+      </View>
 
-            <View style={styles.filterSection}>
-              <Text style={[styles.filterTitle, { color: colors.text }]}>
-                Filtrar por estado
-              </Text>
-              <FlatList
-                horizontal
-                data={estados}
-                keyExtractor={(item, index) => `estado-${index}`}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => setSelectedEstado(
-                      selectedEstado === item ? null : item 
-                    )}
-                    style={[
-                      styles.filterButton,
-                      { backgroundColor: colors.backgroundSecondary },
-                      selectedEstado === item && { backgroundColor: colors.success }
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.filterButtonText,
-                        { color: colors.text },
-                        selectedEstado === item && { color: '#fff', fontWeight: '600' }
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          </View>
-          <View style={styles.citasContainer}>
-            <Text style={[styles.citasTitle, { color: colors.text }]}>
-              Tus citas ({filteredCitas.length})
-            </Text>
-            <FlatList
-              data={filteredCitas}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderCitaItem}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.citasList}
-            />
-          </View>
-        </>
+      <Text style={[styles.citasCount, { color: colors.text }]}>Total: {filteredCitas.length} {filteredCitas.length === 1 ? 'cita' : 'citas'}</Text>
+
+      {filteredCitas.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="sad-outline" size={48} color={colors.textLight} style={{ marginBottom: 8 }} />
+          <Text style={[styles.noCitasText, { color: colors.textLight }]}>No tienes citas programadas</Text>
+        </View>
+      ) : (
+        <View style={styles.citasListContainer}>
+          {filteredCitas.map((cita: Cita) => (
+            <CitaCard key={cita.id} cita={cita} />
+          ))}
+        </View>
       )}
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.card }}
+        handleIndicatorStyle={{ backgroundColor: colors.textLight }}
+      >
+        <BottomSheetView style={{ padding: 20, backgroundColor: colors.card }}>
+          <FiltersBottomSheet
+            procedimientos={procedimientos}
+            estados={estados}
+            selectedProcedimiento={selectedProcedimiento}
+            selectedEstado={selectedEstado}
+            setSelectedProcedimiento={setSelectedProcedimiento}
+            setSelectedEstado={setSelectedEstado}
+            colors={colors}
+          />
+        </BottomSheetView>
+      </BottomSheet>
     </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
-  noCitasText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-  },
-  filtersContainer: {
-    marginBottom: 20,
-  },
-  filterSection: {
-    marginBottom: 16,
-  },
-  filterTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
     marginBottom: 8,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    fontWeight: '500',
   },
   filterButton: {
-    padding: 12,
-    marginRight: 8,
-    borderRadius: 8,
-    minWidth: 80,
-    alignItems: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10,
+    elevation: 2,
   },
-  filterButtonText: {
-    fontWeight: "500",
+  citasCount: {
+    fontSize: 15,
+    fontWeight: '500',
+    marginLeft: 16,
+    marginBottom: 8,
   },
-  citasContainer: {
+  citasListContainer: {
     flex: 1,
-  },
-  citasTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 12,
-  },
-  citasList: {
+    gap: 12,
+    paddingHorizontal: 16,
     paddingBottom: 20,
   },
-  citaCard: {
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-    borderWidth: 1,
-  },
-  citaHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  procedimientoText: {
-    fontSize: 16,
-    fontWeight: "bold",
+  emptyContainer: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
   },
-  estadoBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginLeft: 8,
-  },
-  estadoText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  especialistaText: {
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  fechaHoraContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  fechaText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  horaText: {
-    fontSize: 14,
-    fontWeight: "600",
+  noCitasText: {
+    textAlign: 'center',
+    fontSize: 16,
   },
 });

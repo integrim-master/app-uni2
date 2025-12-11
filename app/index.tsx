@@ -1,7 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/context/ThemeContext";
 import { Redirect } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Index() {
   const { loading, token } = useAuth();
@@ -15,9 +15,6 @@ export default function Index() {
     );
   }
 
-  if (false) {
-    return <Redirect href="/(auth)/login" />;
-  }
 
   return <Redirect href="/(tabs)/home" />;
 }

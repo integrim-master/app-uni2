@@ -20,11 +20,11 @@ export default function StepOne(props?: StepOneProps) {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.card, justifyContent: 'center' }}>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
       <View
    
       >
-        <View style={[styles.card, { backgroundColor: colors.card,  }]}> 
+        <View style={[styles.card,]}> 
           <View style={[styles.animationWrapper, { borderColor: colors.primary }]}>
             <LottieView
               source={require('../../../assets/animations/profile-avatar-of-young-boy.json')}

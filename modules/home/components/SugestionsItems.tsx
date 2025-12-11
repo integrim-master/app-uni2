@@ -2,17 +2,21 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable, StyleSheet, View } from "react-native";
 import BodyText from "../../../components/shared/BodyText";
 
+import { Colors } from "@/themes/colors";
+import { Link } from "expo-router";
 import { useTheme } from '../../../context/ThemeContext';
 
 const SuggestionItem = ({ title }: { title: string }) => {
   const { colors, isDark } = useTheme();
   return (
-    <Pressable style={[styles.suggestionItemContainer, { backgroundColor: colors.card, borderWidth: isDark ? 1 : 0, borderColor: colors.border }]}> 
-      <View style={styles.contentContainer}>
-        <Ionicons name="calendar" size={18} style={[styles.icon, { color:colors.primary  }]} />
-        <BodyText style={[styles.itemText, { color: colors.primary }]}>{title}</BodyText>
-      </View>
-    </Pressable>
+<Link href={'home/suggest'} style={[styles.suggestionItemContainer, { backgroundColor: colors.card, borderWidth: isDark ? 1 : 0, borderColor: colors.border }]} asChild>
+  <Pressable >
+    <View style={styles.contentContainer}>
+      <Ionicons name="calendar" size={18} style={[styles.icon, { color: colors.primaryLight }]} />
+      <BodyText style={[styles.itemText, { color: colors.text }]}>{title}</BodyText>
+    </View>
+  </Pressable>
+</Link>
   );
 };
 
@@ -24,15 +28,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 12,
+    marginBottom: 2,
     borderRadius: 20, 
     shadowColor: "white",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 8,
-    shadowRadius: 1,
-    elevation: 1,
+    borderColor: Colors.primaryLight,
+    borderWidth: 1,
 
   },
   contentContainer: {
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   itemText: {
-    fontWeight: "800", 
+    fontWeight: "500", 
     fontSize: 14, 
   },
 });

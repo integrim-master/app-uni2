@@ -1,8 +1,8 @@
 import TitleText from "@/components/shared/TitleText";
-import { useTheme } from "@/context/ThemeContext";
 import { Link } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
 import { Beneficios } from "./benefits";
 
 interface BenefitsSectionProps {

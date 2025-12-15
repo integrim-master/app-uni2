@@ -1,16 +1,22 @@
 import { Screen } from "@/components/shared/Screen";
+import TabBar from "@/modules/home/components/TabBar";
 import { Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
+import { AnimatePresence, MotiView } from "moti";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import CitaCard, { Cita } from "../components/CitaCard";
 import FiltersBottomSheet from "../components/FiltersBottomSheet";
+import HistoryCard from "../components/HistoryCard";
 
-const mockCitas = [
+const mockCitas: Cita[] = [
   {
     id: 1,
-    procedimiento: "Limpieza Facial",
+    procedimiento: "Limpieza Facial Premium",
     fecha: "2024-12-15",
     hora: "10:00",
     especialista: "Dr. García",
@@ -26,37 +32,59 @@ const mockCitas = [
   },
   {
     id: 3,
-    procedimiento: "Tratamiento Capilar",
+    procedimiento: "Tratamiento Capilar Luxury",
     fecha: "2024-12-25",
     hora: "16:00",
     especialista: "Especialista Rodríguez",
     estado: "Completada",
   },
+  {
+    id: 4,
+    procedimiento: "Tratamiento Capilar Deluxe",
+    fecha: "2024-11-10",
+    hora: "09:00",
+    especialista: "Especialista Rodríguez",
+    estado: "Completada",
+  },
+  {
+    id: 5,
+    procedimiento: "Microdermoabrasión",
+    fecha: "2024-10-02",
+    hora: "12:00",
+    especialista: "Dra. Martínez",
+    estado: "Completada",
+  },
 ];
 
 export default function DatesScreen() {
-  const [selectedProcedimiento, setSelectedProcedimiento] = useState<string | null>(null);
+  const { colors } = useTheme();
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["45%", "75%"], []);
+
+  const [activeTab, setActiveTab] = useState<"upcoming" | "history">(
+    "upcoming"
+  );
+  const [selectedProcedimiento, setSelectedProcedimiento] = useState<
+    string | null
+  >(null);
   const [selectedEstado, setSelectedEstado] = useState<string | null>(null);
 
-  const { colors } = useTheme();
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['45%', '75%'], []);
+  const procedimientos = [...new Set(mockCitas.map((c) => c.procedimiento))];
+  const estados = [...new Set(mockCitas.map((c) => c.estado))];
 
-  const procedimientos = [...new Set(mockCitas.map((cita) => cita.procedimiento))];
-  const estados = [...new Set(mockCitas.map((cita) => cita.estado))];
+  const citasUpcoming = mockCitas.filter((c) => c.estado !== "Completada");
+  const citasHistory = mockCitas.filter((c) => c.estado === "Completada");
 
-  const filteredCitas = useMemo(() => {
-    return mockCitas.filter((cita) => {
-      return (
-        (!selectedProcedimiento || cita.procedimiento === selectedProcedimiento) &&
-        (!selectedEstado || cita.estado === selectedEstado)
-      );
-    });
-  }, [selectedProcedimiento, selectedEstado]);
+  const filteredCitas = citasUpcoming.filter(
+    (c) =>
+      (!selectedProcedimiento || c.procedimiento === selectedProcedimiento) &&
+      (!selectedEstado || c.estado === selectedEstado)
+  );
 
-  const openFilters = useCallback(() => {
+  const openFilters = () => {
     bottomSheetRef.current?.snapToIndex(0);
-  }, []);
+  };
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -73,123 +101,162 @@ export default function DatesScreen() {
 
   return (
     <Screen>
-      <View style={styles.container}> 
-      <View style={[styles.header, { backgroundColor: colors.card + '20' }]}> 
-        <View style={styles.headerContent}>
-          <Ionicons name="calendar" size={32} color={colors.primary} style={{ marginRight: 10 }} />
-          <View>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>Mis citas</Text>
-            <Text style={[styles.headerSubtitle, { color: colors.textLight }]}>Gestiona y revisa tus próximas citas</Text>
-          </View>
-        </View>
-        <Pressable
-          style={[styles.filterButton, { backgroundColor: colors.primary }]}
-          onPress={openFilters}
-        >
-          <Ionicons name="filter" size={22} color="#fff" />
-        </Pressable>
-      </View>
-
-      <Text style={[styles.citasCount, { color: colors.text }]}>Total: {filteredCitas.length} {filteredCitas.length === 1 ? 'cita' : 'citas'}</Text>
-
-      {filteredCitas.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Ionicons name="sad-outline" size={48} color={colors.textLight} style={{ marginBottom: 8 }} />
-          <Text style={[styles.noCitasText, { color: colors.textLight }]}>No tienes citas programadas</Text>
-        </View>
-      ) : (
-        <View style={styles.citasListContainer}>
-          {filteredCitas.map((cita: Cita) => (
-            <CitaCard key={cita.id} cita={cita} />
-          ))}
-        </View>
-      )}
-
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose={true}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: colors.card }}
-        handleIndicatorStyle={{ backgroundColor: colors.textLight }}
-      >
-        <BottomSheetView style={{ padding: 20, backgroundColor: colors.card }}>
-          <FiltersBottomSheet
-            procedimientos={procedimientos}
-            estados={estados}
-            selectedProcedimiento={selectedProcedimiento}
-            selectedEstado={selectedEstado}
-            setSelectedProcedimiento={setSelectedProcedimiento}
-            setSelectedEstado={setSelectedEstado}
-            colors={colors}
+      <View style={styles.container}>
+        <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+          <TabBar
+            options={[
+              { key: "upcoming", label: "Próximas citas" },
+              { key: "history", label: "Historial" },
+            ]}
+            activeTab={activeTab}
+            setActiveTab={(tab) => setActiveTab(tab as any)}
           />
-        </BottomSheetView>
-      </BottomSheet>
-    </View>
+        </View>
+
+        <View style={{ flex: 1, position: "relative" }}>
+          <AnimatePresence exitBeforeEnter>
+            {activeTab === "upcoming" && (
+              <MotiView
+                key="upcoming"
+                from={{ opacity: 0, translateX: 25 }}
+                animate={{ opacity: 1, translateX: 0 }}
+                exit={{ opacity: 0, translateX: -25 }}
+                transition={{ type: "timing", duration: 150 }}
+                style={styles.absoluteFill}
+              >
+                <View style={styles.citasListContainer}>
+                  {filteredCitas.map((c) => (
+                    <CitaCard key={c.id} cita={c} />
+                  ))}
+                  <Pressable
+                    onPress={openFilters}
+                    style={[
+                      styles.floatingButton,
+                      { backgroundColor: colors.primary },
+                    ]}
+                  >
+                    <Ionicons name="filter" size={24} color="#fff" />
+                  </Pressable>
+                </View>
+              </MotiView>
+            )}
+
+            {activeTab === "history" && (
+              <MotiView
+                key="history"
+                from={{ opacity: 0, translateX: 25 }}
+                animate={{ opacity: 1, translateX: 0 }}
+                exit={{ opacity: 0, translateX: -25 }}
+                transition={{ type: "timing", duration: 150 }}
+                style={[styles.absoluteFill, { paddingHorizontal: 16 }]}
+              >
+                <Text style={[styles.historyTitle, { color: colors.text }]}>
+                  Historial de citas
+                </Text>
+
+                {citasHistory.length === 0 ? (
+                  <View style={styles.emptyContainer}>
+                    <Ionicons
+                      name="time-outline"
+                      size={42}
+                      color={colors.textLight}
+                    />
+                    <Text
+                      style={[
+                        styles.noCitasText,
+                        { color: colors.primaryLight },
+                      ]}
+                    >
+                      Aún no hay historial
+                    </Text>
+                  </View>
+                ) : (
+                  <FlatList
+                    data={citasHistory}
+                    keyExtractor={(i) => `hist-${i.id}`}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 64 }}
+                    renderItem={({ item }) => <HistoryCard cita={item} />}
+                  />
+                )}
+              </MotiView>
+            )}
+          </AnimatePresence>
+        </View>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+          backdropComponent={renderBackdrop}
+          backgroundStyle={{ backgroundColor: colors.card }}
+          handleIndicatorStyle={{ backgroundColor: colors.textLight }}
+        >
+          <BottomSheetView style={{ padding: 20 }}>
+            <FiltersBottomSheet
+              procedimientos={procedimientos}
+              estados={estados}
+              selectedProcedimiento={selectedProcedimiento}
+              selectedEstado={selectedEstado}
+              setSelectedProcedimiento={setSelectedProcedimiento}
+              setSelectedEstado={setSelectedEstado}
+              colors={colors}
+            />
+          </BottomSheetView>
+        </BottomSheet>
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1 },
+
+  absoluteFill: {
+    position: "absolute",
+    inset: 0,
     flex: 1,
-    paddingHorizontal: 0,
-    paddingTop: 0,
+    width: "100%",
+    marginTop: 10,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    marginBottom: 8,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  headerSubtitle: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  filterButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 10,
-    elevation: 2,
-  },
-  citasCount: {
-    fontSize: 15,
-    fontWeight: '500',
-    marginLeft: 16,
-    marginBottom: 8,
-  },
+
   citasListContainer: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
-    paddingHorizontal: 16,
-    paddingBottom: 20,
+    justifyContent: "center",
+    paddingTop: 10,
   },
+
+  historyTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    marginBottom: 8,
+  },
+
+  floatingButton: {
+    position: "absolute",
+    bottom: 30,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 6,
+  },
+
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
+
   noCitasText: {
-    textAlign: 'center',
     fontSize: 16,
+    textAlign: "center",
   },
 });

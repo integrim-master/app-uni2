@@ -7,7 +7,7 @@ import Giftsvg from "../../../assets/svg/Gift.svg";
 import { useTheme } from "../../../context/ThemeContext";
 import { BeneficiosProps, ItemsBenefitsProps } from "../types/home.types";
 const ItemsBenefits = memo(
-  ({ dark, light, transparent, data }: ItemsBenefitsProps) => {
+  ({  data }: ItemsBenefitsProps) => {
     const { colors } = useTheme();
 
     return (
@@ -33,13 +33,13 @@ const ItemsBenefits = memo(
             style={[styles.title, { color: colors.text }]}
             numberOfLines={1}
           >
-            {data.procedimiento}
+            {data.title}
           </Text>
           <Text
             style={[styles.desc, { color: colors.textLight }]}
             numberOfLines={2}
           >
-            {data.descripcion}
+            {data.period}
           </Text>
           <View style={styles.usageRow}>
             <Text style={[styles.usageText, { color: colors.primary }]}>
@@ -61,22 +61,16 @@ const ItemsBenefits = memo(
 );
 
 export function Beneficios({
-  dark,
-  light,
-  transparent,
   benefits,
 }: BeneficiosProps) {
   return (
     <FlatList
       data={benefits}
-      keyExtractor={(item) => item.id || item.procedimiento.toString()}
+      keyExtractor={(item) => item.id.toString() || item.title.toString()}
       horizontal
       showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => (
         <ItemsBenefits
-          dark={dark}
-          light={light}
-          transparent={transparent}
           data={item}
         />
       )}

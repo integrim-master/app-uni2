@@ -47,13 +47,13 @@ export default function HomeLayout() {
           headerShown: true,
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="support"
         options={{
           title: "Tus solicitudes",
           headerShadowVisible: false,
         }}
-      />
+      /> */}
       <Stack.Screen
         name="notifications"
         options={{

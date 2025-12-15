@@ -10,52 +10,25 @@ import type { HomeScreenProps } from "../types/home.types";
 
 const HomeScreen: React.FC<HomeScreenProps> = ({
   user,
-  fullName,
-  dark,
-  light,
-  colorFondo,
-  dataButtons,
-  citas,
+  mebershipName,
   benefits,
 }) => {
   const { colors } = useTheme();
 
-  const TAB_OPTIONS = [
-    { key: "first", label: "Accesos" },
-    { key: "second", label: "Informacion" },
-  ];
-  const [activeTab, setActiveTab] = React.useState<string>(TAB_OPTIONS[0].key);
-
-  const cardHomeData = {
-    membresia: 'Gold',
-    dark: dark,
-    light: light,
-    amountBenefits: 10,
-    countBenefits: 4,
-    nombre: fullName,
-  };
 
   return (
-      <ScrollView style={styles.safeArea}>
-        <HeaderSection fullName={fullName} />
+    <ScrollView style={styles.safeArea}>
+      <HeaderSection fullName={user?.user_name  || 'Usuario' } />
 
-        <View style={{ paddingHorizontal: 16 , marginBottom:16 }}>
-          <CardHome {...cardHomeData} />
-        </View>
-         <PromotionsCarousel />
+      <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
+        <CardHome name={mebershipName} benefits={benefits} />
+      </View>
+      <PromotionsCarousel />
 
-        <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
-          <BenefitsSection
-            dark={dark}
-            light={light}
-            colorFondo={colorFondo}
-            benefits={benefits}
-          />
-
-         
-        </View>
-
-      </ScrollView>
+      <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
+        <BenefitsSection benefits={benefits} />
+      </View>
+    </ScrollView>
   );
 };
 

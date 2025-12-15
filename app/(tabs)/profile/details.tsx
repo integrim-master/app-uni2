@@ -1,4 +1,5 @@
 import { Screen } from "@/components/shared/Screen";
+import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
@@ -14,14 +15,8 @@ export default function ProfileDetailScreen() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["45%", "75%"], []);
 
-  const user = {
-    name: "valeria contreras",
-    email: "coco@mail.com",
-    phone: "+57 300 000 0000",
-    country: "Colombia",
-    photo:
-      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=800&q=80",
-  };
+  const {user} =useAuth();
+
 
   const openSheet = useCallback(() => {
     setIsSheetOpen(true);
@@ -55,12 +50,12 @@ export default function ProfileDetailScreen() {
             ]}
           >
             <Text style={[styles.avatarInitial, { color: colors.cardTextDark }]}>
-              {user.name.charAt(0).toUpperCase()}
+              {user?.user_name.charAt(0).toUpperCase()}
             </Text>
           </View>
 
-          <Text style={[styles.name, { color: "#fff" }]}>{user.name}</Text>
-          <Text style={[styles.email, { color: "rgba(255,255,255,0.8)" }]}>{user.email}</Text>
+          <Text style={[styles.name, { color: "#fff" }]}>{user?.user_name}</Text>
+          <Text style={[styles.email, { color: "rgba(255,255,255,0.8)" }]}>{user?.user_email}</Text>
 
           <Pressable style={[styles.editButton, { backgroundColor: colors.primaryDark }]} onPress={openSheet}>
             <Ionicons name="create-outline" size={18} color="#fff" />
@@ -72,26 +67,21 @@ export default function ProfileDetailScreen() {
           <MenuSection
             title="Datos de contacto"
             items={[
-              { title: "Correo", label: user.email },
-              { title: "Teléfono", label: user.phone },
-              { title: "País", label: user.country },
+              { title: "Correo", label: user?.user_email },
+              { title: "Teléfono", label: user?.user_phone },
+              { title: "País", label: 'colombia' },
             ]}
           />
 
           <MenuSection
             title="Datos personales"
             items={[
-              { title: "Nombre", label: user.name },
-              { title: "Fecha de nacimiento", label: "12/03/1998" },
-              { title: "Género", label: "Femenino" },
+              { title: "Nombre", label: user?.user_name },
+             
             ]}
           />
         </View>
       </ScrollView>
-
-      {/* ---------------------------------------------------------------------- */}
-      {/* -------------------   BOTTOM SHEET ESTILO LUXURY   ------------------- */}
-      {/* ---------------------------------------------------------------------- */}
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -116,23 +106,19 @@ export default function ProfileDetailScreen() {
               Personaliza los datos asociados a tu cuenta.
             </Text>
 
-            {/* Campo nombre */}
             <View style={styles.fieldWrapper}>
               <Text style={styles.fieldLabel}>Nombre</Text>
               <View style={styles.fieldBox}>
-                <Text style={styles.fieldText}>{user.name}</Text>
+                <Text style={styles.fieldText}>{user?.user_name}</Text>
               </View>
             </View>
-
-            {/* Campo correo */}
             <View style={styles.fieldWrapper}>
               <Text style={styles.fieldLabel}>Correo</Text>
               <View style={styles.fieldBox}>
-                <Text style={styles.fieldText}>{user.email}</Text>
+                <Text style={styles.fieldText}>{user?.user_email}</Text>
               </View>
             </View>
 
-            {/* Botón guardar */}
             <Pressable style={styles.saveButton} onPress={handleSheetClose}>
               <LinearGradient
                 colors={[colors.primaryDark, colors.primaryLight]}
@@ -203,7 +189,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 
-  /* ------------------ LUXURY BOTTOM SHEET ------------------ */
 
   luxuryContainer: {
     flex: 1,

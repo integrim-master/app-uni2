@@ -1,0 +1,46 @@
+import { Screen } from '@/components/shared/Screen';
+import TabBar from "@/modules/home/components/TabBar";
+import SupportHistory from "@/modules/profile/screens/SupportHistory";
+import SupportRequests from "@/modules/profile/screens/SupportRequests";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+
+type TabOption = {
+  key: string;
+  label: string;
+};
+
+const TAB_OPTIONS: TabOption[] = [
+  { key: "solicitudes", label: "Solicitudes" },
+  { key: "historial", label: "Historial" },
+];
+
+const Support: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>(TAB_OPTIONS[0].key);
+
+  return (
+    <Screen style={styles.container}> 
+      <View style={styles.content}> 
+        <TabBar 
+          options={TAB_OPTIONS} 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+        /> 
+        {activeTab === "solicitudes" && <SupportRequests />}
+        {activeTab === "historial" && <SupportHistory />}
+      </View> 
+    </Screen> 
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+});
+
+export default Support;

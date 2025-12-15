@@ -4,14 +4,14 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 
-export default function ProfiLayout() {
+export default function HomeLayout() {
   const { colors } = useTheme();
 
   return (
     <Stack
       screenOptions={{
         headerShown: true,
-        headerTitleAlign: "left",
+        headerTitleAlign: "center",
         headerTintColor: "white",
         headerBackground: () => (
           <LinearGradient
@@ -26,18 +26,11 @@ export default function ProfiLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Perfil",
+          title: "Mis citas",
           headerShadowVisible: false,
         }}
       />
-      <Stack.Screen
-        name="support"
-        options={{
-          title: "Tus solicitudes",
-          headerShadowVisible: false,
           
-        }}
-      />
 
       <Stack.Screen
         name="details"

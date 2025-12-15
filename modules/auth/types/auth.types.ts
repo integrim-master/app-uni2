@@ -1,28 +1,11 @@
+import { UserData } from "@/types/shared/Auth.types";
+import { MembershipData } from "@/types/shared/Benefits.type";
 import { ReactNode } from "react";
 
-interface UserData {
-  id: string;
-  display_name: string;
-  email: string;
-  ciudad?: string;
-  telefono?: string;
-  identificacion?: string;
-  [key: string]: any; 
-}
-
-interface MembershipData {
-  id: string;
-  name: string;
-  colors: {
-    color1: string;
-    color2: string;
-    color3: string;
-  };
-  [key: string]: any; 
-}
 
 interface LoginResponse {
-  token: string;
+  userData: UserData;
+  membership_data: MembershipData;
 }
 
 interface MeApiResponse {
@@ -35,23 +18,20 @@ interface AuthContextType {
   user: UserData | null;
   membership: MembershipData | null;
   loading: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (token: string, userData: UserData,membershipData: MembershipData ) => Promise<void>;
   logout: () => Promise<void>;
-  loadAuth: () => Promise<void>;
-  refreshUserData: () => Promise<void>;
-  updateUser: (data: Partial<UserData>) => Promise<any>;
-  setLoading: (loading: boolean) => void;
-  applicationBenefit: (procedimientoLabel: string, procedimiento: string) => Promise<any>;
+  setUser: (userData: UserData | null) => void;
+  
 }
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-
 export {
-    AuthContextType,
-    AuthProviderProps, LoginResponse,
-    MeApiResponse, MembershipData, UserData
+  AuthContextType,
+  AuthProviderProps,
+  LoginResponse,
+  MeApiResponse
 };
 

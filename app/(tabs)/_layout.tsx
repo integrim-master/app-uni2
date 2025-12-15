@@ -18,6 +18,7 @@ export default function TabsLayout() {
 
   const baseTabBarHeight = Platform.OS === "ios" ? 88 : 64;
   const bottomInset = Platform.OS === "android" ? insets.bottom : 0;
+  
 
   const tabBarStyle = {
     backgroundColor: colors.card,
@@ -74,13 +75,15 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="dates"
         options={{
-          title: "Citas",
+          title: "Mis citas",
           tabBarIcon: ({ color }) => <CalendarIcon color={color} />,
+              headerShown: false,
         }}
       />
       <Tabs.Screen
         name="diagnostics"
         options={{
+          title: "Análisis",
           tabBarLabel: () => null,
           tabBarIcon: ({ focused }) => (
             <View style={[styles.centerWrapper, { marginTop: -30 }]}>
@@ -120,13 +123,13 @@ export default function TabsLayout() {
                       },
                     ]}
                   >
-                    Analizis
+                    Análisis
                   </Text>
                 </View>
               </View>
             </View>
           ),
-          headerShown: false,
+          headerShown: true,
         }}
       />
 
@@ -145,6 +148,15 @@ export default function TabsLayout() {
           title: "Perfil",
           tabBarIcon: ({ color }) => <UserICon color={color} />,
           headerShown: false,
+        }}
+      />
+       <Tabs.Screen
+        name="profile/support"
+        options={{
+          title: "Perfil",
+          tabBarIcon: ({ color }) => <UserICon color={color} />,
+          headerShown: false,
+          tabBarStyle: { display: "none" },
         }}
       />
     </Tabs>

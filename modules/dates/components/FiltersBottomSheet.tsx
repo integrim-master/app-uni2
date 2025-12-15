@@ -15,7 +15,7 @@ interface FiltersBottomSheetProps {
 export default function FiltersBottomSheet({ procedimientos, estados, selectedProcedimiento, selectedEstado, setSelectedProcedimiento, setSelectedEstado, colors }: FiltersBottomSheetProps) {
   return (
     <View style={styles.sheetContent}>
-      <Text style={[styles.filterTitle, { color: colors.text }]}>Filtrar por procedimiento</Text>
+      <Text style={[styles.filterTitle, { color: colors.primaryLight }]}>Filtrar por procedimiento</Text>
       <FlatList
         horizontal
         data={procedimientos}
@@ -28,7 +28,7 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
               onPress={() => setSelectedProcedimiento(selected ? null : item)}
               style={[
                 styles.filterButton,
-                { backgroundColor: selected ? colors.primary : colors.backgroundSecondary }
+                { backgroundColor: selected ? colors.primary : colors.gradientCardEnd }
               ]}
             >
               <Text style={[styles.filterButtonText, selected && { color: '#fff', fontWeight: '600' }]}>
@@ -38,7 +38,7 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
           );
         }}
       />
-      <Text style={[styles.filterTitle, { color: colors.text, marginTop: 18 }]}>Filtrar por estado</Text>
+      <Text style={[styles.filterTitle, { color: colors.primaryLight, marginTop: 18 }]}>Filtrar por estado</Text>
       <FlatList
         horizontal
         data={estados}
@@ -51,7 +51,7 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
               onPress={() => setSelectedEstado(selected ? null : item)}
               style={[
                 styles.filterButton,
-                { backgroundColor: selected ? colors.success : colors.backgroundSecondary }
+                { backgroundColor: selected ? colors.success : colors.gradientCardEnd }
               ]}
             >
               <Text style={[styles.filterButtonText, selected && { color: '#fff', fontWeight: '600' }]}>
@@ -82,7 +82,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   filterButtonText: {
-    fontWeight: "500",
-    color: "#222"
+    fontWeight: "700",
+    color: 'white',
+
   },
 });

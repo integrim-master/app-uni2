@@ -24,7 +24,7 @@ export default function Suggest() {
       </View>
 
 
-      <View style={[styles.card, { backgroundColor: colors.card }] }>
+      <View style={[styles.card, { backgroundColor: colors.gradientCardStart }] }>
        <View>
          <Text style={[styles.sectionTitle, { color: colors.text }]}>Descripción del tratamiento</Text>
 

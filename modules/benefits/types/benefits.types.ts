@@ -1,19 +1,20 @@
-export interface BenefitData {
-  id: string;
-  procedimiento: string;
-  descripcion: string;
-  descuento?: number;
-  estado: 'disponible' | 'usado' | 'expirado';
-  fechaExpiracion?: string;
-  valor?: number;
+import { Benefits, MembershipData } from "@/types/shared/Benefits.type";
+
+
+ interface ItemUniqueProps {
+
+  data: Benefits;
+  loading: boolean;
+  onPress?: (item: MembershipData) => void;
 }
 
-export interface ItemUniqueProps {
-  index: number;
-  dark: string;
-  light: string;
-  transparent: string;
-  data: BenefitData;
-  loading: boolean;
-  onPress?: (item: BenefitData) => void;
+ interface BenefitApiResponse {
+  id: string; 
+  title: string;
+  description: string;
+  precio: number | null;
+  image: string;
 }
+
+export { BenefitApiResponse, ItemUniqueProps };
+

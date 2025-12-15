@@ -1,3 +1,4 @@
+import { Benefits } from "@/types/shared/Benefits.type";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
@@ -7,12 +8,8 @@ import { useTheme } from "../../../context/ThemeContext";
 const { width } = Dimensions.get("window");
 
 interface CardHomeProps {
-  membresia: string;
-  dark: string;
-  light: string;
-  amountBenefits: number;
-  countBenefits: number;
-  nombre: string;
+  name: string;
+  benefits: Benefits[];
 }
 
 interface ProgressBarProps {
@@ -39,16 +36,12 @@ function ProgressBar({ value, total, light, dark }: ProgressBarProps) {
   );
 }
 
-export function CardHome({
-  membresia,
-  dark,
-  light,
-  amountBenefits,
-  countBenefits,
-  nombre,
-}: CardHomeProps) {
+export function CardHome({ name, benefits }: CardHomeProps) {
   const { colors } = useTheme();
   const shimmerAnim = useRef(new Animated.Value(-1)).current;
+
+  const totalBenefits = benefits.reduce((acc, benefit) => acc + benefit.allowed, 0);
+  const usedBenefits = benefits.reduce((acc, benefit) => acc + benefit.used, 0);
 
   useEffect(() => {
     Animated.loop(
@@ -67,13 +60,12 @@ export function CardHome({
 
   return (
     <View style={{ position: "relative" }}>
-
       <View
         style={{
           ...StyleSheet.absoluteFillObject,
           borderRadius: 20,
           backgroundColor: colors.primaryLight,
-          opacity: 0.70,
+          opacity: 0.7,
           zIndex: -1,
           shadowColor: colors.primary,
           shadowOffset: { width: 0, height: 0 },
@@ -83,9 +75,8 @@ export function CardHome({
         }}
       />
 
-
       <LinearGradient
-        colors={[colors.primaryLight, colors.primary, '#D0993C']}
+        colors={[colors.primaryLight, colors.primary, "#D0993C"]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={{
@@ -124,7 +115,7 @@ export function CardHome({
               className="uppercase font-bold text-4xl"
               style={{ color: colors.text }}
             >
-              {membresia}
+             {name}
             </Text>
 
             <Image source={Logo} className="w-48 h-10" resizeMode="cover" />
@@ -136,7 +127,7 @@ export function CardHome({
                 Válido hasta
               </Text>
               <Text className="text-base font-medium" style={{ color: colors.text }}>
-                01/07/2026
+                31/12/2025
               </Text>
             </View>
           </View>
@@ -148,7 +139,7 @@ export function CardHome({
               Beneficios disponibles
             </Text>
             <Text className="text-lg font-semibold" style={{ color: colors.cardTextDark }}>
-              {countBenefits}/{amountBenefits}
+              {usedBenefits}/{totalBenefits}
             </Text>
           </View>
 
@@ -157,15 +148,14 @@ export function CardHome({
             style={{ borderColor: colors.primaryLight }}
           >
             <ProgressBar
-              value={countBenefits}
-              total={amountBenefits}
-              light={'white'}
+              value={usedBenefits}
+              total={totalBenefits}
+              light={"white"}
               dark={colors.cardTextDark}
             />
           </View>
         </View>
       </LinearGradient>
-
 
       <View
         style={{
@@ -175,13 +165,12 @@ export function CardHome({
           borderBottomRightRadius: 20,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
-          alignItems: 'center',
+          alignItems: "center",
           marginTop: 0,
-
         }}
       >
         <Text className="text-sm" style={{ color: colors.cardTextDark }}>
-          ¡Te quedan 3 beneficios por canjear
+          ¡Te quedan {totalBenefits - usedBenefits} beneficios por usar!
         </Text>
       </View>
     </View>

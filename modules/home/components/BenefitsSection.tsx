@@ -1,4 +1,5 @@
 import TitleText from "@/components/shared/TitleText";
+import { Benefits } from "@/types/shared/Benefits.type";
 import { Link } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -6,16 +7,10 @@ import { useTheme } from "../../../context/ThemeContext";
 import { Beneficios } from "./benefits";
 
 interface BenefitsSectionProps {
-  dark: string;
-  light: string;
-  colorFondo: string;
-  benefits: any[];
+  benefits: Benefits[];
 }
 
 export const BenefitsSection: React.FC<BenefitsSectionProps> = ({
-  dark,
-  light,
-  colorFondo,
   benefits,
 }) => {
   const { colors } = useTheme();
@@ -45,9 +40,6 @@ export const BenefitsSection: React.FC<BenefitsSectionProps> = ({
         </Link>
       </View>
       <Beneficios
-        dark={dark}
-        light={light}
-        transparent={colorFondo}
         benefits={benefits}
       />
     </View>

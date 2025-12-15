@@ -1,15 +1,15 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
-    ActivityIndicator,
-    GestureResponderEvent,
-    Pressable,
-    StyleProp,
-    StyleSheet,
-    Text,
-    TextStyle,
-    View,
-    ViewStyle,
+  ActivityIndicator,
+  GestureResponderEvent,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -41,7 +41,7 @@ export default function PrimaryButton({
   const { colors } = useTheme();
 
   const sizes = {
-    sm: { paddingVertical: 3, paddingHorizontal: 10, fontSize: 14 },
+    sm: { paddingVertical: 8, paddingHorizontal: 10, fontSize: 14 },
     md: { paddingVertical: 12, paddingHorizontal: 16, fontSize: 16 },
     lg: { paddingVertical: 16, paddingHorizontal: 20, fontSize: 18 },
   } as const;
@@ -94,12 +94,10 @@ const styles = StyleSheet.create({
   gradient: {
     borderRadius: 12,
     overflow: "hidden",
-    alignSelf: "flex-start",
   },
   disabledWrapper: {
     borderRadius: 12,
     overflow: "hidden",
-    alignSelf: "flex-start",
   },
   button: {
     alignItems: "center",

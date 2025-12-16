@@ -11,6 +11,7 @@ const NotificationsScreen: React.FC = () => {
 
   return (
     <Screen style={[styles.container]}> 
+    
       <View style={styles.centerContent}>
         <EmptySvgPush width={320} height={320} style={styles.emptyImage} />
         <TitleText style={[styles.emptyTitle, { color: colors.primaryLight }]}>Sin notificaciones</TitleText>

@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
@@ -8,6 +8,8 @@ import { useTheme } from '../../../context/ThemeContext';
 export default function HomeLayout() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
+  const pathname = usePathname();
+  
 
   const HomeHeader = () => (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 11 }}>
@@ -17,9 +19,11 @@ export default function HomeLayout() {
           : require('../../../assets/images/logo-careme-black.png')}
         style={{ width: 120, height: 40, resizeMode: 'contain' }}
       />
-      <TouchableOpacity onPress={() => router.push('/home/notifications')}>
-        <Ionicons name="notifications-outline" size={28} color={colors.primaryLight} />
-      </TouchableOpacity>
+      {!pathname.includes('/notifications') && (
+        <TouchableOpacity onPress={() => router.push('/home/notifications')}>
+          <Ionicons name="notifications-outline" size={28} color={colors.primaryLight} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 

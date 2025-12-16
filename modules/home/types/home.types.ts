@@ -1,3 +1,6 @@
+
+import { UserData } from '@/types/shared/Auth.types';
+import { Benefits } from '@/types/shared/Benefits.type';
 import { ComponentType } from 'react';
 import { ViewProps } from 'react-native';
 
@@ -5,9 +8,7 @@ export interface ButtonData {
   item: string;
   routPage: string;
   icon: ComponentType<any>;
-  dark: string;
-  light: string;
-  colorFondo: string;
+
 }
 
 export interface AccesoDirectoProps {
@@ -32,47 +33,21 @@ export interface CitaData {
 
 
 export interface HomeScreenProps {
-  user: {
-    id: string;
-    display_name: string;
-    email: string;
-    [key: string]: any;
-  };
+  user: UserData
   fullName: string;
-  dark: string;
-  light: string;
-  colorFondo: string;
+  mebershipName: string;
   dataButtons: ButtonData[];
   citas: CitaData[];
-  benefits: BenefitData[];
+  benefits: Benefits[];
 }
 
-
-
-
-
-export interface BenefitData {
-  id: string;
-  procedimiento: string;
-  descripcion: string;
-  descuento?: number;
-  estado: 'disponible' | 'usado' | 'expirado';
-  fechaExpiracion?: string;
-  valor?: number;
-}
 
  export interface BeneficiosProps {
-  dark: string;
-  light: string;
-  transparent: string;
-  benefits: BenefitData[];
+  benefits: Benefits[];
 }
 
 export interface ItemsBenefitsProps {
-  dark: string;
-  light: string;
-  transparent: string;
-  data: BenefitData;
+  data: Benefits;
 }
 
 

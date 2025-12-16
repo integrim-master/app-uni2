@@ -1,61 +1,25 @@
 import { Screen } from '@/components/shared/Screen';
+import TabBar from '@/modules/home/components/TabBar';
+import { Benefits } from '@/types/shared/Benefits.type';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
+import { AnimatePresence, MotiView } from 'moti';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
 import ItemUnique from '../components/ItemUnique';
-import { BenefitData } from '../types/benefits.types';
 
 
-const mockBenefits: BenefitData[] = [
-  {
-    id: '1',
-    procedimiento: 'Limpieza Facial Profunda',
-    descripcion: 'Tratamiento completo de limpieza facial con extracción de puntos negros y mascarilla hidratante',
-    descuento: 30,
-    estado: 'disponible',
-    valor: 150000,
-    fechaExpiracion: '2025-03-31'
-  },
-  {
-    id: '2', 
-    procedimiento: 'Masaje Relajante',
-    descripcion: 'Masaje corporal completo de 60 minutos para aliviar el estrés y la tensión muscular',
-    descuento: 25,
-    estado: 'disponible',
-    valor: 120000,
-    fechaExpiracion: '2025-02-28'
-  },
-  {
-    id: '3',
-    procedimiento: 'Tratamiento Capilar',
-    descripcion: 'Hidratación profunda del cabello con productos premium',
-    descuento: 20,
-    estado: 'usado',
-    valor: 80000,
-    fechaExpiracion: '2025-01-31'
-  },
-  {
-    id: '4',
-    procedimiento: 'Manicure y Pedicure',
-    descripcion: 'Servicio completo de cuidado de uñas con esmaltado semi-permanente',
-    descuento: 15,
-    estado: 'expirado',
-    valor: 60000,
-    fechaExpiracion: '2024-12-01'
-  }
-];
+
 
 export default function BeneficiosScreen() {
-  const { membership, refreshUserData, loading } = useAuth();
+  const { membership, loading } = useAuth();
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
-  
-  
+  const [activeTab, setActiveTab] = useState<'todos' | 'canjeados'>('todos');
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['50%', '75%'], []);
@@ -87,25 +51,22 @@ export default function BeneficiosScreen() {
     );
   }
 
-  const { color1: dark, color2: light, color3: transparent } = membership.colors;
 
-  const benefits = mockBenefits;
+
+  const benefits = membership.benefits;
+
+  const anyCanjeados = benefits.some((b) => (b.used || 0) > 0);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await refreshUserData();
     setRefreshing(false);
   };
 
-  const handleBenefitPress = (benefit: BenefitData) => {
+  const handleBenefitPress = (benefit: Benefits) => {
     router.push(`/benefits/${benefit.id}`);
-    if (benefit.estado === 'disponible') {
-      console.log('Aplicando beneficio pa', benefit.procedimiento);
-
-    }
   };
 
-  if (!benefits || benefits.length === 0) {
+  if (!benefits) {
     return (
       <Screen>
         <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: 'transparent' }}>
@@ -118,60 +79,71 @@ export default function BeneficiosScreen() {
   return (
     <Screen>
       <View style={styles.container}>
-        <FlatList
-          ListHeaderComponent={
-            <View style={[styles.headerContainer, { backgroundColor: 'transparent' }]}> 
-              <View style={styles.searchFilterRow}>
-                <View style={[styles.searchContainer, { backgroundColor: colors.card || '#f0f0f0' }]}> 
-                  <Text style={[styles.searchIcon, { color: colors.textLight }]}>⌕</Text>
-                  <TextInput
-                    style={[styles.searchInput, { color: colors.text }]}
-                    placeholder="Buscar beneficios..."
-                    placeholderTextColor={colors.textLight}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={[styles.filterButton, { backgroundColor: colors.primary }]}
-                  onPress={handleOpenBottomSheet}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name="filter" style={styles.filterIcon} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          }
-          data={benefits}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
-            <ItemUnique
-              index={index}
-              dark={dark}
-              light={light}
-              transparent={transparent}
-              data={item}
-              loading={loading}
-              onPress={handleBenefitPress}
-            />
-          )}
-          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-          ListEmptyComponent={
-            <View style={{ padding: 32, alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, color: colors.textLight, textAlign: 'center' }}>
-                No cuentas con beneficios disponibles
-              </Text>
-            </View>
-          }
-          refreshControl={
-            <RefreshControl 
-              refreshing={refreshing} 
-              onRefresh={onRefresh} 
-              colors={[colors.primary]} 
-              tintColor={colors.primary}
-            />
-          }
-          contentContainerStyle={{ paddingVertical: 16 }}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+          <TabBar
+            options={[{ key: 'todos', label: 'Todos' }, { key: 'canjeados', label: 'Canjeados' }]}
+            activeTab={activeTab}
+            setActiveTab={(tab) => setActiveTab(tab as any)}
+          />
+        </View>
+
+        <View style={{ flex: 1, position: 'relative' }}>
+          <AnimatePresence exitBeforeEnter>
+            {activeTab === 'todos' && (
+              <MotiView
+                key="todos"
+                from={{ opacity: 0, translateX: 25 }}
+                animate={{ opacity: 1, translateX: 0 }}
+                exit={{ opacity: 0, translateX: -25 }}
+                transition={{ type: 'timing', duration: 150 }}
+                style={styles.absoluteFill}
+              >
+                <FlatList
+                  data={benefits}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => (
+                    <ItemUnique data={item} loading={loading} onPress={() => handleBenefitPress(item)} />
+                  )}
+                  ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+                  ListEmptyComponent={
+                    <View style={{ padding: 32, alignItems: 'center' }}>
+                      <Text style={{ fontSize: 16, color: colors.textLight, textAlign: 'center' }}>
+                        No cuentas con beneficios disponibles
+                      </Text>
+                    </View>
+                  }
+                  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.primary} />}
+                  contentContainerStyle={{ paddingVertical: 16 }}
+                  showsVerticalScrollIndicator={false}
+                />
+              </MotiView>
+            )}
+
+            {activeTab === 'canjeados' && (
+              <MotiView
+                key="canjeados"
+                from={{ opacity: 0, translateX: 25 }}
+                animate={{ opacity: 1, translateX: 0 }}
+                exit={{ opacity: 0, translateX: -25 }}
+                transition={{ type: 'timing', duration: 150 }}
+                style={[styles.absoluteFill, { paddingHorizontal: 16 }]}
+              >
+                {!anyCanjeados ? (
+                  <View style={styles.emptyContainer}>
+                    <Ionicons name="gift" size={36} color={colors.textLight} />
+                    <Text style={[styles.noCitasText, { color: colors.primaryLight, marginTop: 10 }]}>No hay beneficios canjeados</Text>
+                  </View>
+                ) : (
+                 <View>
+                  <Text>
+                    Lista de beneficios canjeados
+                  </Text>
+                 </View>
+                )}
+              </MotiView>
+            )}
+          </AnimatePresence>
+        </View>
 
         <BottomSheet
           ref={bottomSheetRef}
@@ -250,5 +222,24 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+
+  absoluteFill: {
+    position: 'absolute',
+    inset: 0,
+    flex: 1,
+    width: '100%',
+    marginTop: 10,
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  noCitasText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

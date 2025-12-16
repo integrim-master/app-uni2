@@ -1,4 +1,5 @@
 import BodyText from '@/components/shared/BodyText';
+import { Screen } from '@/components/shared/Screen';
 import SubtitleText from '@/components/shared/SubtitleText';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
@@ -113,16 +114,16 @@ export default function StepTwo({
   }
 
   return (
-    <View style={[styles.container]}> 
+    <Screen style={[styles.container]}> 
       {showLoaderSendPhoto ? (
         <SendPhoto onComplete={handleAnalysisComplete} />
       ) : (
         <View style={styles.centeredContent}>
 
-          <SubtitleText style={[styles.instructionText, { color: colors.text }]}>
+          {/* <SubtitleText style={[styles.instructionText, { color: colors.text }]}>
             {photoUri ? '¡Foto capturada!' : 'Centra tu rostro'}
           </SubtitleText>
-          
+           */}
           <View 
             style={[
               styles.cameraContainer,
@@ -199,7 +200,7 @@ export default function StepTwo({
           </View>
         </View>
       )}
-    </View>
+    </Screen>
   );
 }
 
@@ -217,16 +218,16 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: 20,
   },
   instructionText: {
-    fontSize: SCREEN_HEIGHT < 700 ? 18 : 20,
+    fontSize: SCREEN_HEIGHT < 700 ? 14 : 16,
     fontWeight: '600',
     marginBottom: 16,
     textAlign: 'center',
   },
 
-  /* PERMISOS */
   permissionMessage: {
     fontSize: 18,
     fontWeight: '600',

@@ -1,14 +1,19 @@
 
+import { useAuth } from '@/context/AuthContext';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MenuSection } from '../../../components/shared/MenuSection';
 import { Screen } from '../../../components/shared/Screen';
 import { useTheme } from '../../../context/ThemeContext';
 import { ProfileHeader } from '../components/ProfileHeader';
+import ConfirmActionModal from '@/components/shared/Modal';
 
 export function ProfileScreen() {
   const { colors, toggleTheme, isDark } = useTheme();
-  const userName = 'Valeria contreras';
+  const {user, logout} = useAuth();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const userName = user?.user_name || 'Usuario';
 
   const accountItems = [
     {
@@ -40,7 +45,7 @@ export function ProfileScreen() {
     {
       icon: 'help-circle-outline',
       label: 'Obtener ayuda',
-      onPress: () => console.log('Obtener ayuda'),
+      onPress: () => router.push('profile/support'),
     },
     {
       icon: 'chatbubble-outline',
@@ -49,63 +54,53 @@ export function ProfileScreen() {
     },
   ];
 
-  return (
-    <Screen >
+ return (
+  <Screen>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.safeArea}>
+        <ProfileHeader
+          userName={userName}
+          onPress={() => router.push("/profile/details")}
+        />
 
+        <MenuSection title="Cuenta" items={accountItems} />
+        <MenuSection title="General" items={generalItems} />
+        <MenuSection title="Soporte" items={supportItems} />
 
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.safeArea}>
-          <ProfileHeader
-            userName={userName}
-            onPress={() => router.push('/profile/details')}
-          />
+        <Pressable
+          onPress={() => setShowLogoutConfirm(true)}
+          style={[
+            styles.themeButton,
+            { backgroundColor: colors.primaryLight },
+          ]}
+        >
+          <Text style={styles.logoutText}>Cerrar sesión</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
 
-          <MenuSection title="Cuenta" items={accountItems} />
-          <MenuSection title="General" items={generalItems} />
-          <MenuSection title="Soporte" items={supportItems} />
-{/* 
-          <Pressable
-            onPress={toggleTheme}
-            style={[
-              styles.themeButton,
-              {
-                backgroundColor: colors.primaryLight,
-                shadowColor: '#000',
-              },
-            ]}
-          >
-            <Ionicons
-              name={isDark ? 'sunny' : 'moon'}
-              size={20}
-              color="#fff"
-              style={styles.themeIcon}
-            />
-            <Text style={styles.themeButtonText}>
-              {isDark ? 'Modo claro' : 'Modo oscuro'}
-            </Text>
-          </Pressable> */}
+    <ConfirmActionModal
+      visible={showLogoutConfirm}
+      title="Cerrar sesión"
+      description="¿Estás seguro que deseas cerrar sesión?"
+      confirmText="Sí, cerrar sesión"
+      cancelText="Cancelar"
+      variant="danger"
+      onCancel={() => setShowLogoutConfirm(false)}
+      onConfirm={async () => {
+        setShowLogoutConfirm(false);
+        await logout();
+        router.replace("/login");
+      }}
+    />
+  </Screen>
+);
 
-          <View style={styles.logoutContainer}>
-            <Pressable
-              onPress={() => {
-                router.replace('/login');
-              }}
-            >
-              <Text style={[styles.logoutText, { color: colors.textSecondary }]}>
-                Cerrar sesión
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
-    </Screen>
-  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 70,
+    paddingTop: 40,
   },
   safeArea: {
     paddingHorizontal: 20,
@@ -116,7 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 16,
     borderRadius: 14,
-    marginBottom: 32,
+    marginBottom: 100,
   },
   themeIcon: {
     marginRight: 10,
@@ -129,9 +124,11 @@ const styles = StyleSheet.create({
   logoutContainer: {
     alignItems: 'center',
     paddingTop: 16,
+    marginBottom: 50,
   },
   logoutText: {
     fontSize: 16,
     fontWeight: '500',
+    color: 'white',
   },
 });

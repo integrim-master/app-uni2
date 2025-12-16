@@ -11,7 +11,7 @@ export default function HomeLayout() {
     <Stack
       screenOptions={{
         headerShown: true,
-        headerTitleAlign: 'left',
+        headerTitleAlign: 'center',
         headerTintColor: 'white',
         headerBackground: () => (
           <LinearGradient

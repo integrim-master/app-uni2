@@ -1,4 +1,5 @@
 import PrimaryButton from '@/components/shared/PrimaryButton';
+import { Colors } from '@/themes/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -14,10 +15,7 @@ import { useTheme } from '../../../context/ThemeContext';
 import { ItemUniqueProps } from '../types/benefits.types';
 
 export default function ItemUnique({
-  index,
-  dark,
-  light,
-  transparent,
+
   data,
   loading,
   onPress,
@@ -61,18 +59,18 @@ export default function ItemUnique({
     }
   };
 
-  const estadoConfig = getEstadoConfig(data.estado);
+  const estadoKey = data.used && data.used > 0 ? 'usado' : 'disponible';
+  const estadoConfig = getEstadoConfig(estadoKey);
 
   return (
     <Pressable
-      onPress={() => onPress?.(data)}
-      disabled={loading || data.estado !== 'disponible'}
+    
       style={({ pressed }) => [
         styles. wrapper,
         pressed && { opacity: 0.92, transform: [{ scale: 0.985 }] },
+        
       ]}
-      accessibilityLabel={`${data.procedimiento} - ${estadoConfig.text}`}
-      accessibilityState={{ disabled: loading || data.estado !== 'disponible' }}
+      accessibilityLabel={`${data.title} - ${estadoConfig.text}`}
     >
    
       <LinearGradient
@@ -84,8 +82,8 @@ export default function ItemUnique({
           {
             backgroundColor: colors.card,
             shadowColor: colors.shadow || '#000',
-            borderColor: colors.border || '#ddd',
-            borderWidth: 2,
+            borderColor: colors.gradientCardStart || '#ddd',
+            borderWidth: 1,
           },
         ]}
       >
@@ -97,13 +95,13 @@ export default function ItemUnique({
               style={[styles.title, { color: colors.text }]}
               numberOfLines={2}
             >
-              {data.procedimiento}
+              {data.title || 'Nombre del beneficio'}
             </Text>
             <Text
               style={[styles.desc, { color: colors.textSecondary }]}
               numberOfLines={2}
             >
-              {data.descripcion}
+              {data.description}
             </Text>
           </View>
 
@@ -134,21 +132,9 @@ export default function ItemUnique({
 
         <View style={styles.bottomSection}>
           <View style={styles.infoPills}>
-            {data. descuento ?  (
-              <View
-                style={[
-                  styles.pill,
-                  { backgroundColor: 'rgba(179, 142, 44, 0.12)' },
-                ]}
-              >
-                <MaterialIcons name="percent" size={14} color="#B38E2C" />
-                <Text style={[styles.pillText, { color: '#B38E2C' }]}>
-                  {data.descuento}% OFF
-                </Text>
-              </View>
-            ) : null}
+         
 
-            {data.valor ? (
+            {data ? (
               <View
                 style={[
                   styles.pill,
@@ -161,12 +147,12 @@ export default function ItemUnique({
                   color={colors.textSecondary}
                 />
                 <Text style={[styles. pillText, { color: colors. textSecondary }]}>
-                  ${data.valor.toLocaleString()}
+                  {data.precio || 0 } 
                 </Text>
               </View>
             ) : null}
 
-            {data.fechaExpiracion ? (
+          
               <View
                 style={[
                   styles.pill,
@@ -175,25 +161,24 @@ export default function ItemUnique({
               >
                 <MaterialIcons name="schedule" size={14} color="#B38E2C" />
                 <Text style={[styles.pillText, { color: '#B38E2C' }]}>
-                  {new Date(data.fechaExpiracion).toLocaleDateString('es-ES', {
-                    day: '2-digit',
-                    month: 'short',
-                  })}
+                Diciembre
                 </Text>
               </View>
-            ) : null}
+      
           </View>
 
           <View style={styles.ctaWrap}>
               {loading ? (
                 <ActivityIndicator size="small" color={colors.primary} />
-              ) : data.estado === 'disponible' ? (
+              ) : data.used === 0 ? (
                 <PrimaryButton
                   title="Aplicar"
-                  onPress={() => onPress?.(data)}
+                  textStyle={styles.applyText}
+                  onPress={onPress as any}
+    
                   style={styles.applyBtn}
-                  gradientColors={['#D4AF37', '#F7D67A', '#D4AF37']}
-                  icon={<MaterialIcons name="arrow-forward" size={16} color="#fff" />}
+                  gradientColors={[colors.primaryLight, colors.primaryDark]}
+                  icon={<MaterialIcons name="arrow-forward" size={16} color={colors.cardTextDark} />}
                 />
               ) : (
               <View style={styles.disabledBtn}>
@@ -224,29 +209,15 @@ const styles = StyleSheet.create({
     ... Platform.select({
       ios: {
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity:  0.14,
+        shadowOpacity:  0.1,
         shadowRadius: 16,
       },
       android:  {
-        elevation: 8,
+        elevation: 2,
       },
     }),
   },
-  notch: {
-    position: 'absolute',
-    top: '50%',
-    marginTop: -14,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    zIndex: 1,
-  },
-  notchLeft: {
-    left: -14,
-  },
-  notchRight: {
-    right:  -14,
-  },
+
 
 
   topSection: {
@@ -339,7 +310,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // CTA
   ctaWrap: {
     alignItems: 'flex-end',
     justifyContent: 'center',
@@ -347,8 +317,7 @@ const styles = StyleSheet.create({
   applyBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 4,
+    paddingHorizontal: 7,
     borderRadius: 12,
     gap: 6,
     ... Platform.select({
@@ -364,10 +333,10 @@ const styles = StyleSheet.create({
     }),
   },
   applyText:  {
-    color: '#fff',
+    color: Colors.cardTextDark,
     fontSize:  14,
     fontWeight: '800',
-    letterSpacing: 0.5,
+
   },
   disabledBtn: {
     paddingHorizontal: 14,

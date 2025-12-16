@@ -1,5 +1,7 @@
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "../../../components/shared/card";
 import { useTheme } from "../../../context/ThemeContext";
 
@@ -12,105 +14,226 @@ export type Cita = {
   estado: string;
 };
 
-export default function CitaCard({ cita }: { cita: Cita }) {
+export default function CitaCard({
+  cita,
+  onPress,
+}: {
+  cita: Cita;
+  onPress?: () => void;
+}) {
   const { colors } = useTheme();
 
-  const getEstadoColor = (estado: string) => {
+  const getEstadoConfig = (estado: string) => {
     switch (estado) {
-      case "Confirmada": return colors.success;
-      case "Pendiente": return colors.warning;
-      case "Completada": return colors.textLight;
-      default: return colors.backgroundDark;
+      case "Confirmada":
+        return {
+          color: colors.successDark ?? colors.success,
+          icon: "check-circle",
+          gradient: [colors.success + "22", colors.success + "10"],
+          textColor: colors.textDark ?? colors.text,
+        };
+      case "Pendiente":
+        return {
+          color: colors.warningDark ?? colors.warning,
+          icon: "schedule",
+          gradient: [colors.warning + "22", colors.warning + "10"],
+          textColor: colors.textDark ?? colors.text,
+        };
+      case "Completada":
+        return {
+          color: "#A1A1A1",
+          icon: "check",
+          gradient: ["#F3F4F6", "#ECECEC"],
+          textColor: colors.textSecondary,
+        };
+      default:
+        return {
+          color: colors.primary,
+          icon: "help-outline",
+          gradient: [colors.primary + "22", colors.primary + "10"],
+          textColor: colors.textDark ?? colors.text,
+        };
     }
   };
 
+  const estadoCfg = getEstadoConfig(cita.estado);
+
   return (
-    <Card style={[styles.citaCard, { borderColor: colors.border, backgroundColor: 'transparent', padding: 0 }] as any}> 
-      <View style={styles.citaContent}> 
-        <View style={styles.citaHeader}>
-          <Text style={[styles.procedimientoText, { color: colors.text }]}>{cita.procedimiento}</Text>
-          <View style={[styles.estadoBadge, { backgroundColor: getEstadoColor(cita.estado) }]}> 
-            <Text style={styles.estadoText}>{cita.estado}</Text>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        { borderRadius: 16 },
+        pressed && { opacity: 0.96 },
+      ]}
+      accessibilityLabel={`${cita.procedimiento} - ${cita.estado}`}
+    >
+      <Card
+        className=""
+        style={
+          [
+            styles.card,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            },
+          ] as any
+        }
+      >
+        <View style={styles.topArea}>
+          <LinearGradient
+            colors={estadoCfg.gradient as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[
+              styles.badge,
+              {
+                borderColor: colors.gradientCardStart ?? colors.border,
+                shadowColor: colors.shadow ?? "#000",
+                backgroundColor: "transparent",
+              },
+            ]}
+          >
+            <MaterialIcons
+              name={estadoCfg.icon as any}
+              size={12}
+              color={estadoCfg.color}
+            />
+            <Text style={[styles.badgeText, { color: estadoCfg.color }]}>
+              {cita.estado}
+            </Text>
+          </LinearGradient>
+
+          {/* <Ionicons
+            name="chevron-up-circle"
+            size={22}
+            color={colors.textLight}
+            style={styles.icon}
+          /> */}
+        </View>
+
+        <View style={styles.content}>
+          <Text
+            style={[styles.procedimiento, { color: colors.text }]}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {cita.procedimiento}
+          </Text>
+
+          <Text
+            style={[styles.especialista, { color: colors.textLight }]}
+            numberOfLines={1}
+          >
+            {cita.especialista}
+          </Text>
+
+          <View style={styles.row}>
+            <Text style={[styles.fecha, { color: colors.text }]}>
+              {cita.fecha}
+            </Text>
+            <Text style={[styles.hora, { color: colors.primary }]}>
+              {cita.hora}
+            </Text>
           </View>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={[styles.especialistaText, { color: colors.textLight }]}>{cita.especialista}</Text>
-          <View style={styles.fechaHoraContainer}>
-            <Text style={[styles.fechaText, { color: colors.text }]}>{cita.fecha}</Text>
-            <Text style={[styles.horaText, { color: colors.text }]}>{cita.hora}</Text>
-          </View>
-        </View>
-      </View>
-    </Card>
+      </Card>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  citaCard: {
-    marginBottom: 16,
+  card: {
+    width: 180,
+    height: 170,
     borderRadius: 16,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
+    flexDirection: "column",
     borderWidth: 1,
+    padding: 0,
+    marginBottom: 16,
+    overflow: "hidden",
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.12,
+        shadowRadius: 16,
+      },
+      android: {
+        elevation: 0,
+      },
+    }),
   },
-  citaContent: {
-    padding: 20,
-    borderRadius: 16,
-    flex: 1,
-  },
-    infoRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginTop: 6,
-    },
-  citaHeader: {
+  topArea: {
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
+    display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    width: "100%",
+    justifyContent: "flex-start",
     alignItems: "center",
+  },
+  icon: {
+    marginLeft: 8,
+    opacity: 0.95,
+  },
+  content: {
+    paddingHorizontal: 14,
+    paddingBottom: 12,
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+  },
+  procedimiento: {
+    fontSize: 15,
+    fontWeight: "700",
+    marginBottom: 6,
+    lineHeight: 20,
+  },
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignSelf: "flex-start",
+    gap: 6,
+    marginBottom: 6,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: "800",
+    marginLeft: 6,
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+  especialista: {
+    fontSize: 13,
+    fontWeight: "500",
     marginBottom: 8,
   },
-  procedimientoText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    flex: 1,
-    letterSpacing: 0.2,
+  row: {
+    marginTop: "auto",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
   },
-  estadoBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-    marginLeft: 8,
-    minWidth: 80,
-    alignItems: 'center',
+  fecha: {
+    fontSize: 12,
+    fontWeight: "500",
   },
-  estadoText: {
-    color: '#fff',
+  hora: {
     fontSize: 13,
     fontWeight: "700",
-    letterSpacing: 0.5,
-  },
-  especialistaText: {
-    fontSize: 15,
-    fontWeight: '500',
-    marginBottom: 0,
-    marginRight: 12,
-  },
-  fechaHoraContainer: {
-    flexDirection: "row",
-    alignItems: 'center',
-    gap: 10,
-  },
-  fechaText: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginRight: 8,
-  },
-  horaText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: '#B38E2C',
   },
 });

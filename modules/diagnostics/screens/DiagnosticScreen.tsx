@@ -18,6 +18,7 @@ export default function DiagnosticScreen(props: DiagnosticScreenProps) {
     React.useCallback(() => {
 
       return () => {
+        
       };
     }, [])
   );
@@ -42,14 +43,7 @@ export default function DiagnosticScreen(props: DiagnosticScreenProps) {
           </View>
         </View>
 
-        {currentStep > 0 && (
-          <Pressable
-            style={[styles.fabNav, { backgroundColor: colors.primary }]}
-            onPress={prevStep}
-          >
-            <MaterialIcons name="arrow-back-ios" size={28} color="#fff" />
-          </Pressable>
-        )}
+       
 
         {currentStep < steps.length - 1 && (
           <Pressable

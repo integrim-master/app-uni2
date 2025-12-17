@@ -1,13 +1,13 @@
-import { Screen } from "@/components/shared/Screen";
-import { useAuth } from "@/context/AuthContext";
+import { MenuSection } from "@/src/components/shared/MenuSection";
+import { Screen } from "@/src/components/shared/Screen";
+import { useAuth } from "@/src/context/AuthContext";
+import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { MenuSection } from "../../../components/shared/MenuSection";
-import { useTheme } from "../../../context/ThemeContext";
 
 export default function ProfileDetailScreen() {
   const { colors } = useTheme();

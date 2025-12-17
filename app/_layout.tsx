@@ -1,3 +1,9 @@
+import { toastConfig } from "@/src/constants/toastConfig";
+import { AuthProvider } from "@/src/context/AuthContext";
+import { LoadingProvider } from "@/src/context/LoadingContext";
+import { NotificationsProvider } from "@/src/context/NotificationsContext";
+import { ThemeProvider } from "@/src/context/ThemeContext";
+import { persistor, store } from "@/src/store";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -9,13 +15,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { toastConfig } from "../constants/toastConfig";
-import { AuthProvider } from "../context/AuthContext";
-import { LoadingProvider } from "../context/LoadingContext";
-import { NotificationsProvider } from "../context/NotificationsContext";
-import { ThemeProvider } from "../context/ThemeContext";
 import "../global.css";
-import { persistor, store } from "../store";
 
 SplashScreen.preventAutoHideAsync();
 

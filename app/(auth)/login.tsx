@@ -1,8 +1,9 @@
-import PrimaryButton from "@/components/shared/PrimaryButton";
-import { Screen } from "@/components/shared/Screen";
-import TitleText from "@/components/shared/TitleText";
-import { useAuth } from "@/context/AuthContext";
-import { useLogin } from "@/modules/login/hooks/useLogin";
+import PrimaryButton from "@/src/components/shared/PrimaryButton";
+import { Screen } from "@/src/components/shared/Screen";
+import TitleText from "@/src/components/shared/TitleText";
+import { useAuth } from "@/src/context/AuthContext";
+import { useTheme } from "@/src/context/ThemeContext";
+import { useLogin } from "@/src/modules/login/hooks/useLogin";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -17,7 +18,6 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import { useTheme } from "../../context/ThemeContext";
 
 const Login = () => {
   const { colors } = useTheme();
@@ -45,13 +45,11 @@ const Login = () => {
       },
       {
         onSuccess: async (data) => {
-          console.log("Login successful:", data);
           await login(data.token, data.user_data, data.membership_data);
           router.replace("/(tabs)/home");
         },
 
         onError: (error: any) => {
-          console.log(error);
           Toast.show({
             type: "error",
             text1: "Credenciales inválidas",

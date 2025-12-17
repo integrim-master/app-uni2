@@ -1,7 +1,9 @@
-import DiagnosticScreen from "@/modules/diagnostics/screens/DiagnosticScreen";
+
+import { useTheme } from "@/src/context/ThemeContext";
+import DiagnosticScreen from "@/src/modules/diagnostics/screens/DiagnosticScreen";
 import { CameraType, useCameraPermissions } from "expo-camera";
 import { useState } from "react";
-import { useTheme } from "../../context/ThemeContext";
+
 
 export default function Diagnostic() {
   const { colors } = useTheme();

@@ -1,5 +1,5 @@
 
-import DatesScreen from "@/modules/dates/screens/DateScreen";
+import DatesScreen from "@/src/modules/dates/screens/DateScreen";
 import React from "react";
 
 export default function Dates() {

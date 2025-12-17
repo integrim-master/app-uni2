@@ -1,8 +1,8 @@
+import { useTheme } from "@/src/context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack } from "expo-router";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
 
 export default function HomeLayout() {
   const { colors } = useTheme();

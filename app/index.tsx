@@ -1,7 +1,8 @@
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/src/context/AuthContext";
+import { useTheme } from "@/src/context/ThemeContext";
 import { Redirect } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
-import { useTheme } from "../context/ThemeContext";
+
 
 export default function Index() {
   const { loading, token } = useAuth();

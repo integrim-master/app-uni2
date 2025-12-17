@@ -1,5 +1,5 @@
+import { ProfileScreen } from '@/src/modules/profile/screens/ProfileScreen';
 import { Stack } from 'expo-router';
-import { ProfileScreen } from '../../../modules/profile/screens/ProfileScreen';
 
 export default function Profile() {
   return (
@@ -8,6 +8,7 @@ export default function Profile() {
         options={{
           title: 'Perfil',
           headerShadowVisible: false,
+          presentation: 'card',
           
         }}
       />

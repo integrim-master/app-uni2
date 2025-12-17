@@ -1,11 +1,11 @@
-import { Screen } from "@/components/shared/Screen";
-import React, { useEffect } from "react";
+import { Screen } from "@/src/components/shared/Screen";
+import { useAuth } from "@/src/context/AuthContext";
+import { useTheme } from "@/src/context/ThemeContext";
+import HomeScreen from "@/src/modules/home/screens/HomeScreen";
+import { ButtonData, CitaData } from "@/src/modules/home/types/home.types";
+import React from "react";
 import Blog from "../../../assets/svg/Blog.svg";
 import SupportIcon from "../../../assets/svg/support.svg";
-import { useAuth } from "../../../context/AuthContext";
-import { useTheme } from "../../../context/ThemeContext";
-import HomeScreen from "../../../modules/home/screens/HomeScreen";
-import { ButtonData, CitaData } from "../../../modules/home/types/home.types";
 const mockCitas: CitaData[] = [
   {
     id: "1",
@@ -29,10 +29,6 @@ export default function Index() {
   const { user, membership } = useAuth();
   const { colors } = useTheme();
 
-  useEffect(() => {
-    console.log("User data:", user);
-    console.log("Membership data:", membership);
-  }, [user]);
 
   const fullName = "Usuario";
 

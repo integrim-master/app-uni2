@@ -1,16 +1,16 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { Tabs } from "expo-router";
-import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   CalendarIcon,
   CameraIcon,
   GiftIcon,
   HomeIcon,
   UserICon,
-} from "../../components/Icons";
-import { useTheme } from "../../context/ThemeContext";
+} from "@/src/components/Icons";
+import { useTheme } from "@/src/context/ThemeContext";
+import { LinearGradient } from "expo-linear-gradient";
+import { Tabs } from "expo-router";
+import React from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabsLayout() {
   const { colors } = useTheme();
@@ -18,7 +18,6 @@ export default function TabsLayout() {
 
   const baseTabBarHeight = Platform.OS === "ios" ? 88 : 64;
   const bottomInset = Platform.OS === "android" ? insets.bottom : 0;
-  
 
   const tabBarStyle = {
     backgroundColor: colors.card,
@@ -77,7 +76,7 @@ export default function TabsLayout() {
         options={{
           title: "Mis citas",
           tabBarIcon: ({ color }) => <CalendarIcon color={color} />,
-              headerShown: false,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -87,12 +86,7 @@ export default function TabsLayout() {
           tabBarLabel: () => null,
           tabBarIcon: ({ focused }) => (
             <View style={[styles.centerWrapper, { marginTop: -30 }]}>
-              <View
-                style={[
-                  styles.centerButton,
-                  { borderColor: colors.card }, 
-                ]}
-              >
+              <View style={[styles.centerButton, { borderColor: colors.card }]}>
                 <LinearGradient
                   colors={
                     focused
@@ -105,10 +99,7 @@ export default function TabsLayout() {
                   }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={[
-                    StyleSheet.absoluteFillObject,
-                    { borderRadius: 14 },
-                  ]}
+                  style={[StyleSheet.absoluteFillObject, { borderRadius: 14 }]}
                 />
 
                 <View style={styles.centerContent}>
@@ -117,9 +108,7 @@ export default function TabsLayout() {
                     style={[
                       styles.tabLabel,
                       {
-                        color: focused
-                          ? colors.text
-                          : colors.cardTextDark,
+                        color: focused ? colors.text : colors.cardTextDark,
                       },
                     ]}
                   >
@@ -150,7 +139,7 @@ export default function TabsLayout() {
           headerShown: false,
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name="profile/support"
         options={{
           title: "Perfil",

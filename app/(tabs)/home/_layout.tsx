@@ -1,10 +1,9 @@
+import { useTheme } from '@/src/context/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, usePathname, useRouter } from 'expo-router';
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
-
+import { Image, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 export default function HomeLayout() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
@@ -70,6 +69,10 @@ export default function HomeLayout() {
         options={{
           title: "",
           headerShadowVisible: false,
+      
+            presentation: Platform.OS === "ios" ? "pageSheet" : undefined,
+
+          animation: Platform.OS === "android" ? "slide_from_right" : undefined,
         }}
       />
     </Stack>

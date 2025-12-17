@@ -1,7 +1,7 @@
-import { Screen } from '@/components/shared/Screen';
-import { useBenefit } from '@/modules/benefits/hooks/useBenefits';
-import BenefitScreen from '@/modules/benefits/screens/BenefitScreen';
-import { BenefitApiResponse } from '@/modules/benefits/types/benefits.types';
+import { Screen } from '@/src/components/shared/Screen';
+import { useBenefit } from '@/src/modules/benefits/hooks/useBenefits';
+import BenefitScreen from '@/src/modules/benefits/screens/BenefitScreen';
+import { BenefitApiResponse } from '@/src/modules/benefits/types/benefits.types';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
 
@@ -14,14 +14,7 @@ export default function Index() {
     if (id_benefits) {
       mutate(
         { uid: id_benefits as string },
-        {
-          onSuccess: (data) => {
-            console.log("Benefit fetch successful:", data);
-          },
-          onError: (error) => {
-            console.log("Error fetching benefit:", error);
-          },
-        }
+       
       );
     }
   }, [id_benefits]);

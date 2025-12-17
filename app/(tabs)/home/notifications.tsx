@@ -1,10 +1,10 @@
 import EmptySvgPush from '@/assets/svg/Push.svg';
-import BodyText from '@/components/shared/BodyText';
-import { Screen } from '@/components/shared/Screen';
-import TitleText from '@/components/shared/TitleText';
+import BodyText from '@/src/components/shared/BodyText';
+import { Screen } from '@/src/components/shared/Screen';
+import TitleText from '@/src/components/shared/TitleText';
+import { useTheme } from '@/src/context/ThemeContext';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
 
 const NotificationsScreen: React.FC = () => {
   const { colors } = useTheme();

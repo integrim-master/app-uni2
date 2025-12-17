@@ -1,4 +1,4 @@
-import BeneficiosScreen from '@/modules/benefits/screens/BeneficiosScreen';
+import BeneficiosScreen from '@/src/modules/benefits/screens/BeneficiosScreen';
 import React from 'react';
 
 export default function Index() {

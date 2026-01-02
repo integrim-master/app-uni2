@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable, StyleSheet, View } from "react-native";
-import BodyText from "../../../components/shared/BodyText";
 
+import ThemedText from "@/src/components/shared/themed-text";
 import { Colors } from "@/themes/colors";
 import { Link } from "expo-router";
 import { useTheme } from '../../../context/ThemeContext';
@@ -13,7 +13,7 @@ const SuggestionItem = ({ title }: { title: string }) => {
   <Pressable >
     <View style={styles.contentContainer}>
       <Ionicons name="calendar" size={18} style={[styles.icon, { color: colors.primaryLight }]} />
-      <BodyText style={[styles.itemText, { color: colors.text }]}>{title}</BodyText>
+      <ThemedText style={[styles.itemText, { color: colors.text }]}>{title}</ThemedText>
     </View>
   </Pressable>
 </Link>

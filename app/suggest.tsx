@@ -1,7 +1,7 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import {
   ImageBackground,
   Pressable,
@@ -15,8 +15,10 @@ export default function Suggest() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <Screen style={[styles.container, { backgroundColor: colors.background }]}>
+    <Screen  >
+
       <SafeAreaView className="flex-1 ">
+              <BackButton/>
         <View style={styles.imageWrapper}>
         <ImageBackground
           source={require("../assets/images/campana.jpg")}
@@ -24,15 +26,7 @@ export default function Suggest() {
           imageStyle={{ borderRadius: 0 }}
         >
           <View style={styles.gradientOverlay} />
-          <Pressable
-            onPress={() => router.back()}
-            style={[
-              styles.backButton,
-              { top: insets.top + -15 },
-            ]}
-          >
-            <Ionicons name="chevron-back" size={26} color="#fff" />
-          </Pressable>
+        
           <View style={styles.titleWrapper}>
             <Text style={styles.title}>Limpieza Facial</Text>
             <Text style={styles.subtitle}>
@@ -100,9 +94,7 @@ export default function Suggest() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+
 
   imageWrapper: {
     width: "100%",

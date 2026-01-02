@@ -1,6 +1,7 @@
 "use client";
 
 import { Screen } from "@/src/components/shared/Screen";
+import ThemedText from "@/src/components/shared/themed-text";
 import { Colors } from "@/src/themes/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -33,6 +34,7 @@ export default function BenefitScreen({
   isPending = false,
 }: Props) {
   const { colors } = useTheme();
+
 
   return (
     <Screen style={{ backgroundColor: colors.background }}>
@@ -94,9 +96,9 @@ export default function BenefitScreen({
           </LinearGradient>
 
 
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <ThemedText type="body" style={{ color: colors.text }}>
             Descripción
-          </Text>
+          </ThemedText>
           {isPending ? (
             <View style={{ gap: 10, marginBottom: 24 }}>
               <Skeleton height={16} radius={6} />
@@ -104,11 +106,12 @@ export default function BenefitScreen({
               <Skeleton height={16} width="80%" radius={6} />
             </View>
           ) : (
-            <Text
-              style={[styles.description, { color: colors.textSecondary }]}
+            <ThemedText
+              type="body"
+            color={colors.textSecondary}
             >
               {benefit?.description}
-            </Text>
+            </ThemedText>
           )}
 
           <View style={styles.pillsRow}>
@@ -252,6 +255,7 @@ const styles = StyleSheet.create({
   pillsRow: {
     flexDirection: "row",
     gap: 10,
+    marginTop: 8,
     marginBottom: 32,
   },
   pill: {

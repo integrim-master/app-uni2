@@ -15,7 +15,6 @@ import { useTheme } from '../../../context/ThemeContext';
 import { ItemUniqueProps } from '../types/benefits.types';
 
 export default function ItemUnique({
-
   data,
   loading,
   onPress,
@@ -59,7 +58,7 @@ export default function ItemUnique({
     }
   };
 
-  const estadoKey = data.used && data.used > 0 ? 'usado' : 'disponible';
+  const estadoKey = data.used && data.used > 1 ? 'usado' : 'disponible';
   const estadoConfig = getEstadoConfig(estadoKey);
 
   return (

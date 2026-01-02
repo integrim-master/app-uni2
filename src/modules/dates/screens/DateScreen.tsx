@@ -126,7 +126,7 @@ export default function DatesScreen() {
               >
                 <View style={styles.citasListContainer}>
                   {filteredCitas.map((c) => (
-                    <CitaCard key={c.id} cita={c} />
+                    <CitaCard key={c.id} cita={c}  />
                   ))}
                   <Pressable
                     onPress={openFilters}

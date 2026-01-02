@@ -1,7 +1,9 @@
+import EmptySvg from '@/assets/svg/Empty.svg';
+import BodyText from '@/src/components/shared/BodyText';
 import { Screen } from '@/src/components/shared/Screen';
+import TitleText from '@/src/components/shared/TitleText';
 import TabBar from '@/src/modules/home/components/TabBar';
 import { Benefits } from '@/src/types/shared/Benefits.type';
-import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { router } from 'expo-router';
 import { AnimatePresence, MotiView } from 'moti';
@@ -128,20 +130,20 @@ export default function BeneficiosScreen() {
                 transition={{ type: 'timing', duration: 150 }}
                 style={[styles.absoluteFill, { paddingHorizontal: 16 }]}
               >
-                {!anyCanjeados ? (
+                {anyCanjeados ? (
                   <View style={styles.emptyContainer}>
-                    <Ionicons name="gift" size={36} color={colors.textLight} />
-                    <Text style={[styles.noCitasText, { color: colors.primaryLight, marginTop: 10 }]}>No hay beneficios canjeados</Text>
+                    <EmptySvg width={240} height={240} style={styles.emptyImage} />
+                    <TitleText style={[styles.emptyTitle, { color: colors.primaryLight }]}>No hay beneficios canjeados</TitleText>
+                
+                    <BodyText style={[styles.emptyBody, { color: colors.textSecondary }]}>Cuando canjees un beneficio, aparecerá aquí para que lo revises y lo uses.</BodyText>
                   </View>
                 ) : (
-                 <View>
-                  <Text>
-                    Lista de beneficios canjeados
-                  </Text>
-                 </View>
+                  <View>
+                    <Text style={{ color: colors.text }}>Lista de beneficios canjeados</Text>
+                  </View>
                 )}
               </MotiView>
-            )}
+            )} 
           </AnimatePresence>
         </View>
 
@@ -234,8 +236,28 @@ const styles = StyleSheet.create({
 
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    paddingTop: 40,
+  },
+  emptyImage: {},
+  emptyTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  emptyBody: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 2,
+    marginBottom: 2,
+    paddingHorizontal: 16,
   },
 
   noCitasText: {

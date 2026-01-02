@@ -1,9 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { BenefitService } from "../services/benefits.service";
 import { BenefitApiResponse } from "../types/benefits.types";
 
-export const useBenefit = () => {
-  return useMutation<BenefitApiResponse, Error, { uid: string }>({
-    mutationFn: ({ uid }) => BenefitService.getDetailsByBenefit({ uid }),
+export const useBenefit = (uid?: string) => {
+  return useQuery<BenefitApiResponse>({
+    queryKey: ["benefit", uid],
+    queryFn: () => BenefitService.getDetailsByBenefit({ uid: uid!  }),
+    enabled: !!uid,
+    staleTime: Infinity,   
+    gcTime: 1000 * 60 * 10, 
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };

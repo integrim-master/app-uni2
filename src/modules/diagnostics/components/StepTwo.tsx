@@ -1,9 +1,8 @@
-import BodyText from "@/src/components/shared/BodyText";
 import { Screen } from "@/src/components/shared/Screen";
 import SubtitleText from "@/src/components/shared/SubtitleText";
+import ThemedText from "@/src/components/shared/themed-text";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import LottieView from "lottie-react-native";
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -20,36 +19,35 @@ import ResultView from "./ResultView";
 
 const { width, height } = Dimensions.get("window");
 
-type Status = "idle" | "sending" | "success" | "results";
-
 type PhotoAsset = {
   uri: string;
   type?: string;
   fileName?: string;
 };
 
+type DiagnosticView = "camera" | "loading" | "result";
+
 type Props = {
+  view: DiagnosticView;
   photoUri: PhotoAsset | null;
   setPhotoUri: (uri: PhotoAsset | null) => void;
-  status: Status;
+  diagnosticReport?: any;
   onSendPhoto: () => void;
-  onAnalysisComplete: () => void;
   onReset: () => void;
 };
 
 export default function StepTwo({
+  view,
   photoUri,
   setPhotoUri,
-  status,
+  diagnosticReport,
   onSendPhoto,
-  onAnalysisComplete,
   onReset,
 }: Props) {
   const { colors } = useTheme();
   const cameraRef = useRef<CameraView>(null);
-
   const [facing, setFacing] = useState<CameraType>("front");
-  const [loading, setLoading] = useState(false);
+  const [capturing, setCapturing] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) return <View />;
@@ -57,84 +55,58 @@ export default function StepTwo({
   if (!permission.granted) {
     return (
       <View style={styles.permissionContainer}>
-        <MaterialIcons
-          name="camera-alt"
-          size={70}
-          color={colors.primary}
-          style={{ marginBottom: 20 }}
-        />
-
-        <SubtitleText style={{ color: colors.text }}>
-          Necesitamos tu permiso para usar la cámara
-        </SubtitleText>
-
-        <BodyText style={{ color: colors.textSecondary }}>
-          Esto nos permitirá capturar tu foto para el diagnóstico
-        </BodyText>
+        <MaterialIcons name="camera-alt" size={70} color={colors.primary} />
+        <SubtitleText>Necesitamos tu permiso</SubtitleText>
+        <ThemedText>Para capturar tu foto</ThemedText>
 
         <Pressable
           style={[styles.permissionButton, { backgroundColor: colors.primary }]}
           onPress={requestPermission}
         >
-          <Text style={styles.permissionText}>Conceder Permiso</Text>
+          <Text style={styles.permissionText}>Conceder permiso</Text>
         </Pressable>
       </View>
     );
   }
 
-  const takePicture = async () => {
-    try {
-      setLoading(true);
-      const photo = await cameraRef.current?.takePictureAsync();
-      if (photo && photo.uri) {
-        const uri = photo.uri as string;
-        const ext = uri.split(".").pop()?.split("?")[0]?.toLowerCase() || "jpg";
-        const fileName = `photo_${Date.now()}.${ext}`;
-        const type = ext === "png" ? "image/png" : "image/jpeg";
+  if (view === "loading") return <SendPhoto />;
 
-        setPhotoUri({ uri, fileName, type });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (status === "success") {
+  if (view === "result" && diagnosticReport) {
     return (
-      <View style={styles.center}>
-        <LottieView
-          source={require("../../../../assets/animations/Success.json")}
-          autoPlay
-          loop
-          style={{ width: 180, height: 180 }}
-        />
-      </View>
+      <ResultView
+        photoUri={photoUri?.uri as  any}
+        diagnostic={diagnosticReport.analysis}
+        onReset={onReset}
+      />
     );
   }
 
-  if (status === "results" && photoUri) {
-    return <ResultView photoUri={photoUri.uri} onReset={onReset} />;
-  }
+  const takePicture = async () => {
+    try {
+      setCapturing(true);
+      const photo = await cameraRef.current?.takePictureAsync();
+      if (!photo?.uri) return;
 
-  if (status === "sending") {
-    return <SendPhoto onComplete={onAnalysisComplete} />;
-  }
+      setPhotoUri({
+        uri: photo.uri,
+        fileName: `photo_${Date.now()}.jpg`,
+        type: "image/jpeg",
+      });
+    } finally {
+      setCapturing(false);
+    }
+  };
 
   return (
     <Screen style={styles.container}>
-      <View
-        style={[
-          styles.cameraContainer,
-          { borderColor: colors.primary },
-        ]}
-      >
+      <View style={[styles.cameraContainer, { borderColor: colors.primary }]}>
         {photoUri ? (
           <Image source={{ uri: photoUri.uri }} style={styles.camera} />
         ) : (
           <CameraView ref={cameraRef} style={styles.camera} facing={facing} />
         )}
 
-        {loading && (
+        {capturing && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Capturando...</Text>
@@ -147,7 +119,7 @@ export default function StepTwo({
           <Pressable
             style={[styles.smallBtn, { borderColor: colors.primary }]}
             onPress={() =>
-              setFacing((prev) => (prev === "front" ? "back" : "front"))
+              setFacing((f) => (f === "front" ? "back" : "front"))
             }
           >
             <MaterialIcons name="flip-camera-ios" size={24} color={colors.primary} />
@@ -157,7 +129,7 @@ export default function StepTwo({
         <Pressable
           style={[
             styles.captureBtn,
-            { backgroundColor: photoUri ? colors.backgroundLight : colors.primary },
+            { backgroundColor: photoUri ? "#eee" : colors.primary },
           ]}
           onPress={photoUri ? () => setPhotoUri(null) : takePicture}
         >
@@ -181,8 +153,9 @@ export default function StepTwo({
   );
 }
 
-const CAMERA_WIDTH = width * 0.85;
+
 const CAMERA_HEIGHT = height * 0.48;
+const CAMERA_WIDTH = width * 0.9;
 
 const styles = StyleSheet.create({
   container: {

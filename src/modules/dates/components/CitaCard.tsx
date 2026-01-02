@@ -1,7 +1,8 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import React from "react";
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { Card } from "../../../components/shared/card";
 import { useTheme } from "../../../context/ThemeContext";
 
@@ -59,85 +60,78 @@ export default function CitaCard({
   const estadoCfg = getEstadoConfig(cita.estado);
 
   return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        { borderRadius: 16 },
-        pressed && { opacity: 0.96 },
-      ]}
-      accessibilityLabel={`${cita.procedimiento} - ${cita.estado}`}
+    <Card
+      onPress={() => router.push(`dates/${43}`)}
+      pressedOpacity={0.96}
+      className=""
+      style={
+        [
+          styles.card,
+          {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+          },
+        ] as any
+      }
     >
-      <Card
-        className=""
-        style={
-          [
-            styles.card,
+      <View style={styles.topArea}>
+        <LinearGradient
+          colors={estadoCfg.gradient as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={[
+            styles.badge,
             {
-              backgroundColor: colors.card,
-              borderColor: colors.border,
+              borderColor: colors.gradientCardStart ?? colors.border,
+              shadowColor: colors.shadow ?? "#000",
+              backgroundColor: "transparent",
             },
-          ] as any
-        }
-      >
-        <View style={styles.topArea}>
-          <LinearGradient
-            colors={estadoCfg.gradient as any}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[
-              styles.badge,
-              {
-                borderColor: colors.gradientCardStart ?? colors.border,
-                shadowColor: colors.shadow ?? "#000",
-                backgroundColor: "transparent",
-              },
-            ]}
-          >
-            <MaterialIcons
-              name={estadoCfg.icon as any}
-              size={12}
-              color={estadoCfg.color}
-            />
-            <Text style={[styles.badgeText, { color: estadoCfg.color }]}>
-              {cita.estado}
-            </Text>
-          </LinearGradient>
-
-          {/* <Ionicons
-            name="chevron-up-circle"
-            size={22}
-            color={colors.textLight}
-            style={styles.icon}
-          /> */}
-        </View>
-
-        <View style={styles.content}>
-          <Text
-            style={[styles.procedimiento, { color: colors.text }]}
-            numberOfLines={2}
-            ellipsizeMode="tail"
-          >
-            {cita.procedimiento}
+          ]}
+        >
+          <MaterialIcons
+            name={estadoCfg.icon as any}
+            size={12}
+            color={estadoCfg.color}
+          />
+          <Text style={[styles.badgeText, { color: estadoCfg.color }]}>
+            {cita.estado}
           </Text>
+        </LinearGradient>
 
-          <Text
-            style={[styles.especialista, { color: colors.textLight }]}
-            numberOfLines={1}
-          >
-            {cita.especialista}
+        {/* <Ionicons
+          name="chevron-up-circle"
+          size={22}
+          color={colors.textLight}
+          style={styles.icon}
+        /> */}
+      </View>
+
+      <View style={styles.content}>
+        <Text
+          style={[styles.procedimiento, { color: colors.text }]}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {cita.procedimiento}
+        </Text>
+
+        <Text
+          style={[styles.especialista, { color: colors.textLight }]}
+          numberOfLines={1}
+        >
+          {cita.especialista}
+        </Text>
+
+        <View style={styles.row}>
+          <Text style={[styles.fecha, { color: colors.text }]}>
+            {cita.fecha}
           </Text>
-
-          <View style={styles.row}>
-            <Text style={[styles.fecha, { color: colors.text }]}>
-              {cita.fecha}
-            </Text>
-            <Text style={[styles.hora, { color: colors.primary }]}>
-              {cita.hora}
-            </Text>
-          </View>
+          <Text style={[styles.hora, { color: colors.primary }]}>
+            {cita.hora}
+          </Text>
         </View>
-      </Card>
-    </Pressable>
+      </View>
+    </Card>
   );
 }
 

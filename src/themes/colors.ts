@@ -34,6 +34,11 @@ export interface ThemeColors {
   cardTextDark: string;
   gradientCardStart: string;
   gradientCardEnd: string;
+
+  membershipGoldGradient: [string, string, string];
+  membershipBlackGradient: [string, string, string];
+  membershipBlackCard?: string;
+  membershipBlackText?: string;
 }
 
 
@@ -72,6 +77,8 @@ export const LightTheme: ThemeColors = {
 
   gradientCardStart: "#FFFFFF",
   gradientCardEnd: "#F9FAFB",
+  membershipGoldGradient: ["#E8C066", "#D4AF37", "#D0993C"],
+  membershipBlackGradient: ["#222227", "#171517", "#0F0F0F"],
   shadow: "#000000", // Sombra negra
   blue: "#668CE8",
 };
@@ -114,6 +121,11 @@ export const DarkTheme: ThemeColors = {
   textSecondaryDorado: "#D4AF37",
   gradientCardStart: "#222222",
   gradientCardEnd: "#393335",
+
+  membershipGoldGradient: ["#E5BE83", "#E2B155", "#D0993C"],
+  membershipBlackGradient: ["#1F1F1F", "#262626", "#121212"],
+  membershipBlackCard: "#111111",
+  membershipBlackText: "#F9FAFB",
 };
 
 

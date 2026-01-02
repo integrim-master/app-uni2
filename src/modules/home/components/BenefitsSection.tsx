@@ -1,4 +1,4 @@
-import TitleText from "@/src/components/shared/TitleText";
+import ThemedText from "@/src/components/shared/themed-text";
 import { Benefits } from "@/src/types/shared/Benefits.type";
 import { Link } from "expo-router";
 import React from "react";
@@ -18,9 +18,9 @@ export const BenefitsSection: React.FC<BenefitsSectionProps> = ({
   return (
     <View style={styles.benefitsContent}>
       <View style={styles.sectionHeader}>
-        <TitleText style={[styles.sectionTitleMain, { color: colors.text }]}>
+        <ThemedText style={[styles.sectionTitleMain, { color: colors.text }]}>
           Tratamientos sugeridos
-        </TitleText>
+        </ThemedText>
         <Link asChild href={`/(tabs)/beneficios`}>
           <Pressable>
             {({ pressed }) => (

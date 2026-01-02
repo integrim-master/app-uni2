@@ -9,8 +9,6 @@ interface PhotoAsset {
 }
 
 export async function AnalyzeImage(photo: PhotoAsset): Promise<any> {
-  console.log("Analizando imagen con N8N:", photo);
-
   const formData = new FormData();
   formData.append("file", {
     uri: photo.uri,
@@ -30,12 +28,7 @@ export async function AnalyzeImage(photo: PhotoAsset): Promise<any> {
       },
       signal: controller.signal,
     }).finally(() => clearTimeout(timeoutId));
-
-    console.log("N8N status:", response.status);
-
     const text = await response.text();
-    console.log("N8N response text:", text || "<vacío>");
-
     if (!text) return null;
 
     try {

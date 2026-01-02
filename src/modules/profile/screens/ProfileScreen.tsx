@@ -60,7 +60,7 @@ export function ProfileScreen() {
       <View style={styles.safeArea}>
         <ProfileHeader
           userName={userName}
-          onPress={() => router.push("/profile/details")}
+          onPress={() => router.push("/details")}
         />
 
         <MenuSection title="Cuenta" items={accountItems} />

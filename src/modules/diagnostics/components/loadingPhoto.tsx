@@ -1,3 +1,4 @@
+import { Screen } from '@/src/components/shared/Screen';
 import LottieView from 'lottie-react-native';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from "react-native";
@@ -30,7 +31,6 @@ const SendPhoto = ({ onComplete }: SendPhotoProps) => {
 
         const timeout = setTimeout(() => {
             clearInterval(interval);
-            onComplete?.();
         }, 8000);
 
         return () => {
@@ -40,7 +40,8 @@ const SendPhoto = ({ onComplete }: SendPhotoProps) => {
     }, []);
 
     return (
-        <View style={styles.container}>
+       <Screen>
+         <View style={styles.container}>
             <View style={styles.animationWrapper}>
                 <LottieView
                     source={require('../../../../assets/animations/uploading.json')}
@@ -51,6 +52,7 @@ const SendPhoto = ({ onComplete }: SendPhotoProps) => {
             </View>
             <Text style={[styles.text, { color: colors.text }]}>{messages[messageIndex]}</Text>
         </View>
+       </Screen>
     );
 };
 

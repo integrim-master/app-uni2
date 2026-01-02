@@ -1,7 +1,6 @@
-import BodyText from "@/src/components/shared/BodyText";
-import TitleText from "@/src/components/shared/TitleText";
+import ThemedText from "@/src/components/shared/themed-text";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 
 type HeaderSectionProps = {
@@ -12,14 +11,8 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
   const { colors, isDark } = useTheme();
 
   return (
-    <View
-      style={[
-        styles.headerContainer,
-      
-      ]}
-    >
+    <View style={[styles.headerContainer]}>
       <View style={styles.profileSection}>
-    
         <View
           style={{
             flexDirection: "row",
@@ -27,17 +20,12 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
             alignItems: "flex-start",
           }}
         >
-          <TitleText style={{ fontSize: 24, fontWeight: 800, color: "white" }}>
+          <ThemedText type="title">
             Hola,{" "}
-            <Text
-              style={[
-                styles.primaryText,
-                { color: isDark ? colors.primaryLight : "white" },
-              ]}
-            >
+            <ThemedText type="title" color={colors.primaryLight}>
               {fullName}
-            </Text>
-          </TitleText>
+            </ThemedText>
+          </ThemedText>
         </View>
         <View style={styles.suggestionsContainer}>
           {/* <BodyText style={{ fontWeight: 500, color: "white" }}>
@@ -58,11 +46,10 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
             keyExtractor={(item) => item.id}
             style={styles.suggestionsList}
           /> */}
-          
 
-          <BodyText style={{ fontWeight: 500, color: "white", opacity: 0.7 }}>
+          <ThemedText color={colors.textSecondary}>
             Tu bienestar es nuestra prioridad
-          </BodyText>
+          </ThemedText>
         </View>
       </View>
     </View>
@@ -127,7 +114,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     marginBottom: 10,
-    paddingBottom: 20, 
+    paddingBottom: 20,
   },
   suggestionsList: {},
   primaryText: {

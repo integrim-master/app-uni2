@@ -1,3 +1,4 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { MenuSection } from "@/src/components/shared/MenuSection";
 import { Screen } from "@/src/components/shared/Screen";
 import { useAuth } from "@/src/context/AuthContext";
@@ -40,7 +41,8 @@ export default function ProfileDetailScreen() {
   );
 
   return (
-    <Screen>
+    <Screen safeArea={true} >
+      <BackButton to={'/profile'}  />
       <ScrollView>
         <View style={[styles.headerContainer]}>
           <View

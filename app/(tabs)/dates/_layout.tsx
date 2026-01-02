@@ -33,9 +33,9 @@ export default function HomeLayout() {
           
 
       <Stack.Screen
-        name="details"
+        name="[date_id]/index"
         options={{
-          title: "Mi perfil",
+          title: "Detalle de la cita",
           headerShadowVisible: false,
         }}
       />

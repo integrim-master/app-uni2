@@ -1,9 +1,23 @@
-import { useMutation } from "@tanstack/react-query";
-import { BenefitService } from "../services/benefits.service";
-import { BenefitApiResponse } from "../types/benefits.types";
 
-export const useBenefit = () => {
-  return useMutation<BenefitApiResponse, Error, { uid: string }>({
-    mutationFn: ({ uid }) => BenefitService.getDetailsByBenefit({ uid }),
+import { useMutation } from "@tanstack/react-query";
+import { DiagnosticsServices } from "../services/diagnostic.service";
+export interface UploadImageParams {
+  photo: {
+    uri: string;
+    type?: string;
+    fileName?: string;
+  };
+  userId: string;
+  token?: string;
+}
+
+export interface UploadImageResult {
+  id: number;
+}
+
+export const useUploadDiagnosticImage = () => {
+  return useMutation<UploadImageResult, Error, UploadImageParams>({
+    mutationFn: (params) =>
+      DiagnosticsServices.uploadImage(params),
   });
 };

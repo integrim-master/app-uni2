@@ -1,233 +1,376 @@
-import BodyText from '@/src/components/shared/BodyText';
-import SubtitleText from '@/src/components/shared/SubtitleText';
-import TitleText from '@/src/components/shared/TitleText';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
+import { Card } from "@/src/components/shared/card";
+import { Screen } from "@/src/components/shared/Screen";
+import { useTheme } from "@/src/context/ThemeContext";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { useMemo } from "react";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+
+interface DiagnosticResponse {
+  diagnostico: Record<string, string>;
+  procedimientos: string[];
+}
 
 type ResultViewProps = {
-    photoUri: string;
-    onReset: () => void;
-    onClose?: () => void;
+  photoUri?: {
+    uri: string;
+    type?: string;
+    fileName?: string;
+  };
+  diagnostic: DiagnosticResponse[];
+  onReset: () => void;
+  onClose?: () => void;
 };
 
-export default function ResultView({ photoUri, onReset, onClose }: ResultViewProps) {
-    const { colors } = useTheme();
+export default function ResultView({
+  photoUri,
+  diagnostic,
+  onReset,
+  onClose,
+}: ResultViewProps) {
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  const data = diagnostic?.[0];
 
-    const diagnosticResults = [
-        { label: 'Estado general', value: 'Bueno', icon: 'check-circle', color: '#4CAF50' },
-        { label: 'Hidratación', value: 'Adecuada', icon: 'water-drop', color: '#2196F3' },
-        { label: 'Tono de piel', value: 'Saludable', icon: 'face', color: '#FF9800' },
-        { label: 'Puntos de atención', value: '2 detectados', icon: 'warning', color: '#FFC107' },
-    ];
+  const procChips = useMemo(
+    () => data?.procedimientos.map((p) => ({ key: p, label: p })) ?? [],
+    [data]
+  );
 
+  if (!data) {
     return (
-        <View style={{ flex: 1 }}>
-            <Pressable
-                style={styles.fabClose}
-                onPress={onClose ? onClose : onReset}
-                android_ripple={{ color: colors.primary + '22' }}
-            >
-                <MaterialIcons name="close" size={30} color={colors.primary} />
-            </Pressable>
-            <ScrollView 
-                style={[styles.container]}
-                contentContainerStyle={styles.contentContainer}
-                showsVerticalScrollIndicator={false}
-            >
-            <View style={styles.header}>
-                <MaterialIcons name="check-circle" size={64} color={colors.primary} />
-                <TitleText style={[styles.title, { color: colors.text }]}>
-                    ¡Diagnóstico completo!
-                </TitleText>
-                <SubtitleText style={[styles.subtitle, { color: colors.textSecondary }]}>
-                    Aquí están los resultados de tu análisis facial
-                </SubtitleText>
-            </View>
-
-            <View style={[styles.photoContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Image source={{ uri: photoUri }} style={styles.photo} />
-            </View>
-
-            <View style={[styles.resultsCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>Resultados del análisis</Text>
-                
-                {diagnosticResults.map((result, index) => (
-                    <View 
-                        key={index} 
-                        style={[
-                            styles.resultItem, 
-                            { borderBottomColor: colors.border },
-                            index === diagnosticResults.length - 1 && styles.lastItem
-                        ]}
-                    >
-                        <View style={styles.resultLeft}>
-                            <View style={[styles.iconWrapper, { backgroundColor: result.color + '22' }]}>
-                                <MaterialIcons name={result.icon as any} size={24} color={result.color} />
-                            </View>
-                            <BodyText style={[styles.resultLabel, { color: colors.text }]}>
-                                {result.label}
-                            </BodyText>
-                        </View>
-                        <Text style={[styles.resultValue, { color: colors.textSecondary }]}>
-                            {result.value}
-                        </Text>
-                    </View>
-                ))}
-            </View>
-
-            <View style={[styles.recommendationCard, { backgroundColor: colors.card, borderColor: colors.primary }]}>
-                <MaterialIcons name="lightbulb" size={28} color={colors.primary} />
-                <SubtitleText style={[styles.recommendationTitle, { color: colors.primary }]}>
-                    Recomendación
-                </SubtitleText>
-                <BodyText style={[styles.recommendationText, { color: colors.textSecondary }]}>
-                    Tu piel se encuentra en buen estado. Continúa con tu rutina de cuidado diario y mantén una hidratación adecuada, teb sugerimmos acercarte a nuestras instalaciones para obtener un diagnostico mucho mas detallado .
-                </BodyText>
-            </View>
-
-            <Pressable 
-                style={[styles.button, { backgroundColor: colors.primary }]}
-                onPress={onReset}
-            >
-                <Text style={styles.buttonText}>Realizar nuevo diagnóstico</Text>
-            </Pressable>
-               
-            </ScrollView>
-        </View>
+      <Screen style={styles.center}>
+        <Text style={{ color: colors.textSecondary }}>
+          No se recibió información del diagnóstico
+        </Text>
+        <Pressable
+          style={[
+            styles.button,
+            { backgroundColor: colors.primary, marginTop: 20 },
+          ]}
+          onPress={onReset}
+        >
+          <Text style={styles.buttonText}>Realizar nuevo diagnóstico</Text>
+        </Pressable>
+      </Screen>
     );
+  }
+
+  return (
+    <Screen style={{ flex: 1 }}>
+      <SafeAreaView>
+        <Pressable
+          onPress={() => router.back()}
+          style={[
+            styles.backButton,
+            { top: insets.top + 8, backgroundColor: colors.card },
+          ]}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          android_ripple={{ color: "rgba(255,255,255,0.12)" }}
+          accessibilityLabel="Volver"
+          accessibilityRole="button"
+        >
+          <Ionicons name="chevron-back" size={24} color={colors.primary} />
+        </Pressable>
+        <Pressable
+          style={[
+            styles.closeBtn,
+            { top: insets.top + 8, backgroundColor: colors.card },
+          ]}
+          onPress={onClose ?? onReset}
+        >
+          <MaterialIcons name="close" size={22} color={colors.primary} />
+        </Pressable>
+
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <View
+              style={[
+                styles.headerIcon,
+                { backgroundColor: colors.primary + "20" },
+              ]}
+            >
+              <MaterialIcons
+                name="auto-awesome"
+                size={32}
+                color={colors.primary}
+              />
+            </View>
+
+            <Text style={[styles.title, { color: colors.text }]}>
+              Diagnóstico Facial
+            </Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+              Análisis clínico asistido por IA
+            </Text>
+          </View>
+          {photoUri && (
+            <Card style={styles.imageCard}>
+              <Image source={{ uri: photoUri as any }} style={styles.image} />
+              <View style={styles.imageBadge}>
+                <MaterialIcons name="check-circle" size={16} color="#22c55e" />
+                <Text style={styles.imageBadgeText}>
+                  Imagen analizada correctamente
+                </Text>
+              </View>
+            </Card>
+          )}
+          <View style={styles.sectionRow}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Evaluación clínica
+            </Text>
+            <View
+              style={[
+                styles.counterBadge,
+                { backgroundColor: colors.primary + "15" },
+              ]}
+            >
+              <Text style={[styles.counterText, { color: colors.primary }]}>
+                {Object.keys(data.diagnostico).length} hallazgos
+              </Text>
+            </View>
+          </View>
+
+          {Object.entries(data.diagnostico).map(([key, value]) => (
+            <Card key={key} style={styles.diagnosticCard}>
+              <View style={styles.cardHeader}>
+                <View
+                  style={[
+                    styles.iconBox,
+                    { backgroundColor: colors.primary + "15" },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="medical-information"
+                    size={18}
+                    color={colors.primary}
+                  />
+                </View>
+                <Text style={[styles.cardTitle, { color: colors.text }]}>
+                  {key}
+                </Text>
+              </View>
+              <Text style={[styles.cardText, { color: colors.textSecondary }]}>
+                {value}
+              </Text>
+            </Card>
+          ))}
+
+          {procChips.length > 0 && (
+            <>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                Recomendaciones personalizadas
+              </Text>
+
+              <View style={styles.chipsWrap}>
+                {procChips.map((c) => (
+                  <View
+                    key={c.key}
+                    style={[
+                      styles.chip,
+                      {
+                        backgroundColor: colors.card,
+                        borderColor: colors.primary + "30",
+                      },
+                    ]}
+                  >
+                    <MaterialIcons
+                      name="spa"
+                      size={16}
+                      color={colors.primary}
+                    />
+                    <Text
+                      style={[styles.chipText, { color: colors.textSecondary }]}
+                    >
+                      {c.label}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
+
+          <Pressable
+            style={[styles.button, { backgroundColor: colors.primary }]}
+            onPress={onReset}
+          >
+            <Text style={styles.buttonText}>Realizar nuevo diagnóstico</Text>
+          </Pressable>
+        </ScrollView>
+      </SafeAreaView>
+    </Screen>
+  );
 }
 
 const styles = StyleSheet.create({
-    fabClose: {
-        position: 'absolute',
-        top: 32,
-        right: 24,
-        zIndex: 10,
-        backgroundColor: '#fff',
-        borderRadius: 24,
-        width: 48,
-        height: 48,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 6,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-    },
-    container: {
-        flex: 1,
-    },
-    contentContainer: {
-        padding: 20,
-        paddingBottom: 40,
-    },
-    header: {
-        alignItems: 'center',
-        marginBottom: 24,
-    },
-    title: {
-        fontSize: 26,
-        fontWeight: '700',
-        marginTop: 16,
-        textAlign: 'center',
-    },
-    subtitle: {
-        fontSize: 16,
-        marginTop: 8,
-        textAlign: 'center',
-    },
-    photoContainer: {
-        width: '100%',
-        height: 300,
-        borderRadius: 16,
-        overflow: 'hidden',
-        marginBottom: 24,
-        borderWidth: 1,
-        elevation: 3,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    photo: {
-        width: '100%',
-        height: '100%',
-    },
-    resultsCard: {
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 20,
-        borderWidth: 1,
-        elevation: 2,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.08,
-        shadowRadius: 3,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        marginBottom: 16,
-    },
-    resultItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: 12,
-        borderBottomWidth: 0.5,
-    },
-    lastItem: {
-        borderBottomWidth: 0,
-    },
-    resultLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-    },
-    iconWrapper: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 12,
-    },
-    resultLabel: {
-        fontSize: 15,
-        fontWeight: '500',
-    },
-    resultValue: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    recommendationCard: {
-        borderRadius: 16,
-        padding: 20,
-        marginBottom: 24,
-        borderWidth: 1,
-        alignItems: 'center',
-    },
-    recommendationTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        marginTop: 12,
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    recommendationText: {
-        fontSize: 14,
-        textAlign: 'center',
-        lineHeight: 20,
-    },
-    button: {
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-});
+  container: {
+    padding: 22,
+    paddingBottom: 48,
+  },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButton: {
+    position: "absolute",
+    left: 16,
+    zIndex: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 8,
+  },
+  closeBtn: {
+    position: "absolute",
 
+    right: 16,
+    zIndex: 20,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 8,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 28,
+  },
+  headerIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+  },
+  subtitle: {
+    fontSize: 14,
+    marginTop: 4,
+  },
+  imageCard: {
+    height: 300,
+    borderRadius: 24,
+    overflow: "hidden",
+    marginBottom: 28,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  imageBadge: {
+    position: "absolute",
+    bottom: 14,
+    left: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#00000088",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 6,
+  },
+  imageBadgeText: {
+    color: "#fff",
+    fontSize: 12,
+  },
+  sectionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  counterBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  counterText: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  diagnosticCard: {
+    flexDirection: "column",
+    padding: 16,
+    borderRadius: 18,
+    marginBottom: 14,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    gap: 10,
+    marginBottom: 6,
+  },
+  iconBox: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  cardText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  chipsWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginBottom: 24,
+  },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 22,
+    borderWidth: 1,
+    gap: 8,
+  },
+  chipText: {
+    fontSize: 14,
+  },
+  button: {
+    paddingVertical: 18,
+    paddingHorizontal: 24,
+    borderRadius: 18,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+});

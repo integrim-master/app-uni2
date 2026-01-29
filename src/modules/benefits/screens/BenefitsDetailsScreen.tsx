@@ -1,45 +1,37 @@
 "use client";
 
+import Badge from "@/src/components/shared/Badge";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { Colors } from "@/src/themes/colors";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Skeleton } from "moti/skeleton";
 import React from "react";
-import {
-  Dimensions,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import type { BenefitApiResponse } from "../types/benefits.types";
 
 type Props = {
   benefit: BenefitApiResponse;
-  onRedeem?: (id: string) => void;
+  onRedeem?: (id: string, title_prod: string) => void;
   isPending?: boolean;
+  isLoadingRedeem?: boolean;
+  sucessRedeem?: boolean;
 };
 
-const { width } = Dimensions.get("window");
-
-export default function BenefitScreen({
+export default function BenefitsDetailsScreen({
   benefit,
+  sucessRedeem,
   onRedeem,
   isPending = false,
+  isLoadingRedeem,
 }: Props) {
   const { colors } = useTheme();
-
 
   return (
     <Screen style={{ backgroundColor: colors.background }}>
       <ScrollView showsVerticalScrollIndicator={false}>
-    
         <View style={styles.heroWrap}>
           <Image
             source={{
@@ -47,10 +39,7 @@ export default function BenefitScreen({
                 benefit?.image ||
                 "https://via.placeholder.com/600x400?text=No+Image",
             }}
-            style={[
-              styles.heroImage,
-              isPending && { opacity: 0.6 },
-            ]}
+            style={[styles.heroImage, isPending && { opacity: 0.6 }]}
             contentFit="cover"
             transition={800}
           />
@@ -62,12 +51,7 @@ export default function BenefitScreen({
 
           <View style={styles.heroContent}>
             {isPending ? (
-              <Skeleton
-                width={260}
-                height={34}
-                radius={10}
-                colorMode="dark"
-              />
+              <Skeleton width={260} height={34} radius={10} colorMode="dark" />
             ) : (
               <Text style={styles.heroTitle} numberOfLines={2}>
                 {benefit?.title}
@@ -85,16 +69,13 @@ export default function BenefitScreen({
             },
           ]}
         >
-          <LinearGradient
-            colors={[colors.primaryLight, colors.primaryDark]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.badge}
-          >
-            <MaterialIcons name="star" size={14} color={colors.cardTextDark} />
-            <Text style={styles.badgeText}>BENEFICIO PREMIUM</Text>
-          </LinearGradient>
-
+          <Badge
+            text="BENEFICIO PREMIUM"
+            variant="premium"
+            size="medium"
+            icon="star"
+            style={{ marginBottom: 24 }}
+          />
 
           <ThemedText type="body" style={{ color: colors.text }}>
             Descripción
@@ -106,77 +87,35 @@ export default function BenefitScreen({
               <Skeleton height={16} width="80%" radius={6} />
             </View>
           ) : (
-            <ThemedText
-              type="body"
-            color={colors.textSecondary}
-            >
+            <ThemedText type="body" color={colors.textSecondary}>
               {benefit?.description}
             </ThemedText>
           )}
 
           <View style={styles.pillsRow}>
-            <View
-              style={[
-                styles.pill,
-                { backgroundColor: `${colors.primary}14` },
-              ]}
-            >
-              <MaterialIcons
-                name="schedule"
-                size={14}
-                color={colors.primary}
-              />
-              <Text style={[styles.pillText, { color: colors.primary }]}>
-                Diciembre
-              </Text>
-            </View>
-
-            <View
-              style={[
-                styles.pill,
-                { backgroundColor: `${colors.success}14` },
-              ]}
-            >
-              <MaterialIcons
-                name="check-circle"
-                size={14}
-                color={colors.success}
-              />
-              <Text style={[styles.pillText, { color: colors.success }]}>
-                Disponible
-              </Text>
-            </View>
+            <Badge
+              text="Diciembre"
+              variant="info"
+              icon="schedule"
+              size="medium"
+            />
+            <Badge
+              text="Disponible"
+              variant="success"
+              icon="check-circle"
+              size="medium"
+            />
           </View>
-
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => onRedeem?.(benefit.id)}
-            disabled={isPending}
-            style={styles.ctaWrap}
-          >
-            <LinearGradient
-              colors={[colors.primaryLight, colors.primaryDark]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[
-                styles.ctaButton,
-                isPending && { opacity: 0.85 },
-              ]}
-            >
-              {isPending ? (
-                <>
-                  <MaterialIcons
-                    name="autorenew"
-                    size={20}
-                    color={Colors.cardTextDark}
-                  />
-                  <Text style={styles.ctaText}>Procesando…</Text>
-                </>
-              ) : (
-                <Text style={styles.ctaText}>Redimir beneficio</Text>
-              )}
-            </LinearGradient>
-          </TouchableOpacity>
+          {/* <PrimaryButton
+            variant="primary"
+            title="Redimir beneficio"
+            textStyle={{
+              color: Colors.cardTextDark,
+            }}
+            onPress={() => onRedeem?.(benefit.id, benefit.title)}
+            disabled={isLoadingRedeem || sucessRedeem}
+            loading={isLoadingRedeem}
+          /> */}
         </View>
       </ScrollView>
     </Screen>
@@ -224,23 +163,6 @@ const styles = StyleSheet.create({
     }),
   },
 
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 18,
-    alignSelf: "flex-start",
-    marginBottom: 24,
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 1,
-    color: "#fff",
-  },
-
   sectionTitle: {
     fontSize: 20,
     fontWeight: "700",
@@ -257,18 +179,6 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 8,
     marginBottom: 32,
-  },
-  pill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 14,
-  },
-  pillText: {
-    fontSize: 12,
-    fontWeight: "700",
   },
 
   ctaWrap: {

@@ -1,78 +1,131 @@
-import EmptySvg from '@/assets/svg/Empty.svg';
-import BodyText from '@/src/components/shared/BodyText';
-import { Screen } from '@/src/components/shared/Screen';
-import TitleText from '@/src/components/shared/TitleText';
-import TabBar from '@/src/modules/home/components/TabBar';
-import { Benefits } from '@/src/types/shared/Benefits.type';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
-import { router } from 'expo-router';
-import { AnimatePresence, MotiView } from 'moti';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../../../context/AuthContext';
-import { useTheme } from '../../../context/ThemeContext';
-import ItemUnique from '../components/ItemUnique';
+import EmptySvg from "@/assets/svg/Empty.svg";
 
+import { Screen } from "@/src/components/shared/Screen";
+import ThemedText from "@/src/components/shared/themed-text";
+import ErrorScreen from "@/src/components/ui/ErrorScreen";
+import { useAuth } from "@/src/context/AuthContext";
+import { Benefits } from "@/src/types/shared/Benefits.type";
+import { router, useFocusEffect } from "expo-router";
+import { AnimatePresence } from "moti";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../../context/ThemeContext";
+import TabBar from "../../home/components/TabBar";
+import BenefitsList from "../components/BenefitsList";
+import BenefitsListSkeleton from "../components/BenefitsListSkeleton";
+import { useCancel } from "../hooks/useCancelBenefits";
+import { useRedemed } from "../hooks/useRedem";
+import { BeneficiosScreenProps } from "../types/benefits.types";
 
-
-
-export default function BeneficiosScreen() {
-  const { membership, loading } = useAuth();
-  const { colors } = useTheme();
-  const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'todos' | 'canjeados'>('todos');
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['50%', '75%'], []);
-
-  const handleOpenBottomSheet = useCallback(() => {
-    bottomSheetRef.current?.snapToIndex(0);
-  }, []);
-
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        opacity={0.5}
-        pressBehavior="close"
-      />
-    ),
-    []
-  );
-
-  if (!membership) {
+export default function BeneficiosScreen({
+  refreshing,
+  activeTab,
+  membership,
+  setActiveTab,
+  onRefresh,
+  loading,
+  error,
+}: BeneficiosScreenProps & { error?: any }) {
+  if (error) {
     return (
-      <Screen>
-        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: 'transparent' }}>
-          <Text style={{ color: colors.text }}>Cargando información de membresía...</Text>
-        </SafeAreaView>
-      </Screen>
+      <ErrorScreen
+        message={
+          error?.message ||
+          "Ocurrió un error al cargar los beneficios. Intenta nuevamente."
+        }
+      />
     );
   }
+  const { colors } = useTheme();
+  const { mutate, isPending, isError: isErrorRedeem } = useRedemed();
+  const { mutate: mutateCancel, isError: isErrorCancel } = useCancel();
+  const { user } = useAuth();
+  const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
+  const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
+    membership?.benefit_redeem,
+  );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setBenefitsRedemed(membership?.benefit_redeem);
+    }, [membership]),
+  );
 
-
-  const benefits = membership.benefits;
-
-  const anyCanjeados = benefits.some((b: any) => (b.used || 0) > 0);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    setRefreshing(false);
-  };
+  const benefits = membership?.benefits;
+  const benefitsUsed = membership?.benefits_used || [];
+  const anyCanjeados = benefitsUsed.length > 0;
 
   const handleBenefitPress = (benefit: Benefits) => {
     router.push(`/benefits/${benefit.id}`);
   };
 
-  if (!benefits) {
+  const handleApplyBenefit = (
+    benefit: Benefits,
+    action: "aplicar" | "cancelar",
+  ) => {
+    if (action === "aplicar") {
+      setActiveBenefitId(String(benefit.id));
+      setBenefitsRedemed({
+        procedimiento: benefit.title,
+        id_procedimiento: String(benefit.id),
+        estado: "En espera",
+      });
+      mutate(
+        {
+          telefono: user?.user_phone || "0000000000",
+          nombre: user?.user_name || "Nombre Usuario",
+          procedimiento: benefit.title,
+          identificacion: user?.user_identificacion || "00000000",
+          sede: user?.user_sede || "Sede Principal",
+          user_id: String(user?.user_id || ""),
+          procedimiento_id: String(benefit.id),
+        },
+        {
+          onSuccess: (data) => {
+            if (!data.success) {
+              setActiveBenefitId(null);
+              setBenefitsRedemed(null);
+            }
+          },
+          onError: () => {
+            setActiveBenefitId(null);
+            setBenefitsRedemed(null);
+          },
+        },
+      );
+    } else {
+      setActiveBenefitId(null);
+      setBenefitsRedemed(null);
+      mutateCancel(
+        {
+          user_id: String(user?.user_id || ""),
+          procedimiento_id: String(benefit.id),
+        },
+        {
+          onError: () => {
+            setActiveBenefitId(String(benefit.id));
+          },
+        },
+      );
+    }
+  };
+
+  if (loading || !benefits) {
     return (
       <Screen>
-        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: 'transparent' }}>
-          <Text style={{ color: colors.text }}>No hay beneficios disponibles.</Text>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 16,
+            backgroundColor: "transparent",
+          }}
+        >
+          <View style={{ width: "100%", flex: 1 }}>
+            <BenefitsListSkeleton />
+          </View>
         </SafeAreaView>
       </Screen>
     );
@@ -83,88 +136,95 @@ export default function BeneficiosScreen() {
       <View style={styles.container}>
         <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
           <TabBar
-            options={[{ key: 'todos', label: 'Todos' }, { key: 'canjeados', label: 'Canjeados' }]}
+            options={[
+              { key: "disponibles", label: "Disponibles" },
+              { key: "canjeados", label: "Canjeados" },
+            ]}
             activeTab={activeTab}
-            setActiveTab={(tab) => setActiveTab(tab as any)}
+            setActiveTab={(tab: string) =>
+              setActiveTab(tab as "disponibles" | "canjeados")
+            }
           />
         </View>
 
-        <View style={{ flex: 1, position: 'relative' }}>
+        {(isErrorRedeem || isErrorCancel) && (
+          <ErrorScreen
+            message={
+              isErrorRedeem
+                ? "Ocurrió un error al canjear el beneficio. Intenta de nuevo."
+                : "Ocurrió un error al cancelar el canje. Intenta de nuevo."
+            }
+          />
+        )}
+
+        <View style={{ flex: 1, position: "relative" }}>
           <AnimatePresence exitBeforeEnter>
-            {activeTab === 'todos' && (
-              <MotiView
-                key="todos"
-                from={{ opacity: 0, translateX: 25 }}
-                animate={{ opacity: 1, translateX: 0 }}
-                exit={{ opacity: 0, translateX: -25 }}
-                transition={{ type: 'timing', duration: 150 }}
-                style={styles.absoluteFill}
-              >
-                <FlatList
-                  data={benefits}
-                  keyExtractor={(item) => item.id.toString()}
-                  renderItem={({ item }) => (
-                    <ItemUnique data={item} loading={loading} onPress={() => handleBenefitPress(item)} />
-                  )}
-                  ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-                  ListEmptyComponent={
-                    <View style={{ padding: 32, alignItems: 'center' }}>
-                      <Text style={{ fontSize: 16, color: colors.textLight, textAlign: 'center' }}>
-                        No cuentas con beneficios disponibles
-                      </Text>
-                    </View>
-                  }
-                  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.primary} />}
-                  contentContainerStyle={{ paddingVertical: 16 }}
-                  showsVerticalScrollIndicator={false}
-                />
-              </MotiView>
+            {activeTab === "disponibles" && (
+              <BenefitsList
+                benefits={benefits}
+                benefitsUsed={benefitsUsed}
+                benefitsRedemed={benefitsRedemed}
+                loading={loading}
+                activeBenefitId={activeBenefitId}
+                isPendingRedeem={isPending}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                onBenefitRedemed={handleApplyBenefit}
+                onBenefitViewDetails={handleBenefitPress}
+                emptyMessage="No cuentas con beneficios disponibles"
+                filterUsed="available"
+                animationKey="disponibles"
+              />
             )}
 
-            {activeTab === 'canjeados' && (
-              <MotiView
-                key="canjeados"
-                from={{ opacity: 0, translateX: 25 }}
-                animate={{ opacity: 1, translateX: 0 }}
-                exit={{ opacity: 0, translateX: -25 }}
-                transition={{ type: 'timing', duration: 150 }}
-                style={[styles.absoluteFill, { paddingHorizontal: 16 }]}
-              >
-                {anyCanjeados ? (
+            {activeTab === "canjeados" && (
+              <>
+                {!anyCanjeados ? (
                   <View style={styles.emptyContainer}>
-                    <EmptySvg width={240} height={240} style={styles.emptyImage} />
-                    <TitleText style={[styles.emptyTitle, { color: colors.primaryLight }]}>No hay beneficios canjeados</TitleText>
-                
-                    <BodyText style={[styles.emptyBody, { color: colors.textSecondary }]}>Cuando canjees un beneficio, aparecerá aquí para que lo revises y lo uses.</BodyText>
+                    <EmptySvg
+                      width={240}
+                      height={240}
+                      style={styles.emptyImage}
+                    />
+                    <ThemedText
+                      type="title"
+                      style={[
+                        styles.emptyTitle,
+                        { color: colors.primaryLight },
+                      ]}
+                    >
+                      No hay beneficios canjeados
+                    </ThemedText>
+
+                    <ThemedText
+                      style={[
+                        styles.emptyBody,
+                        { color: colors.textSecondary },
+                      ]}
+                    >
+                      Cuando canjees un beneficio, aparecerá aquí para que lo
+                      revises y lo uses.
+                    </ThemedText>
                   </View>
                 ) : (
-                  <View>
-                    <Text style={{ color: colors.text }}>Lista de beneficios canjeados</Text>
-                  </View>
+                  <BenefitsList
+                    activeBenefitId={activeBenefitId}
+                    benefits={benefits}
+                    benefitsUsed={benefitsUsed}
+                    loading={loading}
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    onBenefitRedemed={handleApplyBenefit}
+                    onBenefitViewDetails={handleBenefitPress}
+                    emptyMessage="No cuentas con beneficios canjeados"
+                    filterUsed="used"
+                    animationKey="canjeados-list"
+                  />
                 )}
-              </MotiView>
-            )} 
+              </>
+            )}
           </AnimatePresence>
         </View>
-
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={-1}
-          snapPoints={snapPoints}
-          enablePanDownToClose={true}
-          backdropComponent={renderBackdrop}
-          backgroundStyle={{ backgroundColor: colors.background }}
-          handleIndicatorStyle={{ backgroundColor: colors.textLight }}
-        >
-          <BottomSheetView style={[styles.bottomSheetContent, { backgroundColor: colors.background }]}> 
-            <Text style={[styles.bottomSheetTitle, { color: colors.text }]}> 
-              Filtros
-            </Text>
-            <Text style={{ color: colors.text, textAlign: 'center', marginTop: 20 }}>
-              contenido de los filtros
-            </Text>
-          </BottomSheetView>
-        </BottomSheet>
       </View>
     </Screen>
   );
@@ -180,17 +240,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
 
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
+    borderBottomColor: "rgba(0,0,0,0.05)",
   },
   searchFilterRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   searchContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
@@ -198,7 +258,7 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     fontSize: 20,
-    fontWeight: '400',
+    fontWeight: "400",
   },
   searchInput: {
     flex: 1,
@@ -209,12 +269,12 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   filterIcon: {
     fontSize: 20,
-    color: '#fff',
+    color: "#fff",
   },
   bottomSheetContent: {
     flex: 1,
@@ -222,39 +282,35 @@ const styles = StyleSheet.create({
   },
   bottomSheetTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
   },
 
   absoluteFill: {
-    position: 'absolute',
+    position: "absolute",
     inset: 0,
     flex: 1,
-    width: '100%',
+    width: "100%",
     marginTop: 10,
   },
 
   emptyContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
     paddingTop: 40,
   },
   emptyImage: {},
   emptyTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 6,
   },
   emptySubtitle: {
-    fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 4,
   },
   emptyBody: {
-    fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 2,
     marginBottom: 2,
     paddingHorizontal: 16,
@@ -262,6 +318,6 @@ const styles = StyleSheet.create({
 
   noCitasText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

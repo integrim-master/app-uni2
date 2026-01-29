@@ -1,18 +1,20 @@
-import { useTheme } from '@/src/context/ThemeContext';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Stack } from 'expo-router';
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import { useTheme } from "@/src/context/ThemeContext";
+import { LinearGradient } from "expo-linear-gradient";
+import { Stack } from "expo-router";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 export default function HomeLayout() {
   const { colors } = useTheme();
-  
+
   return (
     <Stack
       screenOptions={{
         headerShown: true,
-        headerTitleAlign: 'center',
-        headerTintColor: 'white',
+        headerTitleAlign: "center",
+        headerTintColor: "white",
+        headerShadowVisible: false,
+        headerTransparent: false,
         headerBackground: () => (
           <LinearGradient
             colors={colors.gradientBackground}
@@ -23,20 +25,20 @@ export default function HomeLayout() {
         ),
       }}
     >
-    <Stack.Screen
-  name="index"
-  options={{
-    title: "Beneficios",
-    headerShown: true,
-  }}
-/>
-<Stack.Screen
-  name="[id_benefits]/index"
-  options={{
-    title: "Tus solicitudes",
-    headerShadowVisible: false,
-  }}
-/>
+      <Stack.Screen
+        name="index"
+        options={{
+          title: "Beneficios",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="[id_benefits]/index"
+        options={{
+          title: "Tus solicitudes",
+          headerShadowVisible: false,
+        }}
+      />
     </Stack>
   );
 }

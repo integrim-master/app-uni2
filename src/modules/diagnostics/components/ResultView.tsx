@@ -1,9 +1,14 @@
 import { Card } from "@/src/components/shared/card";
+import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
+import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { TratamientoCareme } from "@/src/types/shared/Benefits.type";
+import { normalizeString } from "@/src/utils/stringUtils";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useMemo } from "react";
+import * as secureStore from "expo-secure-store";
+import React, { useEffect, useMemo } from "react";
 import {
   Image,
   Pressable,
@@ -16,22 +21,8 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-
-interface DiagnosticResponse {
-  diagnostico: Record<string, string>;
-  procedimientos: string[];
-}
-
-type ResultViewProps = {
-  photoUri?: {
-    uri: string;
-    type?: string;
-    fileName?: string;
-  };
-  diagnostic: DiagnosticResponse[];
-  onReset: () => void;
-  onClose?: () => void;
-};
+import { ResultViewProps } from "../types/diagnostics.types";
+import TreatmentCard from "./TreatmentCard";
 
 export default function ResultView({
   photoUri,
@@ -41,14 +32,64 @@ export default function ResultView({
 }: ResultViewProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const data = diagnostic?.[0];
+
+  const [treatments, setTreatments] = React.useState<any>(null);
+
+  const tratamientos = async () => {
+    let data = await secureStore.getItemAsync("auth_data");
+    if (data) {
+      const parsed = JSON.parse(data);
+
+      const tratamientosCareme = Array.isArray(parsed.tratamientos_careme)
+        ? parsed.tratamientos_careme.flatMap((item: TratamientoCareme) => item)
+        : [];
+      setTreatments(tratamientosCareme);
+    }
+  };
+
+  useEffect(() => {
+    tratamientos();
+  }, []);
+
+  const data = diagnostic?.analysis?.[0] || diagnostic;
+  const imageUri =
+    photoUri?.uri || diagnostic?.photoUri?.uri || diagnostic?.imagen;
+  const diagnosticoArray = data?.diagnostico || [];
+  const procedimientosString = data?.procedimientos || "";
+  const procedimientosArray =
+    typeof procedimientosString === "string"
+      ? procedimientosString.split("\n").filter(Boolean)
+      : Array.isArray(procedimientosString)
+        ? procedimientosString
+        : [];
 
   const procChips = useMemo(
-    () => data?.procedimientos.map((p) => ({ key: p, label: p })) ?? [],
-    [data]
+    () =>
+      procedimientosArray.map((p: string) => {
+        const pNormalized = normalizeString(p);
+
+        const treatment = treatments?.find((t: any) => {
+          const titleNormalized = normalizeString(t.title);
+          return (
+            titleNormalized.includes(pNormalized) ||
+            pNormalized.includes(titleNormalized)
+          );
+        });
+
+        return {
+          key: p,
+          label: treatment ? treatment.title : p,
+          link: treatment ? treatment.link : undefined,
+          image: treatment ? treatment.imagen : undefined,
+        };
+      }),
+    [procedimientosArray, treatments],
   );
 
-  if (!data) {
+  if (
+    !data ||
+    (!diagnosticoArray.length && !Object.keys(diagnosticoArray).length)
+  ) {
     return (
       <Screen style={styles.center}>
         <Text style={{ color: colors.textSecondary }}>
@@ -83,7 +124,7 @@ export default function ResultView({
         >
           <Ionicons name="chevron-back" size={24} color={colors.primary} />
         </Pressable>
-        <Pressable
+        {/* <Pressable
           style={[
             styles.closeBtn,
             { top: insets.top + 8, backgroundColor: colors.card },
@@ -91,7 +132,7 @@ export default function ResultView({
           onPress={onClose ?? onReset}
         >
           <MaterialIcons name="close" size={22} color={colors.primary} />
-        </Pressable>
+        </Pressable> */}
 
         <ScrollView
           contentContainerStyle={styles.container}
@@ -112,105 +153,119 @@ export default function ResultView({
               />
             </View>
 
-            <Text style={[styles.title, { color: colors.text }]}>
-              Diagnóstico Facial
-            </Text>
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            <ThemedText type="title">Diagnóstico Facial</ThemedText>
+            <ThemedText type="caption" className="mt-1">
               Análisis clínico asistido por IA
-            </Text>
+            </ThemedText>
           </View>
-          {photoUri && (
+          {imageUri && (
             <Card style={styles.imageCard}>
-              <Image source={{ uri: photoUri as any }} style={styles.image} />
+              <Image source={{ uri: imageUri }} style={styles.image} />
               <View style={styles.imageBadge}>
                 <MaterialIcons name="check-circle" size={16} color="#22c55e" />
-                <Text style={styles.imageBadgeText}>
+                <ThemedText type="caption" style={styles.imageBadgeText}>
                   Imagen analizada correctamente
-                </Text>
+                </ThemedText>
               </View>
             </Card>
           )}
           <View style={styles.sectionRow}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              Evaluación clínica
-            </Text>
+            <ThemedText type="subtitle">Evaluación clínica</ThemedText>
             <View
               style={[
                 styles.counterBadge,
                 { backgroundColor: colors.primary + "15" },
               ]}
             >
-              <Text style={[styles.counterText, { color: colors.primary }]}>
-                {Object.keys(data.diagnostico).length} hallazgos
-              </Text>
+              <ThemedText color={colors.primary} type="caption">
+                {Array.isArray(diagnosticoArray)
+                  ? diagnosticoArray.length
+                  : Object.keys(diagnosticoArray).length}{" "}
+                hallazgos
+              </ThemedText>
             </View>
           </View>
 
-          {Object.entries(data.diagnostico).map(([key, value]) => (
-            <Card key={key} style={styles.diagnosticCard}>
-              <View style={styles.cardHeader}>
-                <View
-                  style={[
-                    styles.iconBox,
-                    { backgroundColor: colors.primary + "15" },
-                  ]}
-                >
-                  <MaterialIcons
-                    name="medical-information"
-                    size={18}
-                    color={colors.primary}
-                  />
-                </View>
-                <Text style={[styles.cardTitle, { color: colors.text }]}>
-                  {key}
-                </Text>
-              </View>
-              <Text style={[styles.cardText, { color: colors.textSecondary }]}>
-                {value}
-              </Text>
-            </Card>
-          ))}
+          {Array.isArray(diagnosticoArray)
+            ? diagnosticoArray.map((item: any, index: number) => (
+                <Card key={index} style={styles.diagnosticCard}>
+                  <View style={styles.cardHeader}>
+                    <View
+                      style={[
+                        styles.iconBox,
+                        { backgroundColor: colors.primary + "15" },
+                      ]}
+                    >
+                      <MaterialIcons
+                        name="medical-information"
+                        size={18}
+                        color={colors.primary}
+                      />
+                    </View>
+                    <Text style={[styles.cardTitle, { color: colors.text }]}>
+                      {item.nombre_diagnostico}
+                    </Text>
+                  </View>
+                  <Text
+                    style={[styles.cardText, { color: colors.textSecondary }]}
+                  >
+                    {item.descripcion_diagnostico}
+                  </Text>
+                </Card>
+              ))
+            : Object.entries(diagnosticoArray).map(
+                ([key, value]: [string, any]) => (
+                  <Card key={key} style={styles.diagnosticCard}>
+                    <View style={styles.cardHeader}>
+                      <View
+                        style={[
+                          styles.iconBox,
+                          { backgroundColor: colors.primary + "15" },
+                        ]}
+                      >
+                        <MaterialIcons
+                          name="medical-information"
+                          size={18}
+                          color={colors.primary}
+                        />
+                      </View>
+                      <Text style={[styles.cardTitle, { color: colors.text }]}>
+                        {key}
+                      </Text>
+                    </View>
+                    <Text
+                      style={[styles.cardText, { color: colors.textSecondary }]}
+                    >
+                      {String(value)}
+                    </Text>
+                  </Card>
+                ),
+              )}
 
           {procChips.length > 0 && (
             <>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                Recomendaciones personalizadas
-              </Text>
+              <View style={styles.sectionRow}>
+                <ThemedText type="subtitle">
+                  Tratamientos recomendados
+                </ThemedText>
+              </View>
 
-              <View style={styles.chipsWrap}>
-                {procChips.map((c) => (
-                  <View
-                    key={c.key}
-                    style={[
-                      styles.chip,
-                      {
-                        backgroundColor: colors.card,
-                        borderColor: colors.primary + "30",
-                      },
-                    ]}
-                  >
-                    <MaterialIcons
-                      name="spa"
-                      size={16}
-                      color={colors.primary}
+              <View style={styles.treatmentsGrid}>
+                {procChips
+                  .filter((c) => c.link !== undefined)
+                  .map((c) => (
+                    <TreatmentCard
+                      key={`card-${c.key}`}
+                      title={c.label}
+                      image={c.image}
+                      link={c.link}
                     />
-                    <Text
-                      style={[styles.chipText, { color: colors.textSecondary }]}
-                    >
-                      {c.label}
-                    </Text>
-                  </View>
-                ))}
+                  ))}
               </View>
             </>
           )}
 
-          <Pressable
-            style={[styles.button, { backgroundColor: colors.primary }]}
-            onPress={onReset}
-          >
-            <Text style={styles.buttonText}>Realizar nuevo diagnóstico</Text>
-          </Pressable>
+          <PrimaryButton title="Realizar nuevo diagnóstico" onPress={onReset} />
         </ScrollView>
       </SafeAreaView>
     </Screen>
@@ -361,6 +416,15 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontSize: 14,
+  },
+  treatmentsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    gap: 1,
+    rowGap: 18,
+    marginBottom: 32,
+    paddingHorizontal: 2,
   },
   button: {
     paddingVertical: 18,

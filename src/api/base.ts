@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 const api = axios.create({
-  baseURL: 'https://admin.alangonzalez.com/',
+  baseURL: "https://api.careme360.com",
   timeout: 10000,
 });
 
@@ -22,19 +22,17 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-
-
 api.interceptors.response.use(
   (res) => res,
   (error) => {
     const status = error.response?.status;
 
-    // if (status === 401) {
-    //   return Promise.reject({
-    //     status,
-    //     message: "Tu sesión ha expirado. Inicia sesión nuevamente.",
-    //   });
-    // }
+    if (status === 401) {
+      return Promise.reject({
+        status,
+        message: "Tu sesión ha expirado. Inicia sesión nuevamente.",
+      });
+    }
 
     if (status === 403) {
       return Promise.reject({
@@ -57,7 +55,7 @@ api.interceptors.response.use(
         error?.message ||
         "Ha ocurrido un error inesperado.",
     });
-  }
+  },
 );
 
 export default api;

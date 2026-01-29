@@ -28,24 +28,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
           </ThemedText>
         </View>
         <View style={styles.suggestionsContainer}>
-          {/* <BodyText style={{ fontWeight: 500, color: "white" }}>
-            Tratamientos recomendados:
-          </BodyText> */}
-          {/* <FlatList
-            data={[
-              { id: "1", title: "Sugerencia 1" , link: "/suggest"},
-              { id: "2", title: "Sugerencia 2" },
-              { id: "3", title: "Sugerencia 3" },
-              { id: "4", title: "Sugerencia 3" },
-              { id: "5", title: "Sugerencia 3" },
-              { id: "8", title: "Sugerencia 3" },
-            ]}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => <SuggestionItem title={item.title} />}
-            keyExtractor={(item) => item.id}
-            style={styles.suggestionsList}
-          /> */}
+          {/* <ThemedText type="subtitle">Tus proximas citas:</ThemedText> */}
 
           <ThemedText color={colors.textSecondary}>
             Tu bienestar es nuestra prioridad
@@ -60,8 +43,8 @@ const styles = StyleSheet.create({
   headerContainer: {
     display: "flex",
     flexDirection: "column",
-    marginTop: 20,
-    height: 100,
+    marginTop: 2,
+    height: 130,
 
     paddingHorizontal: 15,
     justifyContent: "center",
@@ -114,7 +97,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     marginBottom: 10,
-    paddingBottom: 20,
   },
   suggestionsList: {},
   primaryText: {

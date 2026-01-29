@@ -1,20 +1,31 @@
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
+import ThemedText from "@/src/components/shared/themed-text";
 import { Link } from "expo-router";
 import React from "react";
 import {
   ImageBackground,
-  Pressable,
   StyleSheet,
-  Text,
   useWindowDimensions,
   View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
-import Carousel, { ICarouselInstance, Pagination } from "react-native-reanimated-carousel";
+import Carousel, {
+  ICarouselInstance,
+  Pagination,
+} from "react-native-reanimated-carousel";
 import Campana from "../../../../assets/images/campana.jpg";
 import { useTheme } from "../../../context/ThemeContext";
+import { ui } from "../../../themes/ui";
+import { Promotion } from "../types/promotions.types";
+import PromotionsCarouselSkeleton from "./PromotionsCarouselSkeleton";
 
-export const PromotionsCarousel: React.FC = () => {
+export const PromotionsCarousel = ({
+  isLoading = false,
+  promotions,
+}: {
+  promotions: Promotion[];
+  isLoading?: boolean;
+}) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
   const ref = React.useRef<ICarouselInstance>(null);
@@ -27,33 +38,23 @@ export const PromotionsCarousel: React.FC = () => {
     });
   };
 
-  const CARD_WIDTH = layout.width * 0.88; 
+  const CARD_WIDTH = layout.width * 0.88;
   const CARD_HEIGHT = 150;
+
+  if (isLoading) {
+    return <PromotionsCarouselSkeleton />;
+  }
 
   return (
     <View style={styles.promotionSection}>
       <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitleMain, { color: colors.text }]}>
+        <ThemedText
+          type="subtitle"
+          color={colors.textDark}
+          className="font-bold"
+        >
           Promociones exclusivas
-        </Text>
-
-        <Link asChild href={`https://careme360.com/descubre-nuestras-promociones`}>
-          <Pressable>
-            {({ pressed }) => (
-              <Text
-                style={[
-                  styles.seeAllLink,
-                  {
-                    color: colors.textSecondary,
-                    opacity: pressed ? 0.5 : 1,
-                  },
-                ]}
-              >
-                Ver todas
-              </Text>
-            )}
-          </Pressable>
-        </Link>
+        </ThemedText>
       </View>
 
       <Carousel
@@ -64,15 +65,15 @@ export const PromotionsCarousel: React.FC = () => {
         autoPlay
         autoPlayInterval={4000}
         scrollAnimationDuration={900}
-        data={[...Array(5).keys()]}
+        data={promotions}
         onProgressChange={progress}
-        mode="parallax"            
+        mode="parallax"
         modeConfig={{
           parallaxScrollingScale: 0.9,
           parallaxScrollingOffset: 50,
         }}
         style={{ alignSelf: "center" }}
-        renderItem={({ index }) => (
+        renderItem={({ item }) => (
           <View style={styles.slideContainer}>
             <ImageBackground
               style={[
@@ -83,7 +84,7 @@ export const PromotionsCarousel: React.FC = () => {
                   borderColor: colors.borderLight,
                 },
               ]}
-              source={Campana}
+              source={item.image ? { uri: item.image } : Campana}
               resizeMode="cover"
             >
               <View
@@ -94,14 +95,31 @@ export const PromotionsCarousel: React.FC = () => {
               />
 
               <View style={styles.promotionOverlay}>
-                <Text style={styles.promotionTitle}>Extreme Young</Text>
+                <ThemedText
+                  className="mb-2"
+                  type="subtitle"
+                  style={styles.promotionTitle}
+                >
+                  {item.title}
+                </ThemedText>
 
                 <Link
                   asChild
-                  href={`https://wa.me/+573170366805?text=Hola%2C+quiero+saber+mas+informaci%C3%B3n+sobre+la+promoci%C3%B3n+de+EXTREME+YOUNG%2C+vengo+del+link+https%3A%2F%2Fcareme360.com%2Fpromocion%2Fextreme-young%2F`}
+                  href={
+                    item.link_promotion.startsWith("http")
+                      ? item.link_promotion
+                      : `https://${item.link_promotion}`
+                  }
                 >
-                  <PrimaryButton title="Solicitar ahora" style={styles.promotionButton} />
+                  <PrimaryButton
+                    title="Ver promoción"
+                    textStyle={styles.promotionButton}
+                    onPress={() => {}}
+                  />
                 </Link>
+                <ThemedText type="caption" className="mt-2">
+                  {item.fecha_fin ? `Válido hasta: ${item.fecha_fin}` : ""}
+                </ThemedText>
               </View>
             </ImageBackground>
           </View>
@@ -110,7 +128,7 @@ export const PromotionsCarousel: React.FC = () => {
 
       <Pagination.Basic
         progress={progress}
-        data={[...Array(5).keys()]}
+        data={promotions}
         dotStyle={{
           backgroundColor: colors.secondary,
           borderRadius: 5,
@@ -144,23 +162,17 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     paddingHorizontal: 6,
   },
-  sectionTitleMain: {
-    fontWeight: "600",
-    fontSize: 18,
-  },
-  seeAllLink: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
+  sectionTitleMain: {},
+  seeAllLink: {},
 
   slideContainer: {
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 8,  
+    paddingHorizontal: 8,
   },
 
   promotionBanner: {
-    borderRadius: 18,
+    borderRadius: ui.radii.lg,
     borderWidth: 1,
     overflow: "hidden",
     padding: 14,
@@ -169,30 +181,23 @@ const styles = StyleSheet.create({
 
   overlayContrast: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 18,
+    borderRadius: ui.radii.lg,
     zIndex: 1,
   },
 
   promotionOverlay: {
     zIndex: 2,
+    display: "flex",
+    justifyContent: "center",
+    paddingBottom: 10,
+    alignItems: "flex-start",
   },
 
   promotionTitle: {
-    color: "#fff",
-    fontSize: 20,
     fontWeight: "700",
-    marginBottom: 10,
   },
 
   promotionButton: {
-    color: "white",
-    fontWeight: "600",
-    borderRadius: 22,
-    fontSize: 14,
-    paddingHorizontal: 18,
-    alignSelf: "flex-start",
-
-
-
+    fontWeight: "800",
   },
 });

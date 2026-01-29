@@ -1,48 +1,13 @@
 import { useTheme } from "@/src/context/ThemeContext";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import HomeHeader from "@/src/modules/home/components/HomeHeader";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, usePathname, useRouter } from "expo-router";
 import React from "react";
-import {
-  Image,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, StyleSheet } from "react-native";
 export default function HomeLayout() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
-
-  const HomeHeader = () => (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-        paddingHorizontal: 11,
-      }}
-    >
-      <Image
-        source={
-          isDark
-            ? require("../../../assets/images/logo-careme-white.png")
-            : require("../../../assets/images/logo-careme-black.png")
-        }
-        style={{ width: 120, height: 40, resizeMode: "contain" }}
-      />
-        <TouchableOpacity onPress={() => router.push("/notifications")}>
-          <Ionicons
-            name="notifications-outline"
-            size={28}
-            color={colors.primaryLight}
-          />
-        </TouchableOpacity>
-
-    </View>
-  );
 
   return (
     <Stack
@@ -50,6 +15,8 @@ export default function HomeLayout() {
         headerShown: true,
         headerTitleAlign: "left",
         headerTintColor: "white",
+        headerShadowVisible: false,
+        headerTransparent: false,
         headerTitle: () => <HomeHeader />,
         headerBackground: () => (
           <LinearGradient

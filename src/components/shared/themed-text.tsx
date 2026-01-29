@@ -47,14 +47,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     fontFamily: "Roboto-Medium",
-
   },
 
   title: {
     fontSize: 22,
     lineHeight: 28,
     fontFamily: "Roboto-Bold",
-        fontWeight: "800",
+    fontWeight: "800",
   },
 
   subtitle: {
@@ -64,7 +63,8 @@ const styles = StyleSheet.create({
   },
 
   caption: {
-    fontSize: 12,
+    fontSize: 13,
+
     lineHeight: 16,
     opacity: 0.7,
   },
@@ -75,4 +75,3 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
-

@@ -1,5 +1,6 @@
 
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
   button: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: ui.radii.lg,
     justifyContent: "center",
     alignItems: "center",
  

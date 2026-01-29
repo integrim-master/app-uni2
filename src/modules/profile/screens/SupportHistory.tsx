@@ -1,7 +1,5 @@
 import EmptySvg from '@/assets/svg/Empty.svg';
-import BodyText from '@/src/components/shared/BodyText';
-import SubtitleText from '@/src/components/shared/SubtitleText';
-import TitleText from '@/src/components/shared/TitleText';
+import ThemedText from '@/src/components/shared/themed-text';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
@@ -12,9 +10,9 @@ const SupportHistory: React.FC = () => {
   return (
     <View style={styles.emptyContainer}>
       <EmptySvg width={280} height={280} style={styles.emptyImage} />
-      <TitleText style={[styles.emptyTitle, { color: colors.primaryDark }]}>No hay historial</TitleText>
-      <SubtitleText style={[styles.emptySubtitle, { color: colors.text }]}>Tu historial de soporte aparecerá aquí</SubtitleText>
-      <BodyText style={[styles.emptyBody, { color: colors.textSecondary }]}>Cuando tengas solicitudes resueltas, podrás consultarlas en este espacio.</BodyText>
+      <ThemedText type="title" style={[styles.emptyTitle, { color: colors.primaryDark }]}>No hay historial</ThemedText>
+      <ThemedText type="subtitle" style={[styles.emptySubtitle, { color: colors.text }]}>Tu historial de soporte aparecerá aquí</ThemedText>
+      <ThemedText style={[styles.emptyBody, { color: colors.textSecondary }]}>Cuando tengas solicitudes resueltas, podrás consultarlas en este espacio.</ThemedText>
     </View>
   );
 };
@@ -28,18 +26,14 @@ const styles = StyleSheet.create({
   },
   emptyImage: {},
   emptyTitle: {
-    fontSize: 22,
-    fontWeight: '700',
     textAlign: 'center',
     marginBottom: 4,
   },
   emptySubtitle: {
-    fontSize: 16,
     textAlign: 'center',
     marginBottom: 2,
   },
   emptyBody: {
-    fontSize: 14,
     textAlign: 'center',
     marginTop: 2,
     marginBottom: 2,

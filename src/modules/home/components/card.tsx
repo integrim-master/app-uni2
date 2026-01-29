@@ -1,7 +1,7 @@
-import { Link } from 'expo-router';
-import React, { ReactNode } from 'react';
-import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
+import { Link } from "expo-router";
+import React, { ReactNode } from "react";
+import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
 
 interface CardProps {
   href?: string;
@@ -24,7 +24,6 @@ export function Card({
   borderColor,
   pressedOpacity = 0.5,
 }: CardProps) {
-  
   const { colors } = useTheme();
 
   const cardContent = (
@@ -60,13 +59,13 @@ export function Card({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderWidth: 1,
     width: 174,
     height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,

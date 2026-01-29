@@ -1,10 +1,7 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { useFocusEffect } from "expo-router";
 import React from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
-import { Cita } from "../components/CitaCard";
+import { Cita } from "../types/date.api.types";
 
 interface HistoryCardProps {
   cita: Cita;
@@ -12,66 +9,32 @@ interface HistoryCardProps {
 
 export default function HistoryCard({ cita }: HistoryCardProps) {
   const { colors } = useTheme();
-  const [initials, setInitials] = React.useState("");
-  const [cfg, setCfg] = React.useState<{ color: string; bgGradient: string[]; label: string }>({ color: colors.text, bgGradient: [colors.card, colors.card], label: cita.estado });
-
-  const getEstadoConfig = (estado: string) => {
-    switch (estado) {
-      case "Completada":
-        return { color: colors.success, bgGradient: [colors.success + "22", colors.success + "11"], label: "Completada" };
-      case "Confirmada":
-        return { color: colors.primary, bgGradient: [colors.primary + "22", colors.primary + "10"], label: "Confirmada" };
-      case "Pendiente":
-        return { color: colors.warning, bgGradient: [colors.warning + "22", colors.warning + "10"], label: "Pendiente" };
-      default:
-        return { color: colors.text, bgGradient: [colors.card, colors.card], label: estado };
-    }
-  };
-  
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const cfg = getEstadoConfig(cita.estado);
-        setCfg(cfg);
-  const initials = cita.procedimiento.split(" ").slice(0, 2).map((s) => s[0]).join("").toUpperCase();  
-        setInitials(initials);
-    }, [])
-  );
-
-
 
   return (
     <View style={styles.historyCardWrap}>
-      <LinearGradient
-        colors={[colors.gradientCardStart ?? colors.card, colors.gradientCardEnd ?? colors.card]}
-        style={[styles.historyCard, { borderColor: colors.border }]}
+      <View
+        style={[
+          styles.historyCard,
+          { borderColor: colors.border, backgroundColor: colors.card },
+        ]}
       >
         <View style={styles.historyContent}>
           <View style={styles.leftBlock}>
-            <View style={[styles.avatarCircle, { backgroundColor: colors.primary + "22" }]}>
-              <Text style={[styles.avatarText, { color: colors.primary }]}>{initials}</Text>
-            </View>
-
-            <View style={{ marginLeft: 12, flex: 1 }}>
-              <Text style={[styles.procTitle, { color: colors.text }]} numberOfLines={1}>
-                {cita.procedimiento}
+            <View style={{ marginLeft: 0, flex: 1 }}>
+              <Text
+                style={[styles.procTitle, { color: colors.text }]}
+                numberOfLines={1}
+              >
+                {cita.Procedimiento}
               </Text>
               <Text style={[styles.procMeta, { color: colors.textLight }]}>
-                {cita.especialista} · {formatDate(cita.fecha)} · {cita.hora}
+                {cita.profesional} · {formatDate(cita.fecha_cita)} ·{" "}
+                {cita.hora_cita}
               </Text>
             </View>
           </View>
-
-          <View style={styles.rightBlock}>
-            <LinearGradient colors={cfg.bgGradient as any} style={[styles.statusBadge, { borderColor: colors.border }]}>
-              <MaterialIcons name="check-circle" size={14} color={cfg.color} />
-              <Text style={[styles.statusText, { color: cfg.color }]}>{cfg.label}</Text>
-            </LinearGradient>
-
-            <Ionicons name="chevron-forward" size={20} color={colors.textLight} style={{ marginTop: 8 }} />
-          </View>
         </View>
-      </LinearGradient>
+      </View>
     </View>
   );
 }
@@ -79,7 +42,11 @@ export default function HistoryCard({ cita }: HistoryCardProps) {
 function formatDate(d: string) {
   try {
     const dt = new Date(d);
-    return dt.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+    return dt.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   } catch {
     return d;
   }
@@ -142,5 +109,4 @@ function PlatformSelectShadow() {
       shadowRadius: 20,
     };
   }
-
 }

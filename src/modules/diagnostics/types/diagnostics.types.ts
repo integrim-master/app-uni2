@@ -40,3 +40,23 @@ export type DiagnosticScreenProps = {
   facing: CameraType;
   setFacing: React.Dispatch<React.SetStateAction<CameraType>>;
 };
+
+
+
+export type ResultViewProps = {
+  photoUri?: {
+    uri: string;
+    type?: string;
+    fileName?: string;
+  };
+  diagnostic: any;
+  onReset: () => void;
+  onClose?: () => void;
+};
+
+
+export interface TreatmentCardProps {
+  title: string;
+  image?: string;
+  link?: string;
+}

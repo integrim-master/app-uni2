@@ -1,19 +1,9 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import Badge from "@/src/components/shared/Badge";
 import React from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { Card } from "../../../components/shared/card";
 import { useTheme } from "../../../context/ThemeContext";
-
-export type Cita = {
-  id: number;
-  procedimiento: string;
-  fecha: string;
-  hora: string;
-  especialista: string;
-  estado: string;
-};
+import { Cita } from "../types/date.api.types";
 
 export default function CitaCard({
   cita,
@@ -23,47 +13,11 @@ export default function CitaCard({
   onPress?: () => void;
 }) {
   const { colors } = useTheme();
-
-  const getEstadoConfig = (estado: string) => {
-    switch (estado) {
-      case "Confirmada":
-        return {
-          color: colors.successDark ?? colors.success,
-          icon: "check-circle",
-          gradient: [colors.success + "22", colors.success + "10"],
-          textColor: colors.textDark ?? colors.text,
-        };
-      case "Pendiente":
-        return {
-          color: colors.warningDark ?? colors.warning,
-          icon: "schedule",
-          gradient: [colors.warning + "22", colors.warning + "10"],
-          textColor: colors.textDark ?? colors.text,
-        };
-      case "Completada":
-        return {
-          color: "#A1A1A1",
-          icon: "check",
-          gradient: ["#F3F4F6", "#ECECEC"],
-          textColor: colors.textSecondary,
-        };
-      default:
-        return {
-          color: colors.primary,
-          icon: "help-outline",
-          gradient: [colors.primary + "22", colors.primary + "10"],
-          textColor: colors.textDark ?? colors.text,
-        };
-    }
-  };
-
-  const estadoCfg = getEstadoConfig(cita.estado);
-
   return (
     <Card
-      onPress={() => router.push(`dates/${43}`)}
+      onPress={onPress}
       pressedOpacity={0.96}
-      className=""
+      className="w"
       style={
         [
           styles.card,
@@ -74,60 +28,34 @@ export default function CitaCard({
         ] as any
       }
     >
-      <View style={styles.topArea}>
-        <LinearGradient
-          colors={estadoCfg.gradient as any}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={[
-            styles.badge,
-            {
-              borderColor: colors.gradientCardStart ?? colors.border,
-              shadowColor: colors.shadow ?? "#000",
-              backgroundColor: "transparent",
-            },
-          ]}
-        >
-          <MaterialIcons
-            name={estadoCfg.icon as any}
-            size={12}
-            color={estadoCfg.color}
-          />
-          <Text style={[styles.badgeText, { color: estadoCfg.color }]}>
-            {cita.estado}
-          </Text>
-        </LinearGradient>
-
-        {/* <Ionicons
-          name="chevron-up-circle"
-          size={22}
-          color={colors.textLight}
-          style={styles.icon}
-        /> */}
-      </View>
-
       <View style={styles.content}>
+        <Badge
+          text={cita.categoria}
+          variant="info"
+          size="small"
+          style={{ marginBottom: 6 }}
+        />
         <Text
           style={[styles.procedimiento, { color: colors.text }]}
           numberOfLines={2}
           ellipsizeMode="tail"
         >
-          {cita.procedimiento}
+          {cita.Procedimiento}
         </Text>
 
         <Text
           style={[styles.especialista, { color: colors.textLight }]}
           numberOfLines={1}
         >
-          {cita.especialista}
+          {cita.profesional}
         </Text>
 
         <View style={styles.row}>
           <Text style={[styles.fecha, { color: colors.text }]}>
-            {cita.fecha}
+            {cita.fecha_cita}
           </Text>
           <Text style={[styles.hora, { color: colors.primary }]}>
-            {cita.hora}
+            {cita.hora_cita}
           </Text>
         </View>
       </View>
@@ -156,20 +84,20 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  topArea: {
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 6,
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  icon: {
-    marginLeft: 8,
-    opacity: 0.95,
-  },
+  // topArea: {
+  //   paddingHorizontal: 12,
+  //   paddingTop: 10,
+  //   paddingBottom: 6,
+  //   display: "flex",
+  //   flexDirection: "row",
+  //   width: "100%",
+  //   justifyContent: "flex-start",
+  //   alignItems: "center",
+  // },
+  // icon: {
+  //   marginLeft: 8,
+  //   opacity: 0.95,
+  // },
   content: {
     paddingHorizontal: 14,
     paddingBottom: 12,
@@ -183,34 +111,34 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     lineHeight: 20,
   },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignSelf: "flex-start",
-    gap: 6,
-    marginBottom: 6,
-    ...Platform.select({
-      ios: {
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.12,
-        shadowRadius: 10,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: "800",
-    marginLeft: 6,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-  },
+  // badge: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   paddingHorizontal: 10,
+  //   paddingVertical: 6,
+  //   borderRadius: 12,
+  //   borderWidth: 1,
+  //   alignSelf: "flex-start",
+  //   gap: 6,
+  //   marginBottom: 6,
+  //   ...Platform.select({
+  //     ios: {
+  //       shadowOffset: { width: 0, height: 6 },
+  //       shadowOpacity: 0.12,
+  //       shadowRadius: 10,
+  //     },
+  //     android: {
+  //       elevation: 2,
+  //     },
+  //   }),
+  // },
+  // badgeText: {
+  //   fontSize: 11,
+  //   fontWeight: "800",
+  //   marginLeft: 6,
+  //   textTransform: "uppercase",
+  //   letterSpacing: 0.6,
+  // },
   especialista: {
     fontSize: 13,
     fontWeight: "500",

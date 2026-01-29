@@ -34,17 +34,18 @@ export interface ThemeColors {
   cardTextDark: string;
   gradientCardStart: string;
   gradientCardEnd: string;
-
+  membershipSilverGradient?: [string, string, string];
+  membershipSilverCard?: string;
+  membershipSilverText?: string;
   membershipGoldGradient: [string, string, string];
   membershipBlackGradient: [string, string, string];
   membershipBlackCard?: string;
   membershipBlackText?: string;
 }
 
-
 export const LightTheme: ThemeColors = {
   cardTextDark: "#694610",
-  primary: "#D4AF37", 
+  primary: "#D4AF37",
   primaryLight: "#E8C066", // Dorado claro
   primaryDark: "#B38E2C", // Dorado oscuro
   secondary: "#FFB22C", // Naranja vibrante
@@ -53,6 +54,7 @@ export const LightTheme: ThemeColors = {
   success: "#22C55E", // Verde éxito
   successLight: "#4ADE80", // Verde claro
   successDark: "#16A34A", // Verde oscuro
+
   danger: "#EF4444", // Rojo peligro
   dangerLight: "#F87171", // Rojo claro
   dangerDark: "#B91C1C", // Rojo oscuro
@@ -71,7 +73,7 @@ export const LightTheme: ThemeColors = {
   textSecondaryDorado: "#D4AF37", // Texto dorado claro
   border: "#E5E7EB", // Borde gris claro
   borderLight: "#F3F4F6", // Borde muy claro
-  card: "white", 
+  card: "white",
   gradientBackground: ["#F3F4F6", "#E5E7EB", "#E5E7EB"],
   gradientCard: ["#FFFFFF", "#F9FAFB"],
 
@@ -83,7 +85,6 @@ export const LightTheme: ThemeColors = {
   blue: "#668CE8",
 };
 
-
 // Paleta de Modo Oscuro - Negro, Gris y Dorado
 export const DarkTheme: ThemeColors = {
   cardTextDark: "#694610",
@@ -92,6 +93,9 @@ export const DarkTheme: ThemeColors = {
   primaryDark: "#B38E2C",
   secondary: "#FFB22C",
   secondaryLight: "#FFC966",
+  membershipSilverGradient: ["#E3E3E3", "#BEBEBE", "#A7A7A7"],
+  membershipSilverCard: "#F5F5F5",
+  membershipSilverText: "black",
   secondaryDark: "#CC8E1F",
   success: "#10B981",
   successLight: "#34D399",
@@ -127,7 +131,6 @@ export const DarkTheme: ThemeColors = {
   membershipBlackCard: "#111111",
   membershipBlackText: "#F9FAFB",
 };
-
 
 // Para compatibilidad con código existente
 export const Colors = LightTheme;

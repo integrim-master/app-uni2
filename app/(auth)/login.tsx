@@ -1,9 +1,11 @@
+import ConfirmActionModal from "@/src/components/shared/Modal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
-import TitleText from "@/src/components/shared/TitleText";
+import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useLogin } from "@/src/modules/login/hooks/useLogin";
+import { useTerms } from "@/src/modules/login/hooks/useTerms";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -13,7 +15,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
@@ -21,13 +22,34 @@ import Toast from "react-native-toast-message";
 
 const Login = () => {
   const { colors } = useTheme();
-  const { mutate, isPending, isSuccess, isError, error } = useLogin();
-  const { login } = useAuth();
+  const { mutate, isPending } = useLogin();
+  const { mutate: acceptTerms, isPending: isLoadinPrivacy } = useTerms();
+  const { login, logout } = useAuth();
+
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   const [dataUser, setDataUser] = useState({
     username: "",
     password: "",
   });
+
+  const handleAcceptPrivacy = () => {
+    acceptTerms(undefined, {
+      onSuccess: async () => {
+        setShowPrivacyModal(false);
+        router.replace("/home");
+      },
+      onError: (error: any) => {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2:
+            error?.response?.data?.message ||
+            "No se pudieron aceptar los términos",
+        });
+      },
+    });
+  };
 
   const handleLogin = () => {
     if (!dataUser.username || !dataUser.password) {
@@ -38,6 +60,7 @@ const Login = () => {
       });
       return;
     }
+
     mutate(
       {
         username: dataUser.username,
@@ -45,10 +68,21 @@ const Login = () => {
       },
       {
         onSuccess: async (data) => {
-          await login(data.token, data.user_data, data.membership_data);
-          router.replace("/(tabs)/home");
-        },
+          await login(
+            data.token,
+            data.user_data,
+            data.membership_data,
+            data.tratamientos_careme,
+            data.treatments_suggest,
+            data.promotions,
+          );
 
+          if (data.user_data.user_terms !== "Aceptado") {
+            setShowPrivacyModal(true);
+          } else {
+            router.replace("/home");
+          }
+        },
         onError: (error: any) => {
           Toast.show({
             type: "error",
@@ -58,12 +92,50 @@ const Login = () => {
               "Usuario o contraseña incorrectos",
           });
         },
-      }
+      },
     );
   };
 
   return (
-    <Screen style={[styles.safeArea]}>
+    <Screen style={styles.safeArea}>
+      <ConfirmActionModal
+        visible={showPrivacyModal}
+        title="Política de privacidad"
+        loading={isLoadinPrivacy}
+        variant="warning"
+        confirmText="Aceptar"
+        onConfirm={handleAcceptPrivacy}
+        onCancel={() => {
+          setShowPrivacyModal(false);
+          logout();
+        }}
+        description={
+          <>
+            <ThemedText
+              type="caption"
+              style={{ marginBottom: 20, textAlign: "center" }}
+            >
+              Para continuar, debes aceptar nuestra política de privacidad. Por
+              favor, revisa los términos y condiciones en el siguiente link.
+            </ThemedText>
+
+            <ThemedText
+              type="link"
+              style={{ marginBottom: 20, textAlign: "center" }}
+              onPress={() => {
+                import("react-native").then(({ Linking }) => {
+                  Linking.openURL(
+                    "https://careme360.com/wp-content/uploads/2026/01/POLITICA-DE-TRATAMIENTO-DE-DATOS-CARE-ME-1.pdf",
+                  );
+                });
+              }}
+            >
+              Ver Política de Privacidad
+            </ThemedText>
+          </>
+        }
+      />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -73,7 +145,7 @@ const Login = () => {
           contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={[styles.container]}>
+          <View style={styles.container}>
             <View style={styles.header}>
               <Image
                 source={require("@/assets/images/logo-careme-white.png")}
@@ -86,21 +158,25 @@ const Login = () => {
               style={[styles.formContainer, { backgroundColor: colors.card }]}
             >
               <View style={{ marginBottom: 24, alignItems: "center" }}>
-                <TitleText style={[styles.welcomeText, { color: colors.text }]}>
+                <ThemedText
+                  type="title"
+                  style={[styles.welcomeText, { color: colors.text }]}
+                >
                   Bienvenido
-                </TitleText>
-                <Text
+                </ThemedText>
+                <ThemedText
                   style={[styles.subtitleText, { color: colors.textSecondary }]}
                 >
                   Inicia sesión en tu cuenta
-                </Text>
+                </ThemedText>
               </View>
 
               <View style={styles.inputWrapper}>
-                <Text style={[styles.label, { color: colors.text }]}>
+                <ThemedText style={[styles.label, { color: colors.text }]}>
                   Usuario o Email
-                </Text>
+                </ThemedText>
                 <TextInput
+                  value={dataUser.username}
                   onChangeText={(text) =>
                     setDataUser({ ...dataUser, username: text })
                   }
@@ -118,10 +194,11 @@ const Login = () => {
               </View>
 
               <View style={styles.inputWrapper}>
-                <Text style={[styles.label, { color: colors.text }]}>
+                <ThemedText style={[styles.label, { color: colors.text }]}>
                   Contraseña
-                </Text>
+                </ThemedText>
                 <TextInput
+                  value={dataUser.password}
                   onChangeText={(text) =>
                     setDataUser({ ...dataUser, password: text })
                   }
@@ -135,28 +212,26 @@ const Login = () => {
                   ]}
                   placeholder="Ingresa tu contraseña"
                   placeholderTextColor={colors.textSecondary}
-                  secureTextEntry={true}
+                  secureTextEntry
                 />
               </View>
 
               <Pressable style={styles.forgotPassword}>
-                <Text
+                <ThemedText
                   style={[styles.forgotPasswordText, { color: colors.primary }]}
                 >
                   ¿Olvidaste tu contraseña?
-                </Text>
+                </ThemedText>
               </Pressable>
 
               <PrimaryButton
                 title="Iniciar Sesión"
                 onPress={handleLogin}
                 loading={isPending}
-                gradientColors={
-                  [
-                    colors.primaryLight,
-                    colors.primaryDark ?? colors.primaryLight,
-                  ] as any
-                }
+                gradientColors={[
+                  colors.primaryLight,
+                  colors.primaryDark ?? colors.primaryLight,
+                ]}
               />
 
               <View
@@ -190,14 +265,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   welcomeText: {
-    fontSize: 28,
-    fontWeight: "800",
     marginBottom: 8,
   },
-  subtitleText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
+  subtitleText: {},
   formContainer: {
     borderRadius: 10,
     padding: 28,
@@ -207,8 +277,6 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   label: {
-    fontSize: 13,
-    fontWeight: "600",
     marginBottom: 8,
   },
   input: {
@@ -222,10 +290,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     alignSelf: "center",
   },
-  forgotPasswordText: {
-    fontSize: 13,
-    fontWeight: "500",
-  },
+  forgotPasswordText: {},
   divider: {
     height: 1,
     marginVertical: 16,

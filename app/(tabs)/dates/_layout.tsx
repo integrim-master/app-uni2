@@ -30,7 +30,6 @@ export default function HomeLayout() {
           headerShadowVisible: false,
         }}
       />
-          
 
       <Stack.Screen
         name="[date_id]/index"

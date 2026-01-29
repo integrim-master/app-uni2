@@ -1,12 +1,16 @@
+import Badge from "@/src/components/shared/Badge";
+import { TratamientoCareme } from "@/src/types/shared/Benefits.type";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { memo } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
-import { BeneficiosProps, ItemsBenefitsProps } from "../types/home.types";
+import { ui } from "../../../themes/ui";
+import TreatmentCard from "../../diagnostics/components/TreatmentCard";
+import { SuggestedTreatmentsListProps } from "../types/treatments.suggest.types";
 
-const ItemBenefit = memo(({ data }: ItemsBenefitsProps) => {
+const ItemBenefit = memo(({ treatment }: { treatment: TratamientoCareme }) => {
   const { colors } = useTheme();
 
   return (
@@ -27,14 +31,14 @@ const ItemBenefit = memo(({ data }: ItemsBenefitsProps) => {
         ]}
       >
         <View style={styles.info}>
-          <View className="flex flex-row justify-between items-center">
-            <View
-              style={[styles.badge, { backgroundColor: `${colors.primary}22` }]}
-            >
-              <Text style={[styles.badgeText, { color: colors.primary }]}>
-                {data.title}
-              </Text>
-            </View>
+          <View className="flex flex-row mb-1 justify-between items-center">
+            <Badge
+              text={treatment.title}
+              variant="warning"
+              icon="health-and-safety"
+              size="small"
+              layout="horizontal"
+            />
             <Ionicons name="chevron-forward" size={22} color={colors.primary} />
           </View>
           <Text
@@ -52,26 +56,33 @@ const ItemBenefit = memo(({ data }: ItemsBenefitsProps) => {
   );
 });
 
-export function Beneficios({ benefits }: BeneficiosProps) {
+export function SuggestedTreatmentsList({
+  SuggestedTreatments,
+}: SuggestedTreatmentsListProps) {
   return (
     <FlatList
-      data={benefits}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => <ItemBenefit data={item} />}
+      data={SuggestedTreatments}
+      keyExtractor={(item, index) =>
+        item.id ? item.id.toString() : index.toString()
+      }
+      renderItem={({ item }) => (
+        <TreatmentCard title={item.title} image={item.image} link={item.link} />
+      )}
+      numColumns={2}
       scrollEnabled={false}
       contentContainerStyle={{ paddingBottom: 4 }}
+      columnWrapperStyle={{ gap: 12, justifyContent: "space-between" }}
     />
   );
 }
-
 const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: ui.radii.lg,
+    borderWidth: ui.borders.width,
 
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
@@ -98,7 +109,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: ui.radii.md,
     marginTop: 4,
   },
 

@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { AnimatePresence, MotiView } from "moti";
 import React, { useMemo, useRef, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import CitaCard from "../components/CitaCard";
 
@@ -88,24 +88,17 @@ export default function DatesScreen({ dates, isLoading }: DatesScreenProps) {
                 >
                   <FlatList
                     data={citasUpcoming}
-                    keyExtractor={(item) => `cita-${item.id}`}
-                    renderItem={({ item }) => <CitaCard  cita={item} />}
+                   
+                    keyExtractor={(item, index) => {
+                      const keyBase = `${item?.fecha_cita ?? ""}-${item?.hora_cita ?? ""}-${item?.Procedimiento ?? ""}`;
+                      return `cita-${keyBase || index}`;
+                    }}
+                    renderItem={({ item }) => <CitaCard cita={item} />}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{
-                      paddingBottom: 64,
-                      paddingHorizontal: 16,
+                      paddingHorizontal: 10,
                     }}
-                    ListFooterComponent={
-                      <Pressable
-                        onPress={openFilters}
-                        style={[
-                          styles.floatingButton,
-                          { backgroundColor: colors.primary },
-                        ]}
-                      >
-                        <Ionicons name="filter" size={24} color="#fff" />
-                      </Pressable>
-                    }
+                    
                   />
                 </MotiView>
               )}
@@ -119,9 +112,7 @@ export default function DatesScreen({ dates, isLoading }: DatesScreenProps) {
                   transition={{ type: "timing", duration: 150 }}
                   style={[styles.absoluteFill, { paddingHorizontal: 16 }]}
                 >
-                  <Text style={[styles.historyTitle, { color: colors.text }]}>
-                    Historial de citas
-                  </Text>
+          
 
                   {citasHistory.length === 0 ? (
                     <View style={styles.emptyContainer}>

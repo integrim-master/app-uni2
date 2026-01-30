@@ -10,7 +10,7 @@ export default function ProfiLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         headerTitleAlign: "left",
         headerTintColor: "white",
         headerShadowVisible: false,
@@ -28,8 +28,8 @@ export default function ProfiLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Perfilsss",
-          headerShadowVisible: false,
+          title: "Perfil",
+          headerShadowVisible: true,
         }}
       />
       <Stack.Screen

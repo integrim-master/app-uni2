@@ -1,6 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { SafeAreaViewBase, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "../../context/ThemeContext";
 
@@ -23,7 +24,7 @@ export function Screen({
         end={{ x: 1, y: 1 }}
         style={[styles.container, style]}
       >
-        <SafeAreaViewBase style={styles.container}>{children}</SafeAreaViewBase>
+  <SafeAreaView style={styles.container}>{children}</SafeAreaView>
       </LinearGradient>
     );
   }

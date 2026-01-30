@@ -29,7 +29,7 @@ export default function HomeLayout() {
         name="index"
         options={{
           title: "Beneficios",
-          headerShown: false,
+          headerShown: true,
         }}
       />
       <Stack.Screen

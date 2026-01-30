@@ -17,7 +17,7 @@ export default function CitaCard({
     <Card
       onPress={onPress}
       pressedOpacity={0.96}
-      className="w"
+      className=""
       style={
         [
           styles.card,
@@ -65,22 +65,23 @@ export default function CitaCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: 180,
-    height: 170,
+    minHeight: 110,
     borderRadius: 16,
     flexDirection: "column",
     borderWidth: 1,
     padding: 0,
-    marginBottom: 16,
+    marginVertical: 8,
+    marginHorizontal: 12,
     overflow: "hidden",
     ...Platform.select({
       ios: {
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.12,
-        shadowRadius: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
       },
       android: {
-        elevation: 0,
+        elevation: 2,
       },
     }),
   },
@@ -100,9 +101,10 @@ const styles = StyleSheet.create({
   // },
   content: {
     paddingHorizontal: 14,
-    paddingBottom: 12,
+    paddingVertical: 12,
     flex: 1,
     display: "flex",
+    width:'100%',
     flexDirection: "column",
   },
   procedimiento: {
@@ -145,10 +147,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   row: {
-    marginTop: "auto",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
+  marginTop: 8,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
   },
   fecha: {
     fontSize: 12,

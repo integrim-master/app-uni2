@@ -4,7 +4,6 @@ import React from "react";
 
 export default function Dates() {
   const { data: dates, isLoading, isError } = useDates();
-  console.log("DATES DATA:", dates);
 
   return <DatesScreen dates={dates} isLoading={isLoading} />;
 }

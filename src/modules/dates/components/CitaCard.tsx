@@ -1,4 +1,6 @@
 import Badge from "@/src/components/shared/Badge";
+import ThemedText from "@/src/components/shared/themed-text";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { Card } from "../../../components/shared/card";
@@ -17,22 +19,17 @@ export default function CitaCard({
     <Card
       onPress={onPress}
       pressedOpacity={0.96}
+      borderColor={colors.border}
       className=""
-      style={
-        [
-          styles.card,
-          {
-            backgroundColor: colors.card,
-            borderColor: colors.border,
-          },
-        ] as any
-      }
+      style={[styles.card] as any}
     >
       <View style={styles.content}>
         <Badge
           text={cita.categoria}
-          variant="info"
+          variant={cita.categoria === "Estetico" ? "info" : "warning"}
           size="small"
+          icon="health-and-safety"
+          showIcon={false}
           style={{ marginBottom: 6 }}
         />
         <Text
@@ -43,20 +40,39 @@ export default function CitaCard({
           {cita.Procedimiento}
         </Text>
 
-        <Text
-          style={[styles.especialista, { color: colors.textLight }]}
-          numberOfLines={1}
-        >
-          {cita.profesional}
-        </Text>
+        <View style={styles.rowSingle}>
+          <Ionicons
+            name="map-outline"
+            size={14}
+            color={colors.textLight}
+            style={{ marginRight: 8 }}
+          />
+          <ThemedText className="capitalize w-full">{cita.sede}</ThemedText>
+        </View>
 
         <View style={styles.row}>
-          <Text style={[styles.fecha, { color: colors.text }]}>
-            {cita.fecha_cita}
-          </Text>
-          <Text style={[styles.hora, { color: colors.primary }]}>
-            {cita.hora_cita}
-          </Text>
+          <View style={styles.rowItem}>
+            <Ionicons
+              name="calendar-outline"
+              size={14}
+              color={colors.text}
+              style={{ marginRight: 6 }}
+            />
+            <Text style={[styles.fecha, { color: colors.text }]}>
+              {cita.fecha_cita}
+            </Text>
+          </View>
+          <View style={styles.rowItem}>
+            <Ionicons
+              name="time-outline"
+              size={14}
+              color={colors.primary}
+              style={{ marginRight: 6 }}
+            />
+            <Text style={[styles.hora, { color: colors.primary }]}>
+              {cita.hora_cita}
+            </Text>
+          </View>
         </View>
       </View>
     </Card>
@@ -68,8 +84,8 @@ const styles = StyleSheet.create({
     minHeight: 110,
     borderRadius: 16,
     flexDirection: "column",
-    borderWidth: 1,
     padding: 0,
+
     marginVertical: 8,
     marginHorizontal: 12,
     overflow: "hidden",
@@ -80,31 +96,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.08,
         shadowRadius: 12,
       },
-      android: {
-        elevation: 2,
-      },
     }),
   },
-  // topArea: {
-  //   paddingHorizontal: 12,
-  //   paddingTop: 10,
-  //   paddingBottom: 6,
-  //   display: "flex",
-  //   flexDirection: "row",
-  //   width: "100%",
-  //   justifyContent: "flex-start",
-  //   alignItems: "center",
-  // },
-  // icon: {
-  //   marginLeft: 8,
-  //   opacity: 0.95,
-  // },
+
   content: {
     paddingHorizontal: 14,
     paddingVertical: 12,
     flex: 1,
     display: "flex",
-    width:'100%',
+    width: "100%",
     flexDirection: "column",
   },
   procedimiento: {
@@ -113,44 +113,27 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     lineHeight: 20,
   },
-  // badge: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   paddingHorizontal: 10,
-  //   paddingVertical: 6,
-  //   borderRadius: 12,
-  //   borderWidth: 1,
-  //   alignSelf: "flex-start",
-  //   gap: 6,
-  //   marginBottom: 6,
-  //   ...Platform.select({
-  //     ios: {
-  //       shadowOffset: { width: 0, height: 6 },
-  //       shadowOpacity: 0.12,
-  //       shadowRadius: 10,
-  //     },
-  //     android: {
-  //       elevation: 2,
-  //     },
-  //   }),
-  // },
-  // badgeText: {
-  //   fontSize: 11,
-  //   fontWeight: "800",
-  //   marginLeft: 6,
-  //   textTransform: "uppercase",
-  //   letterSpacing: 0.6,
-  // },
+
   especialista: {
     fontSize: 13,
     fontWeight: "500",
     marginBottom: 8,
   },
   row: {
-  marginTop: 8,
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  rowSingle: {
+    marginTop: 6,
+
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rowItem: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   fecha: {
     fontSize: 12,

@@ -24,10 +24,6 @@
         "foregroundImage": "./assets/images/icon-careme.png",
         "backgroundColor": "#ffffff"
       },
-      "notification": {
-        "icon": "./assets/images/notification-icon.png",
-        "color": "#ffffff"
-      },
       "edgeToEdgeEnabled": true,
       "package": "com.andresfvb.careme360",
       "runtimeVersion": "1.0.0"

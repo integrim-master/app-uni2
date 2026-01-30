@@ -1,62 +1,67 @@
 import { Screen } from "@/src/components/shared/Screen";
 import TabBar from "@/src/modules/home/components/TabBar";
-import { Ionicons } from "@expo/vector-icons";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { parseDateString } from "@/src/utils/dateUtils";
+import { router } from "expo-router";
 import { AnimatePresence, MotiView } from "moti";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import CitaCard from "../components/CitaCard";
-
-import HistoryCard from "../components/HistoryCard";
+import CitaCardSkeleton from "../components/CitaCardSkeleton";
+import EmptyDates from "../components/EmptyDates";
+import HistoryScreen from "./HistoryScreen";
 
 interface DatesScreenProps {
   dates?: any[];
   isLoading?: boolean;
+  isError?: boolean;
+  error?: any;
 }
 
-export default function DatesScreen({ dates, isLoading }: DatesScreenProps) {
+export default function DatesScreen({
+  dates = [],
+  isLoading,
+  isError,
+  error,
+}: DatesScreenProps) {
   const { colors } = useTheme();
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["45%", "75%"], []);
-
   const [activeTab, setActiveTab] = useState<"upcoming" | "history">(
     "upcoming",
   );
-  const [selectedProcedimiento, setSelectedProcedimiento] = useState<
-    string | null
-  >(null);
-  const [selectedEstado, setSelectedEstado] = useState<string | null>(null);
 
-  const openFilters = () => {
-    bottomSheetRef.current?.snapToIndex(0);
-  };
+  const { upcoming, history } = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  // const renderBackdrop = useCallback(
-  //   (props: any) => (
-  //     <BottomSheetBackdrop
-  //       {...props}
-  //       disappearsOnIndex={-1}
-  //       appearsOnIndex={0}
-  //       opacity={0.5}
-  //       pressBehavior="close"
-  //     />
-  //   ),
-  //   [],
-  // );
+    const result = {
+      upcoming: [] as any[],
+      history: [] as any[],
+    };
 
-  const citas = Array.isArray(dates) ? dates : [];
-  const citasUpcoming = citas.filter((c) => c.estado !== "Completada");
-  const citasHistory = citas.filter((c) => c.estado === "Completada");
+    for (const cita of dates) {
+      const parsedDate = parseDateString(cita?.fecha_cita);
+      if (!parsedDate) continue;
+
+      const onlyDate = new Date(
+        parsedDate.getFullYear(),
+        parsedDate.getMonth(),
+        parsedDate.getDate(),
+      );
+
+      const target = onlyDate <= today ? result.history : result.upcoming;
+      target.push({ ...cita, _parsedDate: parsedDate });
+    }
+
+    return result;
+  }, [dates]);
 
   return (
     <Screen>
       <View style={styles.container}>
-        <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+        <View style={styles.tabContainer}>
           <TabBar
             options={[
-              { key: "upcoming", label: "Próximas citas" },
+              { key: "upcoming", label: "Citas" },
               { key: "history", label: "Historial" },
             ]}
             activeTab={activeTab}
@@ -64,82 +69,50 @@ export default function DatesScreen({ dates, isLoading }: DatesScreenProps) {
           />
         </View>
 
-        <View style={{ flex: 1, position: "relative" }}>
-          {isLoading ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ color: colors.text }}>Cargando citas...</Text>
+        <View style={styles.content}>
+          {isLoading && <CitaCardSkeleton />}
+
+          {!isLoading && isError && (
+            <View style={styles.center}>
+              <Text style={{ color: colors.text, marginBottom: 8 }}>
+                Error cargando citas
+              </Text>
+              <Text style={{ color: colors.textLight }}>
+                {String(error?.message ?? error ?? "")}
+              </Text>
             </View>
-          ) : (
+          )}
+
+          {!isLoading && !isError && (
             <AnimatePresence exitBeforeEnter>
               {activeTab === "upcoming" && (
-                <MotiView
-                  key="upcoming"
-                  from={{ opacity: 0, translateX: 25 }}
-                  animate={{ opacity: 1, translateX: 0 }}
-                  exit={{ opacity: 0, translateX: -25 }}
-                  transition={{ type: "timing", duration: 150 }}
-                  style={styles.absoluteFill}
-                >
-                  <FlatList
-                    data={citasUpcoming}
-                   
-                    keyExtractor={(item, index) => {
-                      const keyBase = `${item?.fecha_cita ?? ""}-${item?.hora_cita ?? ""}-${item?.Procedimiento ?? ""}`;
-                      return `cita-${keyBase || index}`;
-                    }}
-                    renderItem={({ item }) => <CitaCard cita={item} />}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{
-                      paddingHorizontal: 10,
-                    }}
-                    
-                  />
-                </MotiView>
+                <AnimatedView key="upcoming">
+                  {upcoming.length === 0 ? (
+                    <EmptyDates
+                      title="No hay próximas citas"
+                      subtitle="Programa tu primera cita"
+                    />
+                  ) : (
+                    <FlatList
+                      data={upcoming}
+                      keyExtractor={(item, index) => `cita-${item.id ?? index}`}
+                      renderItem={({ item }) => (
+                        <CitaCard
+                          cita={item}
+                          onPress={() => router.push(`/dates/${item.id}`)}
+                        />
+                      )}
+                      showsVerticalScrollIndicator={false}
+                      contentContainerStyle={{ paddingHorizontal: 10 }}
+                    />
+                  )}
+                </AnimatedView>
               )}
 
               {activeTab === "history" && (
-                <MotiView
-                  key="history"
-                  from={{ opacity: 0, translateX: 25 }}
-                  animate={{ opacity: 1, translateX: 0 }}
-                  exit={{ opacity: 0, translateX: -25 }}
-                  transition={{ type: "timing", duration: 150 }}
-                  style={[styles.absoluteFill, { paddingHorizontal: 16 }]}
-                >
-          
-
-                  {citasHistory.length === 0 ? (
-                    <View style={styles.emptyContainer}>
-                      <Ionicons
-                        name="time-outline"
-                        size={42}
-                        color={colors.textLight}
-                      />
-                      <Text
-                        style={[
-                          styles.noCitasText,
-                          { color: colors.primaryLight },
-                        ]}
-                      >
-                        Aún no hay historial
-                      </Text>
-                    </View>
-                  ) : (
-                    <FlatList
-                      data={citasHistory}
-                      keyExtractor={(i) => `hist-${i.id}`}
-                      showsVerticalScrollIndicator={false}
-                      contentContainerStyle={{ paddingBottom: 64 }}
-                      renderItem={({ item }) => <HistoryCard cita={item} />}
-                    />
-                  )}
-                </MotiView>
+                <AnimatedView key="history" padding>
+                  <HistoryScreen dates={history} />
+                </AnimatedView>
               )}
             </AnimatePresence>
           )}
@@ -149,53 +122,40 @@ export default function DatesScreen({ dates, isLoading }: DatesScreenProps) {
   );
 }
 
+function AnimatedView({
+  children,
+  padding,
+}: {
+  children: React.ReactNode;
+  padding?: boolean;
+}) {
+  return (
+    <MotiView
+      from={{ opacity: 0, translateX: 25 }}
+      animate={{ opacity: 1, translateX: 0 }}
+      exit={{ opacity: 0, translateX: -25 }}
+      transition={{ type: "timing", duration: 150 }}
+      style={[styles.absoluteFill, padding && { paddingHorizontal: 16 }]}
+    >
+      {children}
+    </MotiView>
+  );
+}
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  tabContainer: { paddingHorizontal: 20, paddingTop: 10 },
+  content: { flex: 1, position: "relative" },
+
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
   absoluteFill: {
     position: "absolute",
     inset: 0,
-    flex: 1,
-    width: "100%",
     marginTop: 10,
-  },
-
-  citasListContainer: {
-    width: "100%",
-    height: "100%",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    justifyContent: "center",
-    paddingTop: 10,
-  },
-
-  historyTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    marginBottom: 8,
-  },
-
-  floatingButton: {
-    position: "absolute",
-    bottom: 30,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 6,
-  },
-
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  noCitasText: {
-    fontSize: 16,
-    textAlign: "center",
   },
 });

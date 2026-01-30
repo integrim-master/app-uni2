@@ -23,25 +23,25 @@ export function ProfileScreen() {
     {
       icon: "home-outline",
       label: "Inicio",
-      onPress: () => console.log("Inicio"),
+      onPress: () => router.push("/home"),
     },
-    {
-      icon: "star-outline",
-      label: "Favoritos",
-      onPress: () => router.push("profile/favorites"),
-    },
+    // {
+    //   icon: "star-outline",
+    //   label: "Favoritos",
+    //   onPress: () => router.push("profile/favorites"),
+    // },
   ];
 
   const supportItems = [
-    {
-      icon: "help-circle-outline",
-      label: "Obtener ayuda",
-      onPress: () => router.push("profile/support"),
-    },
+    // {
+    //   icon: "help-circle-outline",
+    //   label: "Obtener ayuda",
+    //   onPress: () => router.push("profile/support"),
+    // },
     {
       icon: "chatbubble-outline",
-      label: "Contactar soporte",
-      onPress: () => console.log("Contactar soporte"),
+      label: "Contactar asesor",
+      onPress: () => console.log("Contactar asesor"),
     },
     {
       icon: "document-text-outline",

@@ -3,6 +3,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
+import { MotiView } from "moti";
 import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 
@@ -27,37 +28,33 @@ export default function Index() {
 
   if (loading) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <View style={styles.center}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
-  if (token) {
-    return null;
-  }
+  if (token) return null;
 
   return (
-    <View style={styles.container} className="bg-red-400">
-      <VideoView
-        player={player}
-        allowsPictureInPicture
-        style={StyleSheet.absoluteFillObject}
-      />
+    <View style={styles.container}>
+      <VideoView player={player} style={StyleSheet.absoluteFillObject} />
+
+      {/* Overlay con gradiente visual */}
       <View style={styles.overlay} />
-      <View style={styles.content}>
+
+      <MotiView
+        from={{ opacity: 0, translateY: 30 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: "timing", duration: 500 }}
+        style={styles.content}
+      >
         <PrimaryButton
-          textStyle={styles.buttonText}
-          title="Iniciar Sesión"
+          title="Iniciar sesión"
           onPress={() => router.push("/login")}
+          textStyle={styles.buttonText}
         />
-      </View>
+      </MotiView>
     </View>
   );
 }
@@ -65,38 +62,36 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    height: "100%",
-    alignItems: "center",
     backgroundColor: "#000",
   },
+
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.45)",
   },
+
   content: {
     flex: 1,
-    width: "100%",
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: 60,
+    paddingHorizontal: 24,
+    paddingBottom: 70,
   },
-  button: {
-    backgroundColor: "#fff",
-    paddingHorizontal: 48,
-    paddingVertical: 16,
-    borderRadius: 32,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
+
   buttonText: {
-    color: "#111",
-    fontSize: 20,
-    fontWeight: "bold",
-    letterSpacing: 1,
+    fontSize: 18,
+    fontWeight: "700",
+  },
+
+  secondaryAction: {
+    marginTop: 16,
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 14,
   },
 });

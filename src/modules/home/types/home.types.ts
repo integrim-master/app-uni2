@@ -1,7 +1,8 @@
 import { UserData } from "@/src/types/shared/Auth.types";
 import { Benefits, TratamientoCareme } from "@/src/types/shared/Benefits.type";
 import { ComponentType } from "react";
-import { Promotion } from "./promotions.types";
+import { UltimasCitas } from "./home.dates.types";
+import { Promotion } from "./home.promotions.types";
 
 export interface ButtonData {
   item: string;
@@ -29,6 +30,7 @@ export interface HomeScreenProps {
   onRefresh: () => void;
   refreshing: boolean;
   benefits: Benefits[];
+  dates?: UltimasCitas;
 }
 
 export interface BeneficiosProps {

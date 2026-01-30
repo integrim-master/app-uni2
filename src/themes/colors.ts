@@ -116,7 +116,7 @@ export const DarkTheme: ThemeColors = {
   textLight: "#D1D5DB",
   textDark: "#E5E7EB",
   textSecondary: "#9CA3AF",
-  border: "#374151",
+  border: "#3d3d3d",
   borderLight: "#4B5563",
   card: "#1F1F1F",
   shadow: "#000000",

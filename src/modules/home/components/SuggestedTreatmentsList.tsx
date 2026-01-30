@@ -8,7 +8,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import { ui } from "../../../themes/ui";
 import TreatmentCard from "../../diagnostics/components/TreatmentCard";
-import { SuggestedTreatmentsListProps } from "../types/treatments.suggest.types";
+import { SuggestedTreatmentsListProps } from "../types/home.treatments.types";
 
 const ItemBenefit = memo(({ treatment }: { treatment: TratamientoCareme }) => {
   const { colors } = useTheme();

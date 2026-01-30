@@ -2,6 +2,7 @@ import {
   AuthContextType,
   AuthProviderProps,
 } from "@/src/modules/auth/types/auth.types";
+import { UltimasCitas } from "@/src/modules/home/types/home.dates.types";
 import { UserData } from "@/src/types/shared/Auth.types";
 import {
   MembershipData,
@@ -10,7 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Promotion } from "../modules/home/types/promotions.types";
+import { Promotion } from "../modules/home/types/home.promotions.types";
 import { useLoading } from "./LoadingContext";
 
 const STORAGE_KEY = "auth_data";
@@ -26,12 +27,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [treatmentsCareme, setTreatmentsCareme] = useState<TratamientoCareme[]>(
     [],
   );
+  const [dates, setDatesState] = useState<UltimasCitas | undefined>(undefined);
 
   const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
     restoreSession();
   }, []);
+
+  const setDates = async (d?: UltimasCitas) => {
+    try {
+      setDatesState(d);
+      const saved = await SecureStore.getItemAsync(STORAGE_KEY);
+      const parsed = saved ? JSON.parse(saved) : {};
+      parsed.dates = d;
+      await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(parsed));
+    } catch (e) {
+      console.error("Error saving dates to storage:", e);
+    }
+  };
 
   const restoreSession = async () => {
     try {
@@ -44,6 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(parsed.user);
       setPromotions(parsed.promotions || []);
       setMembership(parsed.membership);
+      if (parsed.dates) setDatesState(parsed.dates);
     } catch (error) {
       console.error("Error restoring session:", error);
     } finally {
@@ -58,6 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     treatments: TratamientoCareme[],
     treatments_suggest: TratamientoCareme[],
     promotions: Promotion[],
+    datesArg?: UltimasCitas,
   ) => {
     showLoading("Iniciando sesión...");
     try {
@@ -68,6 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         tratamientos_careme: treatments,
         treatments_suggest: treatments_suggest,
         promotions: promotions,
+        dates: datesArg,
       };
 
       setToken(token);
@@ -76,6 +93,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setTreatmentsCareme(treatments);
       setPromotions(promotions);
       await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(payload));
+      if (datesArg) await setDates(datesArg);
     } finally {
       hideLoading();
     }
@@ -87,6 +105,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setToken(null);
       setUser(null);
       setMembership(null);
+      try {
+        await setDates(undefined);
+      } catch (e) {}
       await AsyncStorage.clear();
       await SecureStore.deleteItemAsync(STORAGE_KEY);
     } finally {
@@ -112,6 +133,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     membership,
     treatmentsCareme,
+    dates,
+    setDates,
     loading,
     login,
     logout,

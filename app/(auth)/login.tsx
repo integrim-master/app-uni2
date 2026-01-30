@@ -75,6 +75,7 @@ const Login = () => {
             data.tratamientos_careme,
             data.treatments_suggest,
             data.promotions,
+            data.ultimas_citas,
           );
 
           if (data.user_data.user_terms !== "Aceptado") {
@@ -228,10 +229,6 @@ const Login = () => {
                 title="Iniciar Sesión"
                 onPress={handleLogin}
                 loading={isPending}
-                gradientColors={[
-                  colors.primaryLight,
-                  colors.primaryDark ?? colors.primaryLight,
-                ]}
               />
 
               <View

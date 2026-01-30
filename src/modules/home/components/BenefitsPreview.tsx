@@ -1,9 +1,9 @@
+import { Card } from "@/src/components/shared/card";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import BenefitsListSkeleton from "@/src/modules/benefits/components/BenefitsListSkeleton";
 import type { Benefits } from "@/src/types/shared/Benefits.type";
-import { LinearGradient } from "expo-linear-gradient";
 import { MotiView } from "moti";
 import React from "react";
 import { View } from "react-native";
@@ -45,16 +45,17 @@ export default function BenefitsPreview({
       transition={{ type: "timing", duration: 600 }}
       className="w-full mt-10 mb-4 rounded-2xl overflow-hidden"
     >
-      <LinearGradient
-        colors={colors.gradientCard as any}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <Card
+        pressable={false}
         style={{
           padding: 16,
           gap: 10,
+          borderColor: colors.border,
+          borderWidth: 0.8,
+          flexDirection: "column",
         }}
       >
-        <View className="flex-row items-center justify-between">
+        <View className="flex-row w-full items-center justify-between">
           <ThemedText
             type="subtitle"
             color={colors.textDark}
@@ -81,7 +82,7 @@ export default function BenefitsPreview({
             </ThemedText>
           </View>
         ) : (
-          <View style={{ gap: 10 }}>
+          <View className="w-full " style={{ gap: 10 }}>
             {items.map((b) => (
               <View
                 key={String(b.id)}
@@ -108,13 +109,13 @@ export default function BenefitsPreview({
         )}
 
         <PrimaryButton
-          variant="secondary"
+          variant="primary"
           title="Ver todos mis beneficios"
           onPress={onPressAll}
-          size="md"
+          size="sm"
           style={{ marginTop: 6 }}
         />
-      </LinearGradient>
+      </Card>
     </MotiView>
   );
 }

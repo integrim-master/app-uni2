@@ -2,7 +2,6 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack } from "expo-router";
 import React from "react";
-import { StyleSheet } from "react-native";
 
 export default function HomeLayout() {
   const { colors } = useTheme();
@@ -14,13 +13,12 @@ export default function HomeLayout() {
         headerTitleAlign: "center",
         headerTintColor: "white",
         headerShadowVisible: false,
-        headerTransparent: false,
         headerBackground: () => (
           <LinearGradient
             colors={colors.gradientBackground}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.25 }}
-            style={StyleSheet.absoluteFillObject}
+            start={[0, 0]}
+            end={[1, 0]}
+            style={{ flex: 1 }}
           />
         ),
       }}

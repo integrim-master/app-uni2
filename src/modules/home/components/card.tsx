@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 1,
     borderRadius: 12,
-    paddingHorizontal: 40,
+    paddingHorizontal: 10,
     paddingVertical: 8,
     gap: 8,
   },

@@ -1,6 +1,10 @@
-
 import { useMutation } from "@tanstack/react-query";
-import { DiagnosticsServices } from "../services/diagnostic.service";
+import {
+  CreateDiagnosticParams,
+  CreateDiagnosticResult,
+  DiagnosticsServices,
+} from "../services/diagnostic.service";
+
 export interface UploadImageParams {
   photo: {
     uri: string;
@@ -17,7 +21,12 @@ export interface UploadImageResult {
 
 export const useUploadDiagnosticImage = () => {
   return useMutation<UploadImageResult, Error, UploadImageParams>({
-    mutationFn: (params) =>
-      DiagnosticsServices.uploadImage(params),
+    mutationFn: (params) => DiagnosticsServices.uploadImage(params),
+  });
+};
+
+export const useCreateDiagnostic = () => {
+  return useMutation<CreateDiagnosticResult, Error, CreateDiagnosticParams>({
+    mutationFn: (params) => DiagnosticsServices.createDiagnostic(params),
   });
 };

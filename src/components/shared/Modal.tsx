@@ -2,25 +2,18 @@
 
 import { useTheme } from "@/src/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { MotiView } from "moti";
-import React from "react";
-import {
-  Modal,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { ReactNode } from "react";
+import { Modal, Platform, Pressable, StyleSheet, View } from "react-native";
+import PrimaryButton from "./PrimaryButton";
+import ThemedText from "./themed-text";
 
 type Variant = "primary" | "danger" | "warning";
 
 type Props = {
   visible: boolean;
   title?: string;
-  description?: string;
+  description?: string | ReactNode;
   confirmText?: string;
   cancelText?: string;
   variant?: Variant;
@@ -45,15 +38,18 @@ export default function ConfirmActionModal({
   const variantConfig = {
     primary: {
       icon: "check-circle",
-      gradient: [colors.primaryLight, colors.primaryDark],
+      iconColor: colors.success,
+      titleColor: colors.primary,
     },
     danger: {
       icon: "warning",
-      gradient: [colors.dangerLight ?? "#FFCDD2", colors.danger],
+      iconColor: colors.danger,
+      titleColor: colors.danger,
     },
     warning: {
       icon: "error-outline",
-      gradient: [colors.warningLight ?? "#FFF3CD", colors.warning],
+      iconColor: colors.warning,
+      titleColor: colors.warning,
     },
   }[variant];
 
@@ -63,6 +59,7 @@ export default function ConfirmActionModal({
       transparent
       animationType="none"
       statusBarTranslucent
+      presentationStyle="overFullScreen"
     >
       <Pressable style={styles.backdrop} onPress={onCancel}>
         <MotiView
@@ -73,14 +70,9 @@ export default function ConfirmActionModal({
           style={styles.overlay}
         >
           <MotiView
-            from={{ scale: 0.92, opacity: 0 }}
-            animate={{ scale: 1, opacity: 2 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{
-              type: "spring",
-              damping: 14,
-              stiffness: 140,
-            }}
+            from={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "timing", duration: 220 }}
             style={[
               styles.card,
               {
@@ -89,65 +81,49 @@ export default function ConfirmActionModal({
               },
             ]}
           >
-            <LinearGradient
-              colors={variantConfig.gradient as any}
-              style={styles.iconWrap}
-            >
+            <View style={styles.iconWrap}>
               <MaterialIcons
                 name={variantConfig.icon as any}
-                size={26}
-                color={colors.primaryLight}
+                size={50}
+                color={variantConfig.iconColor}
               />
-            </LinearGradient>
+            </View>
 
-            <Text style={[styles.title, { color: colors.text }]}>
+            <ThemedText
+              type="title"
+              color={variantConfig.titleColor}
+              style={styles.title}
+            >
               {title}
-            </Text>
+            </ThemedText>
 
             {description ? (
-              <Text
-                style={[
-                  styles.description,
-                  { color: colors.textSecondary },
-                ]}
-              >
-                {description}
-              </Text>
+              typeof description === "string" ? (
+                <ThemedText type="body" color={colors.textSecondary}>
+                  {description}
+                </ThemedText>
+              ) : (
+                <View style={{ width: "100%", alignItems: "center" }}>
+                  {description}
+                </View>
+              )
             ) : null}
-            <View style={styles.actionsRow}>
-              <TouchableOpacity
-                style={[
-                  styles.cancelBtn,
-                  { backgroundColor: colors.backgroundLight },
-                ]}
-                onPress={onCancel}
-                disabled={loading}
-              >
-                <Text
-                  style={[
-                    styles.cancelText,
-                    { color: colors.textSecondary },
-                  ]}
-                >
-                  {cancelText}
-                </Text>
-              </TouchableOpacity>
 
-              <TouchableOpacity
-                activeOpacity={0.85}
+            <View style={styles.actionsRow} className="mt-4">
+              <PrimaryButton
+                title={cancelText}
+                onPress={onCancel}
+                variant="secondary"
+                size="md"
+              />
+
+              <PrimaryButton
+                title={confirmText}
                 onPress={onConfirm}
-                disabled={loading}
-                style={styles.confirmWrap}
-              >
-                <LinearGradient
-                  colors={variantConfig.gradient as any}
-                  style={styles.confirmBtn}
-                >
-                  <Text style={styles.confirmText}>
-                    {loading ? "Procesando..." : confirmText}
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
+                loading={loading}
+                variant={variant}
+                size="md"
+              />
             </View>
           </MotiView>
         </MotiView>
@@ -159,7 +135,7 @@ export default function ConfirmActionModal({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0,0,0,0.35)",
     justifyContent: "center",
     padding: 24,
   },
@@ -167,72 +143,56 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+
   card: {
-    borderRadius: 24,
-    padding: 24,
+    borderRadius: 28,
+    paddingHorizontal: 24,
+    paddingVertical: 28,
     alignItems: "center",
     ...Platform.select({
       ios: {
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.25,
-        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.18,
+        shadowRadius: 24,
       },
       android: {
-        elevation: 8,
+        elevation: 10,
       },
     }),
   },
 
   iconWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: 18,
   },
 
   title: {
-    fontSize: 20,
-    fontWeight: "800",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: 6,
   },
+
   description: {
-    fontSize: 15,
-    lineHeight: 22,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 28,
   },
 
   actionsRow: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 12,
     width: "100%",
   },
+
   cancelBtn: {
     flex: 1,
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: "center",
-  },
-  cancelText: {
-    fontSize: 14,
-    fontWeight: "700",
   },
 
-  confirmWrap: {
-    flex: 1,
-    borderRadius: 14,
-    overflow: "hidden",
-  },
   confirmBtn: {
-    paddingVertical: 14,
-    alignItems: "center",
-  },
-  confirmText: {
-    fontSize: 14,
-    fontWeight: "800",
-    color: "#fff",
+    flex: 1,
   },
 });

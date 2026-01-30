@@ -1,12 +1,15 @@
 import { useAuth } from "@/src/context/AuthContext";
+import { useDiagnostic } from "@/src/context/DiagnosticContext";
 import StepTwo from "@/src/modules/diagnostics/components/StepTwo";
-import { useUploadDiagnosticImage } from "@/src/modules/diagnostics/hooks/useDiagnostic";
+import {
+  useCreateDiagnostic,
+  useUploadDiagnosticImage,
+} from "@/src/modules/diagnostics/hooks/useDiagnostic";
 import { DiagnosticScreenProps } from "@/src/modules/diagnostics/types/diagnostics.types";
 import { useAnalyzeImage } from "@/src/n8n/hooks/useAnalizeImage";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 type PhotoAsset = {
   uri: string;
@@ -17,11 +20,13 @@ type PhotoAsset = {
 type DiagnosticView = "camera" | "loading" | "result";
 
 export default function StepScreen(props: DiagnosticScreenProps) {
+  const { diagnosticReport, clearDiagnostic, refreshDiagnostic } =
+    useDiagnostic();
   const { user, token } = useAuth();
   const userId = user?.user_id;
 
   const [photoUri, setPhotoUri] = useState<PhotoAsset | null>(null);
-  const [diagnosticReport, setDiagnosticReport] = useState<any>(null);
+  const [localReport, setLocalReport] = useState<any>(null);
 
   const {
     mutateAsync: uploadImage,
@@ -30,39 +35,30 @@ export default function StepScreen(props: DiagnosticScreenProps) {
     reset: resetUpload,
   } = useUploadDiagnosticImage();
 
-  const {
-    mutateAsync: analyzeImage,
-    isPending: isAnalyzing,
-  } = useAnalyzeImage();
+  const { mutateAsync: analyzeImage, isPending: isAnalyzing } =
+    useAnalyzeImage();
+
+  const { mutateAsync: createDiagnostic } = useCreateDiagnostic();
 
   const { setCurrentStep } = props;
 
+  const currentDiagnostic = localReport || diagnosticReport;
+
   const view: DiagnosticView = isAnalyzing
     ? "loading"
-    : isSuccess || diagnosticReport
-    ? "result"
-    : "camera";
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const saved = await AsyncStorage.getItem("diagnosticReport");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          setPhotoUri(parsed.photoUri);
-          setDiagnosticReport(parsed);
-        }
-      } catch (e) {
-        console.error("Error loading diagnostic report:", e);
-      }
-    })();
-  }, []);
+    : isSuccess || currentDiagnostic
+      ? "result"
+      : "camera";
 
   useFocusEffect(
     useCallback(() => {
-      setCurrentStep?.(diagnosticReport ? 1 : 0);
+      if (diagnosticReport) {
+        setCurrentStep?.(1);
+      } else {
+        setCurrentStep?.(0);
+      }
       return () => {};
-    }, [diagnosticReport, setCurrentStep])
+    }, [diagnosticReport, setCurrentStep]),
   );
 
   const handleSendPhoto = async () => {
@@ -84,11 +80,22 @@ export default function StepScreen(props: DiagnosticScreenProps) {
         mediaId: uploadResult.id,
       };
 
-      setDiagnosticReport(payload);
-      await AsyncStorage.setItem(
-        "diagnosticReport",
-        JSON.stringify(payload)
-      );
+      const diagnosticoData = Array.isArray(analysisResult)
+        ? analysisResult[0]?.diagnostico || {}
+        : analysisResult.diagnostico || analysisResult;
+      const procedimientosData = Array.isArray(analysisResult)
+        ? analysisResult[0]?.procedimientos || []
+        : analysisResult.procedimientos || [];
+
+      await createDiagnostic({
+        diagnostico: diagnosticoData,
+        procedimientos: procedimientosData,
+        imageId: uploadResult.id,
+        userId: String(userId),
+      });
+
+      setLocalReport(payload);
+      await refreshDiagnostic();
     } catch (error) {
       console.error("Error procesando imagen:", error);
     }
@@ -96,9 +103,9 @@ export default function StepScreen(props: DiagnosticScreenProps) {
 
   const handleResetFlow = async () => {
     setPhotoUri(null);
-    setDiagnosticReport(null);
+    setLocalReport(null);
     resetUpload();
-    await AsyncStorage.removeItem("diagnosticReport");
+    await clearDiagnostic();
   };
 
   return (
@@ -106,9 +113,10 @@ export default function StepScreen(props: DiagnosticScreenProps) {
       view={view}
       photoUri={photoUri}
       setPhotoUri={setPhotoUri}
-      diagnosticReport={diagnosticReport}
+      diagnosticReport={currentDiagnostic}
       onSendPhoto={handleSendPhoto}
       onReset={handleResetFlow}
+      onBack={() => setCurrentStep?.(0)}
     />
   );
 }

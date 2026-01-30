@@ -1,7 +1,8 @@
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
-import CitaCard, { Cita } from "./CitaCard";
+import type { Cita } from "../types/date.api.types";
+import CitaCard from "./CitaCard";
 
 export default function CitasList({ citas }: { citas: Cita[] }) {
   const { colors } = useTheme();
@@ -17,7 +18,10 @@ export default function CitasList({ citas }: { citas: Cita[] }) {
       <Text style={[styles.citasTitle, { color: colors.text }]}>Tus citas ({citas.length})</Text>
       <FlatList
         data={citas}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => {
+          const keyBase = `${item?.fecha_cita ?? ""}-${item?.hora_cita ?? ""}-${item?.Procedimiento ?? ""}`;
+          return `cita-${keyBase || index}`;
+        }}
         renderItem={({ item }) => <CitaCard cita={item} />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.citasList}

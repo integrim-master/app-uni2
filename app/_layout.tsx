@@ -1,9 +1,8 @@
 import { toastConfig } from "@/src/constants/toastConfig";
 import { AuthProvider } from "@/src/context/AuthContext";
+import { DiagnosticProvider } from "@/src/context/DiagnosticContext";
 import { LoadingProvider } from "@/src/context/LoadingContext";
-import { NotificationsProvider } from "@/src/context/NotificationsContext";
 import { ThemeProvider } from "@/src/context/ThemeContext";
-import { persistor, store } from "@/src/store";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -13,8 +12,6 @@ import React, { useState } from "react";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
-import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
 import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
@@ -30,11 +27,11 @@ export default function RootLayout() {
       new QueryClient({
         defaultOptions: {
           queries: {
-            retry: 1,               
-            staleTime: 1000 * 60, 
+            retry: 1,
+            staleTime: 1000 * 60,
           },
         },
-      })
+      }),
   );
 
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -52,30 +49,26 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <QueryClientProvider client={queryClient}>
-            <BottomSheetModalProvider>
-              <ThemeProvider>
-                <LoadingProvider>
-                  <AuthProvider>
-                    <NotificationsProvider>
-                      {/* {isBannerVisible && (
-                        <BannerModal
-                          visible={isBannerVisible}
-                          bannerData={bannerData}
-                          onClose={() => setIsBannerVisible(false)}
-                        />
-                      )} */}
-                      <Slot />
-                    </NotificationsProvider>
-                  </AuthProvider>
-                </LoadingProvider>
-              </ThemeProvider>
-            </BottomSheetModalProvider>
-          </QueryClientProvider>
-        </PersistGate>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <BottomSheetModalProvider>
+          <ThemeProvider>
+            <LoadingProvider>
+              <AuthProvider>
+                <DiagnosticProvider>
+                  {/* {isBannerVisible && (
+                      <BannerModal
+                        visible={isBannerVisible}
+                        bannerData={bannerData}
+                        onClose={() => setIsBannerVisible(false)}
+                      />
+                    )} */}
+                  <Slot />
+                </DiagnosticProvider>
+              </AuthProvider>
+            </LoadingProvider>
+          </ThemeProvider>
+        </BottomSheetModalProvider>
+      </QueryClientProvider>
       <Toast config={toastConfig} />
     </GestureHandlerRootView>
   );

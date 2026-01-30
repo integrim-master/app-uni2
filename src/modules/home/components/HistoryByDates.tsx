@@ -1,7 +1,7 @@
-import React from 'react';
-import { View } from 'react-native';
-import { HistoryByDatesProps } from '../types/home.types';
-import { ItemsHistory } from './ItemsHistory';
+import React from "react";
+import { View } from "react-native";
+import { HistoryByDatesProps } from "../types/home.types";
+import { ItemsHistory } from "./ItemsHistory";
 
 export function HistoryByDates({ citas, dark }: HistoryByDatesProps) {
   const citasFilter = citas.slice(0, 2);
@@ -20,9 +20,8 @@ export function HistoryByDates({ citas, dark }: HistoryByDatesProps) {
             medico={item.especialista}
             estado={item.estado as "Cancelada" | "Pendiente" | "Completada"}
           />
-       
         </View>
       ))}
     </View>
-  )
+  );
 }

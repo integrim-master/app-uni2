@@ -1,5 +1,5 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
-import SubtitleText from "@/src/components/shared/SubtitleText";
 import ThemedText from "@/src/components/shared/themed-text";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
@@ -34,6 +34,7 @@ type Props = {
   diagnosticReport?: any;
   onSendPhoto: () => void;
   onReset: () => void;
+  onBack?: () => void;
 };
 
 export default function StepTwo({
@@ -43,6 +44,7 @@ export default function StepTwo({
   diagnosticReport,
   onSendPhoto,
   onReset,
+  onBack,
 }: Props) {
   const { colors } = useTheme();
   const cameraRef = useRef<CameraView>(null);
@@ -56,7 +58,7 @@ export default function StepTwo({
     return (
       <View style={styles.permissionContainer}>
         <MaterialIcons name="camera-alt" size={70} color={colors.primary} />
-        <SubtitleText>Necesitamos tu permiso</SubtitleText>
+        <ThemedText type="subtitle">Necesitamos tu permiso</ThemedText>
         <ThemedText>Para capturar tu foto</ThemedText>
 
         <Pressable
@@ -74,8 +76,8 @@ export default function StepTwo({
   if (view === "result" && diagnosticReport) {
     return (
       <ResultView
-        photoUri={photoUri?.uri as  any}
-        diagnostic={diagnosticReport.analysis}
+        photoUri={photoUri || undefined}
+        diagnostic={diagnosticReport}
         onReset={onReset}
       />
     );
@@ -99,6 +101,10 @@ export default function StepTwo({
 
   return (
     <Screen style={styles.container}>
+      <View className="w-full p-1">
+        <BackButton />
+      </View>
+
       <View style={[styles.cameraContainer, { borderColor: colors.primary }]}>
         {photoUri ? (
           <Image source={{ uri: photoUri.uri }} style={styles.camera} />
@@ -118,11 +124,13 @@ export default function StepTwo({
         {!photoUri && (
           <Pressable
             style={[styles.smallBtn, { borderColor: colors.primary }]}
-            onPress={() =>
-              setFacing((f) => (f === "front" ? "back" : "front"))
-            }
+            onPress={() => setFacing((f) => (f === "front" ? "back" : "front"))}
           >
-            <MaterialIcons name="flip-camera-ios" size={24} color={colors.primary} />
+            <MaterialIcons
+              name="flip-camera-ios"
+              size={24}
+              color={colors.primary}
+            />
           </Pressable>
         )}
 
@@ -153,7 +161,6 @@ export default function StepTwo({
   );
 }
 
-
 const CAMERA_HEIGHT = height * 0.48;
 const CAMERA_WIDTH = width * 0.9;
 
@@ -161,10 +168,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-around",
   },
   center: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButtonContainer: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -235,3 +253,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
+
+
+ 

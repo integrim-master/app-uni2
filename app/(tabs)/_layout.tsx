@@ -26,8 +26,8 @@ export default function TabsLayout() {
     paddingBottom: bottomInset
       ? bottomInset + (Platform.OS === "ios" ? 12 : 8)
       : Platform.OS === "ios"
-      ? 28
-      : 12,
+        ? 28
+        : 12,
     paddingTop: 8,
     borderTopWidth: 0.5,
     ...Platform.select({
@@ -51,7 +51,10 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.textSecondary,
         headerTitleAlign: "center",
         headerTintColor: "white",
+        headerShadowVisible: false,
+        headerTransparent: false,
         tabBarStyle,
+        sceneStyle: { backgroundColor: "#302D34" },
         headerBackground: () => (
           <LinearGradient
             colors={colors.gradientBackground}

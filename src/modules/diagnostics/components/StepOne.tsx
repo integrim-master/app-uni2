@@ -1,8 +1,8 @@
-import TitleText from '@/src/components/shared/TitleText';
+import ThemedText from '@/src/components/shared/themed-text';
 import { MaterialIcons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
 import { DiagnosticScreenProps } from '../types/diagnostics.types';
 
@@ -33,16 +33,16 @@ export default function StepOne(props?: StepOneProps) {
               style={styles.animation}
             />
           </View>
-          <TitleText style={[styles.title, { color: colors.primary }]}> 
+          <ThemedText type="title" style={[styles.title, { color: colors.primary }]}> 
             Bienvenido al diagnóstico
-          </TitleText>
-          <Text style={[styles.description, { color: colors.textSecondary }]}> 
+          </ThemedText>
+          <ThemedText style={[styles.description, { color: colors.textSecondary }]}> 
             Para mejores resultados, por favor retírate gafas, gorra o cualquier cosa
             que obstruya tu rostro.
-          </Text>
-          <Text style={[styles.subtitle, { color: colors.text }]}> 
+          </ThemedText>
+          <ThemedText type="semiBold" style={[styles.subtitle, { color: colors.text }]}> 
             Algunos tips para mejorar el diagnóstico:
-          </Text>
+          </ThemedText>
           <View style={styles.tipsContainer}> 
             {tips.map((tip, index) => (
               <View key={index} style={styles.tipItem}> 
@@ -53,9 +53,9 @@ export default function StepOne(props?: StepOneProps) {
                     color={colors.primary}
                   />
                 </View>
-                <Text style={[styles.tipText, { color: colors.textSecondary }]}> 
+                <ThemedText style={[styles.tipText, { color: colors.textSecondary }]}> 
                   {tip.text}
-                </Text>
+                </ThemedText>
               </View>
             ))}
           </View>
@@ -91,22 +91,14 @@ const styles = StyleSheet.create({
     height: 220,
   },
   title: {
-    fontSize: 26,
-    fontWeight: '800',
     textAlign: 'center',
     marginBottom: 10,
-    letterSpacing: 0.2,
   },
   description: {
-    fontSize: 16,
     textAlign: 'center',
-    lineHeight: 22,
     marginBottom: 18,
-    opacity: 0.85,
   },
   subtitle: {
-    fontSize: 17,
-    fontWeight: '600',
     alignSelf: 'flex-start',
     marginBottom: 14,
     marginTop: 8,
@@ -131,7 +123,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tipText: {
-    fontSize: 16,
     flex: 1,
   },
 });

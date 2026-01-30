@@ -41,6 +41,7 @@
       "expo-video",
       "expo-font",
       "expo-web-browser",
+      "expo-notifications",
       "expo-secure-store",
       [
         "expo-media-library",
@@ -50,7 +51,7 @@
           "isAccessMediaLocationEnabled": true
         }
       ],
-       [
+      [
         "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
@@ -62,11 +63,11 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "2f2404fc-e5ce-413f-8529-53a64b3c89f6"
+        "projectId": "4a5b62b6-5a9b-4439-83ff-90d63f30df9a"
       }
     },
     "updates": {
-      "url": "https://u.expo.dev/2f2404fc-e5ce-413f-8529-53a64b3c89f6"
+      "url": "https://u.expo.dev/4a5b62b6-5a9b-4439-83ff-90d63f30df9a"
     }
   },
   "react-native-toast-message": {

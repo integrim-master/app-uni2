@@ -13,6 +13,8 @@ export default function ProfiLayout() {
         headerShown: true,
         headerTitleAlign: "left",
         headerTintColor: "white",
+        headerShadowVisible: false,
+        headerTransparent: false,
         headerBackground: () => (
           <LinearGradient
             colors={colors.gradientBackground}
@@ -27,7 +29,7 @@ export default function ProfiLayout() {
         name="index"
         options={{
           title: "Perfil",
-          headerShadowVisible: false,
+          headerShadowVisible: true,
         }}
       />
       <Stack.Screen
@@ -35,7 +37,13 @@ export default function ProfiLayout() {
         options={{
           title: "Tus solicitudes",
           headerShadowVisible: false,
-          
+        }}
+      />
+      <Stack.Screen
+        name="privacy"
+        options={{
+          title: "Política de privacidad",
+          headerShadowVisible: false,
         }}
       />
 
@@ -43,6 +51,13 @@ export default function ProfiLayout() {
         name="details"
         options={{
           title: "Mi perfil",
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="favorites"
+        options={{
+          title: "Favoritos",
           headerShadowVisible: false,
         }}
       />

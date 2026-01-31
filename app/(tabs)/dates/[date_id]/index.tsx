@@ -1,356 +1,169 @@
-import { MaterialIcons } from "@expo/vector-icons";
 // import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useLocalSearchParams } from "expo-router";
 // import { useCallback, useMemo, useRef, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import Badge from "@/src/components/shared/Badge";
+import { Card } from "@/src/components/shared/card";
+import ThemedText from "@/src/components/shared/themed-text";
+import { useAuth } from "@/src/context/AuthContext";
+import { formatDateToText } from "@/src/utils/stringUtils";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, View } from "react-native";
 import { Screen } from "../../../../src/components/shared/Screen";
-import ThemedText from "../../../../src/components/shared/themed-text";
 import { useTheme } from "../../../../src/context/ThemeContext";
 
 export default function Index() {
   const { colors } = useTheme();
   const { date_id } = useLocalSearchParams();
-  // const bottomSheetRef = useRef<BottomSheet>(null);
-  // const snapPoints = useMemo(() => ["50%", "70%"], []);
+  const { user, dates } = useAuth();
 
-  // const [estadoCita, setEstadoCita] = useState("Confirmada");
-  // const [motivoCancelacion, setMotivoCancelacion] = useState("");
-  // const [selectedNewStatus, setSelectedNewStatus] = useState<string | null>(null);
-
-  // Datos de ejemplo - reemplazar con tu lógica de obtención de datos
-  const cita = {
-    id: date_id,
-    procedimiento: "Limpieza Dental",
-    fecha: "15 de Enero, 2026",
-    hora: "10:30 AM",
-    especialista: "Dra. María García",
-    estado: "Confirmada",
-    consultorio: "Consultorio 3B",
-    direccion: "Av. Principal 123, Edificio Médico",
-    duracion: "45 minutos",
-    precio: "$80.00",
-    notas: "Por favor llegar 10 minutos antes de la cita.",
-  };
-
-  const getEstadoConfig = (estado: string) => {
-    switch (estado) {
-      case "Confirmada":
-        return {
-          color: colors.success,
-          icon: "check-circle",
-          bgColor: colors.success + "20",
-        };
-      case "Cancelada":
-        return {
-          color: "#EF4444",
-          icon: "cancel",
-          bgColor: "#EF444420",
-        };
-      default:
-        return {
-          color: colors.primary,
-          icon: "help-outline",
-          bgColor: colors.primary + "20",
-        };
-    }
-  };
-
-  // const handleOpenBottomSheet = () => {
-  //   setSelectedNewStatus(null);
-  //   setMotivoCancelacion("");
-  //   bottomSheetRef.current?.expand();
-  // };
-
-  // const handleChangeStatus = () => {
-  //   if (selectedNewStatus === "Cancelada" && !motivoCancelacion.trim()) {
-  //     Alert.alert("Error", "Por favor, ingresa el motivo de cancelación");
-  //     return;
-  //   }
-
-  //   setEstadoCita(selectedNewStatus || estadoCita);
-  //   bottomSheetRef.current?.close();
-  //   Alert.alert(
-  //     "Estado actualizado",
-  //     selectedNewStatus === "Cancelada"
-  //       ? `Cita cancelada. Motivo: ${motivoCancelacion}`
-  //       : "Cita confirmada exitosamente"
-  //   );
-  // };
-
-  // const renderBackdrop = useCallback(
-  //   (props: any) => (
-  //     <BottomSheetBackdrop
-  //       {...props}
-  //       disappearsOnIndex={-1}
-  //       appearsOnIndex={0}
-  //       opacity={0.5}
-  //     />
-  //   ),
-  //   []
-  // );
-
-  const estadoConfig = getEstadoConfig(cita.estado);
+  const DateFiltered = dates?.find((d) => String(d.id) === String(date_id));
 
   return (
-    <Screen safeArea>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View
-          style={[
-            styles.headerCard,
-            {
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-            },
-          ]}
+    <Screen>
+      <View>
+        <LinearGradient
+          className="pb-2 flex-row items-center gap-4 "
+          colors={colors.gradientBackground}
+          start={[0, 0]}
+          end={[1, 0]}
         >
-          <View style={styles.statusBadge}>
-            <View
-              style={[
-                styles.statusDot,
-                { backgroundColor: estadoConfig.color },
-              ]}
-            />
-            <ThemedText type="caption" style={{ color: estadoConfig.color }}>
-              {cita.estado}
-            </ThemedText>
-          </View>
-
-          <ThemedText type="title" style={styles.procedimiento}>
-            {cita.procedimiento}
-          </ThemedText>
-
-          <View style={styles.metaInfo}>
-            <View style={styles.metaItem}>
-              <MaterialIcons
-                name="calendar-today"
-                size={14}
-                color={colors.textSecondary}
-              />
-              <ThemedText type="caption" color={colors.textSecondary}>
-                {cita.fecha}
-              </ThemedText>
-            </View>
-            <View style={styles.metaItem}>
-              <MaterialIcons
-                name="access-time"
-                size={14}
-                color={colors.textSecondary}
-              />
-              <ThemedText type="caption" color={colors.textSecondary}>
-                {cita.hora}
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <ThemedText
-            type="caption"
-            color={colors.textSecondary}
-            style={styles.cardLabel}
-          >
-            Especialista
-          </ThemedText>
-          <View style={styles.simpleRow}>
-            <MaterialIcons name="person" size={18} color={colors.primary} />
-            <ThemedText type="semiBold">{cita.especialista}</ThemedText>
-          </View>
-        </View>
-
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <ThemedText
-            type="caption"
-            color={colors.textSecondary}
-            style={styles.cardLabel}
-          >
-            Ubicación
-          </ThemedText>
-          <View style={styles.simpleRow}>
-            <MaterialIcons
-              name="location-on"
-              size={18}
-              color={colors.primary}
-            />
-            <View style={{ flex: 1 }}>
-              <ThemedText type="semiBold">{cita.consultorio}</ThemedText>
-              <ThemedText
-                type="caption"
-                color={colors.textSecondary}
-                style={{ marginTop: 2 }}
-              >
-                {cita.direccion}
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <ThemedText
-            type="caption"
-            color={colors.textSecondary}
-            style={styles.cardLabel}
-          >
-            Detalles
-          </ThemedText>
-
-          <View style={styles.detailRow}>
-            <ThemedText color={colors.textSecondary}>Duración</ThemedText>
-            <ThemedText type="semiBold">{cita.duracion}</ThemedText>
-          </View>
-
-          <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
-            <ThemedText color={colors.textSecondary}>Precio</ThemedText>
-            <ThemedText type="semiBold" style={{ color: colors.primary }}>
-              {cita.precio}
-            </ThemedText>
-          </View>
-        </View>
-
-        {cita.notas && (
           <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-              },
-            ]}
+            className="flex justify-center items-end pr-4 "
+            style={{
+              backgroundColor: colors.gradientCardStart,
+              width: 90,
+              height: 70,
+              borderEndStartRadius: 50,
+              borderEndEndRadius: 50,
+            }}
           >
+            <View
+              className="p-2 rounded-full"
+              style={{ backgroundColor: colors.primaryLight }}
+            >
+              <Ionicons name="calendar-outline" color={"white"} size={30} />
+            </View>
+          </View>
+          <View className="flex gap-2">
+            <ThemedText>Cita agenda</ThemedText>
+            <Badge
+              showIcon={false}
+              text={DateFiltered?.categoria}
+              variant="warning"
+              size="small"
+            />
+          </View>
+        </LinearGradient>
+      </View>
+
+      <View className="p-4 flex gap-2 h-full">
+        <Card
+          pressable={false}
+          className=""
+          style={{
+            height: 200,
+            marginBottom: 20,
+          }}
+        >
+          <View className="flex-1 p-4 w-full h-full justify-around  items-start">
             <ThemedText
-              type="caption"
-              color={colors.textSecondary}
-              style={styles.cardLabel}
+              type="subtitle"
+              style={{
+                color: colors.primaryLight,
+                textAlign: "center",
+                fontWeight: 800,
+              }}
             >
-              Notas importantes
+              {DateFiltered?.Procedimiento}
             </ThemedText>
-            <View style={styles.simpleRow}>
-              <MaterialIcons
-                name="info-outline"
-                size={18}
-                color={colors.primary}
-              />
-              <ThemedText style={{ flex: 1 }}>{cita.notas}</ThemedText>
+            <View className="mt-4">
+              <ThemedText
+                color={colors.textPrimary}
+                // style={{ fontWeight: 800 }}
+                type="caption"
+              >
+                {formatDateToText(DateFiltered?.fecha_cita)}
+              </ThemedText>
+              <ThemedText
+                style={{ fontWeight: 700 }}
+                type="body"
+                color={colors.textPrimary}
+              >
+                {DateFiltered?.hora_cita}
+              </ThemedText>
+              <ThemedText color={colors.textSecondary}>
+                Profesional {DateFiltered?.profesional}
+              </ThemedText>
             </View>
-          </View>
-        )}
-
-        <View style={{ height: 30 }} />
-      </ScrollView>
-
-      {/* Bottom Sheet para cambiar estado
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: colors.card }}
-        handleIndicatorStyle={{ backgroundColor: colors.border }}
-      >
-        <BottomSheetView style={styles.bottomSheetContent}>
-          <View style={styles.sheetHeader}>
+            <View></View>
+            <View
+              style={{
+                height: 1,
+                backgroundColor: colors.border || "#e0e0e0",
+                alignSelf: "stretch",
+                marginVertical: 8,
+              }}
+            />
             <View>
-              <ThemedText type="title" style={{ marginBottom: 4 }}>
-                Estado de la cita
-              </ThemedText>
-              <ThemedText type="caption" color={colors.textSecondary}>
-                Selecciona una opción para actualizar
+              <ThemedText color={colors.textPrimary}>Sede</ThemedText>
+              <ThemedText className="capitalize" color={colors.textSecondary}>
+                {DateFiltered?.sede}
               </ThemedText>
             </View>
           </View>
+        </Card>
 
-          <View style={styles.optionsContainer}>
-            Opción Confirmada
-            <Pressable
-              onPress={() => setSelectedNewStatus("Confirmada")}
-              style={({ pressed }) => [
-                styles.statusOptionCard,
-                {
-                  backgroundColor:
-                    selectedNewStatus === "Confirmada"
-                      ? colors.success + "15"
-                      : colors.background,
-                  borderColor:
-                    selectedNewStatus === "Confirmada"
-                      ? colors.success
-                      : colors.border,
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-            >
-              <View style={styles.optionLeft}>
-                <View
-                  style={[
-                    styles.iconCircle,
-                    {
-                      backgroundColor:
-                        selectedNewStatus === "Confirmada"
-                          ? colors.success
-                          : colors.border + "50",
-                    },
-                  ]}
-                >
-                  <MaterialIcons
-                    name="check"
-                    size={20}
-                    color={
-                      selectedNewStatus === "Confirmada" ? "#fff" : colors.textSecondary
-                    }
-                  />
-                </View>
-                <View>
-                  <ThemedText type="semiBold">
-                    Confirmar cita
-                  </ThemedText>
-                  <ThemedText
-                    type="caption"
-                    color={colors.textSecondary}
-                    style={{ marginTop: 2 }}
-                  >
-                    La cita se mantiene activa
-                  </ThemedText>
-                </View>
-              </View>
-              <MaterialIcons
-                name={
-                  selectedNewStatus === "Confirmada"
-                    ? "radio-button-checked"
-                    : "radio-button-unchecked"
-                }
-                size={22}
-                color={
-                  selectedNewStatus === "Confirmada"
-                    ? colors.success
-                    : colors.border
-                }
-              />
-            </Pressable>
+        <Card
+          pressable={false}
+          style={{
+            height: 80,
+            width: "100%",
+            justifyContent: "flex-start",
+            padding: 20,
+          }}
+          className="flex items-start justify-start w-full"
+        >
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: colors.primaryLight,
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 12,
+            }}
+          >
+            <Ionicons name="person-outline" size={28} color="white" />
+          </View>
+          <View>
+            <ThemedText color={colors.textPrimary}>Usuario</ThemedText>
+            <ThemedText color={colors.textSecondary}>
+              {user?.user_name}
+            </ThemedText>
+          </View>
+        </Card>
 
-      </BottomSheet>
-      */}
+        <View className="mt-4">
+          <ThemedText
+            type="subtitle"
+            style={{
+              fontWeight: "800",
+              marginBottom: 10,
+            }}
+            color={colors.primaryLight}
+          >
+            Recomendaciones:
+          </ThemedText>
+          <View className="mt-2">
+            <ThemedText type="body" color={colors.textSecondary}>
+              • Llegar 10 minutos antes de la cita {"\n"}• Si no puede asistir
+              cancelar con dos horas de {"\n"} anticipacion
+            </ThemedText>
+          </View>
+        </View>
+      </View>
     </Screen>
   );
 }

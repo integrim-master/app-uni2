@@ -27,6 +27,7 @@ interface BadgeProps {
   icon?: IconName;
   fullWidth?: boolean;
   sharp?: boolean;
+  showIcon?: boolean;
   /**
    * Layout del badge: horizontal (ícono al lado) o vertical (ícono arriba)
    */
@@ -42,6 +43,7 @@ export default function Badge({
   fullWidth = false,
   sharp = false,
   layout = "horizontal",
+  showIcon = true,
   style,
 }: BadgeProps) {
   const { colors } = useTheme();
@@ -150,7 +152,7 @@ export default function Badge({
 
   const variantColors = getVariantColors();
   const sizeStyles = getSizeStyles();
-  const displayIcon = getDefaultIcon();
+  const displayIcon = showIcon ? getDefaultIcon() : undefined;
 
   return (
     <View

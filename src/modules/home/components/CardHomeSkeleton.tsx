@@ -19,7 +19,7 @@ export function CardHomeSkeleton({ isBlack }: CardHomeSkeletonProps) {
     <View style={{ shadowColor: colors.primaryLight, borderRadius: 24 }}>
       <View className="rounded-2xl overflow-hidden">
         <LinearGradient
-          colors={colors.membershipGoldGradient as any}
+          colors={colors.gradientCard as any}
           style={{ padding: 20, gap: 16 }}
         >
           <View className="flex-row justify-between items-center">
@@ -71,7 +71,7 @@ export function CardHomeSkeleton({ isBlack }: CardHomeSkeletonProps) {
 
         <View
           style={{
-            backgroundColor: colors.primaryLight,
+            backgroundColor: colors.card,
             padding: 12,
             alignItems: "center",
           }}

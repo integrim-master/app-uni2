@@ -3,7 +3,8 @@ import {
   MembershipData,
   TratamientoCareme,
 } from "@/src/types/shared/Benefits.type";
-import { Promotion } from "../../home/types/promotions.types";
+import { UltimasCitas } from "../../home/types/home.dates.types";
+import { Promotion } from "../../home/types/home.promotions.types";
 
 interface LoginResponse {
   token: string;
@@ -12,6 +13,7 @@ interface LoginResponse {
   tratamientos_careme: TratamientoCareme[];
   treatments_suggest: TratamientoCareme[];
   promotions: Promotion[];
+  ultimas_citas: UltimasCitas;
 }
 
 interface AcceptTermsResponse {

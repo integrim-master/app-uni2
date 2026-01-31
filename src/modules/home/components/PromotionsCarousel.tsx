@@ -3,20 +3,20 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { Link } from "expo-router";
 import React from "react";
 import {
-  ImageBackground,
-  StyleSheet,
-  useWindowDimensions,
-  View,
+    ImageBackground,
+    StyleSheet,
+    useWindowDimensions,
+    View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
-  ICarouselInstance,
-  Pagination,
+    ICarouselInstance,
+    Pagination,
 } from "react-native-reanimated-carousel";
 import Campana from "../../../../assets/images/campana.jpg";
 import { useTheme } from "../../../context/ThemeContext";
 import { ui } from "../../../themes/ui";
-import { Promotion } from "../types/promotions.types";
+import { Promotion } from "../types/home.promotions.types";
 import PromotionsCarouselSkeleton from "./PromotionsCarouselSkeleton";
 
 export const PromotionsCarousel = ({

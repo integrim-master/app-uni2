@@ -1,4 +1,5 @@
-export interface Cita {
+export interface UltimaCita {
+  id: string;
   fecha_cita: string;
   hora_cita: string;
   categoria: string;
@@ -8,4 +9,4 @@ export interface Cita {
   sede: string;
 }
 
-export type CitasApiResponse = Cita[];
+export type UltimasCitas = UltimaCita[];

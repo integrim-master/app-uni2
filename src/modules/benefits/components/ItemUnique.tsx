@@ -25,12 +25,15 @@ export default function ItemUnique({
   const isThisBenefitRedeemedByBackend =
     Number(benefitRedemed?.id_procedimiento) === data.id;
 
-
-
-console.log(  "Rendering ItemUnique for benefit ID:", data.id,
-    " | isThisBenefitActive:", isThisBenefitActive,
-    " | isAnyBenefitActive:", isAnyBenefitActive,
-    " | isThisBenefitRedeemedByBackend:", isThisBenefitRedeemedByBackend
+  console.log(
+    "Rendering ItemUnique for benefit ID:",
+    data.id,
+    " | isThisBenefitActive:",
+    isThisBenefitActive,
+    " | isAnyBenefitActive:",
+    isAnyBenefitActive,
+    " | isThisBenefitRedeemedByBackend:",
+    isThisBenefitRedeemedByBackend,
   );
 
   return (
@@ -53,7 +56,7 @@ console.log(  "Rendering ItemUnique for benefit ID:", data.id,
             borderColor:
               isThisBenefitActive || isThisBenefitRedeemedByBackend
                 ? colors.primary
-                : colors.border || "#ddd",
+                : colors.border,
             borderWidth: 1,
           },
         ]}
@@ -126,7 +129,6 @@ console.log(  "Rendering ItemUnique for benefit ID:", data.id,
                 style={styles.fullWidthBtn}
                 variant="secondary"
                 onPress={onPressViewDetails}
-                gradientColors={[colors.background, colors.card]}
                 icon={
                   <MaterialIcons
                     name="visibility"
@@ -154,7 +156,6 @@ console.log(  "Rendering ItemUnique for benefit ID:", data.id,
                 disabled={isAnyBenefitActive && !isThisBenefitActive}
                 loading={isPendingRedeem && isThisBenefitActive}
                 style={styles.fullWidthBtn}
-                gradientColors={[colors.primaryLight, colors.primaryDark]}
                 icon={
                   <MaterialIcons
                     name={

@@ -1,8 +1,7 @@
 import { useTheme } from "@/src/context/ThemeContext";
-import { LinearGradient } from "expo-linear-gradient";
+import HeaderGradient from "@/src/ui/HeaderGradient";
 import { Stack } from "expo-router";
 import React from "react";
-import { StyleSheet } from "react-native";
 
 export default function HomeLayout() {
   const { colors } = useTheme();
@@ -13,13 +12,8 @@ export default function HomeLayout() {
         headerShown: true,
         headerTitleAlign: "center",
         headerTintColor: "white",
-        headerBackground: () => (
-          <LinearGradient
-            colors={colors.gradientBackground}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.25 }}
-            style={StyleSheet.absoluteFillObject}
-          />
+        header: ({ navigation, options, back }) => (
+          <HeaderGradient title={options.title as string} back={!!back} />
         ),
       }}
     >

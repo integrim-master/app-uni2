@@ -1,14 +1,13 @@
-import React from "react";
-// import { LinearGradient } from "expo-linear-gradient"; // no se usa
+import React, { useRef } from "react";
 import {
   ActivityIndicator,
+  Animated,
   GestureResponderEvent,
   Pressable,
   StyleProp,
   StyleSheet,
   Text,
   TextStyle,
-  View,
   ViewStyle,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
@@ -27,7 +26,6 @@ interface PrimaryButtonProps {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   icon?: React.ReactNode;
-  gradientColors?: string[];
 }
 
 const PrimaryButton = ({
@@ -40,114 +38,108 @@ const PrimaryButton = ({
   style,
   textStyle,
   icon,
-  gradientColors,
 }: PrimaryButtonProps) => {
   const { colors } = useTheme();
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const animateTo = (toValue: number) => {
+    Animated.timing(scale, {
+      toValue,
+      duration: 120,
+      useNativeDriver: true,
+    }).start();
+  };
 
   const sizes = {
-    sm: { paddingVertical: 8, paddingHorizontal: 10, fontSize: 14 },
-    md: { paddingVertical: 12, paddingHorizontal: 16, fontSize: 16 },
-    lg: { paddingVertical: 16, paddingHorizontal: 20, fontSize: 18 },
+    sm: { paddingVertical: 8, paddingHorizontal: 14, fontSize: 14 },
+    md: { paddingVertical: 14, paddingHorizontal: 20, fontSize: 16 },
+    lg: { paddingVertical: 18, paddingHorizontal: 24, fontSize: 18 },
   } as const;
-
-  const s = sizes[size];
 
   const variantConfig = {
     primary: {
       background: colors.primary,
+      pressed: "rgba(0,0,0,0.12)",
       text: "#fff",
-      border: colors.primary,
     },
     secondary: {
       background: colors.backgroundLight,
+      pressed: "rgba(0,0,0,0.08)",
       text: colors.textPrimary,
-      // border: colors.primaryLight,
     },
     danger: {
       background: colors.danger,
+      pressed: "rgba(0,0,0,0.15)",
       text: "#fff",
-      border: colors.danger,
     },
     warning: {
       background: colors.warning,
+      pressed: "rgba(0,0,0,0.15)",
       text: "#fff",
-      border: colors.warning,
     },
   } as const;
 
+  const s = sizes[size];
   const config = variantConfig[variant];
-
-  const content = (
-    <View
-      style={[
-        styles.button,
-        {
-          paddingVertical: s.paddingVertical,
-          paddingHorizontal: s.paddingHorizontal,
-        },
-        disabled && { opacity: 0.6 },
-      ]}
-    >
-      {loading ? (
-        <ActivityIndicator color={config.text} />
-      ) : (
-        <>
-          <Text
-            style={[
-              styles.text,
-              {
-                color: config.text,
-                fontSize: s.fontSize,
-              },
-              textStyle,
-            ]}
-          >
-            {title}
-          </Text>
-
-          {icon && <View style={styles.iconWrap}>{icon}</View>}
-        </>
-      )}
-    </View>
-  );
 
   return (
     <Pressable
-      onPress={onPress}
       disabled={disabled || loading}
-      accessibilityRole="button"
+      onPress={onPress}
+      onPressIn={() => animateTo(0.96)} // 👈 baja suave
+      onPressOut={() => animateTo(1)} // 👈 sube suave
     >
-      <View
+      <Animated.View
         style={[
-          styles.solid,
-          style,
+          styles.container,
           {
             backgroundColor: config.background,
-            // borderColor: config.border,
-            // borderWidth: ui.borders.hairline,
+            paddingVertical: s.paddingVertical,
+            paddingHorizontal: s.paddingHorizontal,
+            transform: [{ scale }],
+            opacity: disabled || loading ? 0.6 : 1,
           },
+          style,
         ]}
       >
-        {content}
-      </View>
+        {loading ? (
+          <ActivityIndicator color={config.text} />
+        ) : (
+          <>
+            <Text
+              style={[
+                styles.text,
+                {
+                  color: config.text,
+                  fontSize: s.fontSize,
+                },
+                textStyle,
+              ]}
+            >
+              {title}
+            </Text>
+            {icon && <Animated.View style={styles.icon}>{icon}</Animated.View>}
+          </>
+        )}
+      </Animated.View>
     </Pressable>
   );
 };
+
 export default PrimaryButton;
+
 const styles = StyleSheet.create({
-  solid: {
+  container: {
     borderRadius: ui.radii.md,
-  },
-  button: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row",
   },
   text: {
     fontWeight: "700",
+    letterSpacing: 0.3,
   },
-  iconWrap: {
+  icon: {
     marginLeft: 8,
-    marginTop: 1,
   },
 });

@@ -4,7 +4,7 @@ import { parseDateString } from "@/src/utils/dateUtils";
 import { router } from "expo-router";
 import { AnimatePresence, MotiView } from "moti";
 import React, { useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import CitaCard from "../components/CitaCard";
 import CitaCardSkeleton from "../components/CitaCardSkeleton";
@@ -16,6 +16,8 @@ interface DatesScreenProps {
   isLoading?: boolean;
   isError?: boolean;
   error?: any;
+  onRefresh?: () => void;
+  refreshing?: boolean;
 }
 
 export default function DatesScreen({
@@ -23,6 +25,8 @@ export default function DatesScreen({
   isLoading,
   isError,
   error,
+  onRefresh,
+  refreshing,
 }: DatesScreenProps) {
   const { colors } = useTheme();
   const [activeTab, setActiveTab] = useState<"upcoming" | "history">(
@@ -104,6 +108,13 @@ export default function DatesScreen({
                       )}
                       showsVerticalScrollIndicator={false}
                       contentContainerStyle={{ paddingHorizontal: 10 }}
+                      refreshControl={
+                        <RefreshControl
+                          refreshing={!!refreshing}
+                          onRefresh={onRefresh}
+                          tintColor={colors.primary}
+                        />
+                      }
                     />
                   )}
                 </AnimatedView>
@@ -111,7 +122,11 @@ export default function DatesScreen({
 
               {activeTab === "history" && (
                 <AnimatedView key="history" padding>
-                  <HistoryScreen dates={history} />
+                  <HistoryScreen
+                    dates={history}
+                    onRefresh={onRefresh}
+                    refreshing={refreshing}
+                  />
                 </AnimatedView>
               )}
             </AnimatePresence>

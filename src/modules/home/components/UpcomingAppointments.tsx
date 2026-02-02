@@ -34,9 +34,33 @@ export default function UpcomingAppointments({ dates, isLoading }: Props) {
         </ThemedText>
 
         <FlatList
-          data={dates}
+          data={Array.isArray(dates) ? dates.slice(0, 2) : []}
           horizontal
           showsHorizontalScrollIndicator={false}
+          // ListFooterComponent={
+          //   <View style={{ width: 120, marginLeft: 6 }}>
+          //     <Pressable
+          //       onPress={() => router.push("/dates")}
+          //       style={{ width: 120 }}
+          //     >
+          //       <Card
+          //         pressable={false}
+          //         style={{
+          //           height: 130,
+          //           width: 120,
+          //           padding: 12,
+          //           justifyContent: "center",
+          //         }}
+          //       >
+          //         <View style={{ alignItems: "center" }}>
+          //           <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+          //             Ver todas
+          //           </ThemedText>
+          //         </View>
+          //       </Card>
+          //     </Pressable>
+          //   </View>
+          // }
           renderItem={({ item, index }) => (
             <MotiView
               from={{ opacity: 0, translateY: 12 }}

@@ -1,14 +1,9 @@
+import Badge from "@/src/components/shared/Badge";
 import { BenefitUsed } from "@/src/types/shared/Benefits.type";
-import { MaterialIcons } from "@expo/vector-icons";
+import { formatDateToText } from "@/src/utils/stringUtils";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import {
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 
 interface ItemUniqueUsedProps {
@@ -16,23 +11,8 @@ interface ItemUniqueUsedProps {
   onPress?: () => void;
 }
 
-export default function ItemUniqueUsed({
-  data,
-  onPress,
-}: ItemUniqueUsedProps) {
+export default function ItemUniqueUsed({ data, onPress }: ItemUniqueUsedProps) {
   const { colors } = useTheme();
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const months = [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
-  };
 
   return (
     <Pressable
@@ -65,61 +45,21 @@ export default function ItemUniqueUsed({
             >
               {data.benefit}
             </Text>
-            <View style={styles.dateContainer}>
-              <MaterialIcons
-                name="calendar-today"
-                size={14}
-                color={colors.textSecondary}
-              />
-              <Text
-                style={[styles.dateText, { color: colors.textSecondary }]}
-              >
-                Canjeado el {formatDate(data.date_redeem)}
-              </Text>
-            </View>
+            <Text style={[styles.dateText, { color: colors.textSecondary }]}>
+              {formatDateToText(data.date_redeem)}
+            </Text>
           </View>
 
-          <LinearGradient
-            colors={[`${colors.danger}12`, `${colors.danger}0A`]}
+          <Badge
+            text="USADO"
+            icon="check-circle"
+            variant="info"
             style={styles.estadoBadge}
-            start={[0, 0]}
-            end={[1, 0]}
-          >
-            <MaterialIcons
-              name="check-circle"
-              size={14}
-              color={colors.dangerDark ?? colors.danger}
-              style={{ marginRight: 6 }}
-            />
-            <Text style={[styles.estadoText, { color: colors.dangerDark ?? colors.danger }]}>
-              USADO
-            </Text>
-          </LinearGradient>
-        </View>
-
-        <View style={styles.perforationWrap}>
-          <View
-            style={[
-              styles.perforationLine,
-              { borderColor: colors.border || "#ddd" },
-            ]}
           />
         </View>
 
         <View style={styles.bottomSection}>
-          <View style={styles.infoPills}>
-            <View
-              style={[
-                styles.pill,
-                { backgroundColor: `${colors.success}12` },
-              ]}
-            >
-              <MaterialIcons name="event-available" size={14} color={colors.success} />
-              <Text style={[styles.pillText, { color: colors.success }]}>
-                Aplicado
-              </Text>
-            </View>
-          </View>
+          <Badge text="Canjeado" icon="event-available" variant="success" />
         </View>
       </LinearGradient>
     </Pressable>
@@ -153,81 +93,26 @@ const styles = StyleSheet.create({
   titleColumn: {
     flex: 1,
     justifyContent: "center",
+    gap: 4,
   },
   title: {
     fontSize: 17,
     fontWeight: "700",
     letterSpacing: 0.3,
-    marginBottom: 8,
     lineHeight: 22,
-  },
-  dateContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
   },
   dateText: {
     fontSize: 13,
     lineHeight: 18,
-    opacity: 0.85,
     fontWeight: "500",
   },
   estadoBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
     alignSelf: "flex-start",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-  },
-  estadoText: {
-    color: "#fff",
-    fontSize: 11,
-    fontWeight: "800",
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-  },
-  perforationWrap: {
-    marginVertical: 14,
-  },
-  perforationLine: {
-    borderTopWidth: 1.5,
-    borderStyle: "dashed",
-    opacity: 0.35,
   },
   bottomSection: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
-    gap: 12,
-  },
-  infoPills: {
-    flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  pill: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    gap: 4,
-  },
-  pillText: {
-    fontSize: 12,
-    fontWeight: "700",
+    marginTop: 12,
   },
 });

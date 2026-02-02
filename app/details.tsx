@@ -67,8 +67,6 @@ export default function ProfileDetailScreen() {
   );
 
   const handleSubmit = () => {
-    console.log("Submitting profile update:", data);
-
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 0.95,

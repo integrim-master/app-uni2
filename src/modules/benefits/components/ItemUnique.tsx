@@ -78,8 +78,8 @@ export default function ItemUnique({
           </View>
           <Badge
             text={
-              data.used === 0
-                ? `Restantes: ${data.remaining ?? ""}`
+              data.remaining > 0
+                ? `Restantes: ${data.remaining ?? 0}`
                 : `Usado${data.used > 1 ? "s" : ""}: ${data.used}`
             }
             icon={"circle"}

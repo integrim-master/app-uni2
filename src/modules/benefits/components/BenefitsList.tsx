@@ -28,7 +28,7 @@ export default function BenefitsList({
   const { colors } = useTheme();
 
   const filteredBenefits = (benefits || []).filter(
-    (b: Benefits) => (b.remaining || 0) > 1,
+    (b: Benefits) => (b.remaining || 0) >= 1,
   );
 
   return (

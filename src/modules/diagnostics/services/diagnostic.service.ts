@@ -130,7 +130,6 @@ export const DiagnosticsServices = {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
-      console.log("Fetch last diagnostic response status:", res);
 
       if (!res.ok) {
         if (res.status === 404) {
@@ -140,7 +139,6 @@ export const DiagnosticsServices = {
       }
 
       const data = await res.json();
-      console.log("Last diagnostic data:", data);
       return { success: true, data };
     } catch (error: any) {
       console.error("Error fetching last diagnostic:", error);

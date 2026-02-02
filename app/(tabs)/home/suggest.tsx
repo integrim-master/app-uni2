@@ -9,93 +9,65 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 export default function Suggest() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <Screen  >
-
+    <Screen>
       <SafeAreaView className="flex-1 ">
-              <BackButton/>
+        <BackButton />
         <View style={styles.imageWrapper}>
-        <ImageBackground
-          source={require("../assets/images/campana.jpg")}
-          style={styles.image}
-          imageStyle={{ borderRadius: 0 }}
+          <ImageBackground
+            source={require("../../../assets/images/campana.jpg")}
+            style={styles.image}
+            imageStyle={{ borderRadius: 0 }}
+          >
+            <View style={styles.gradientOverlay} />
+
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title}>Limpieza Facial</Text>
+              <Text style={styles.subtitle}>Tratamiento profesional</Text>
+            </View>
+          </ImageBackground>
+        </View>
+
+        <View
+          style={[styles.card, { backgroundColor: colors.gradientCardStart }]}
         >
-          <View style={styles.gradientOverlay} />
-        
-          <View style={styles.titleWrapper}>
-            <Text style={styles.title}>Limpieza Facial</Text>
-            <Text style={styles.subtitle}>
-              Tratamiento profesional
+          <View>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Descripción del tratamiento
+            </Text>
+
+            <Text style={[styles.desc, { color: colors.textSecondary }]}>
+              La limpieza facial profunda elimina impurezas, celulas muertas y
+              toxinas de la piel, dejándola suave, luminosa y revitalizada.
+              Incluye exfoliación, extracción controlada y mascarilla hidratante
+              para mejorar la salud del cutis.
             </Text>
           </View>
-        </ImageBackground>
-      </View>
-
-      <View
-        style={[
-          styles.card,
-          { backgroundColor: colors.gradientCardStart },
-        ]}
-      >
-        <View>
-          <Text
-            style={[
-              styles.sectionTitle,
-              { color: colors.text },
-            ]}
-          >
-            Descripción del tratamiento
-          </Text>
-
-          <Text
-            style={[
-              styles.desc,
-              { color: colors.textSecondary },
-            ]}
-          >
-            La limpieza facial profunda elimina impurezas, celulas
-            muertas y toxinas de la piel, dejándola suave, luminosa
-            y revitalizada. Incluye exfoliación, extracción
-            controlada y mascarilla hidratante para mejorar la
-            salud del cutis.
-          </Text>
-        </View>
-        <View style={styles.buttonsRow}>
-          <Pressable
-            style={[
-              styles.whatsappBtn,
-              { backgroundColor: colors.success },
-            ]}
-          >
-            <Ionicons
-              name="logo-whatsapp"
-              size={22}
-              color={colors.card}
-            />
-            <Text
-              style={[
-                styles.whatsappText,
-                { color: colors.card },
-              ]}
+          <View style={styles.buttonsRow}>
+            <Pressable
+              style={[styles.whatsappBtn, { backgroundColor: colors.success }]}
             >
-              Contactar asesor
-            </Text>
-          </Pressable>
+              <Ionicons name="logo-whatsapp" size={22} color={colors.card} />
+              <Text style={[styles.whatsappText, { color: colors.card }]}>
+                Contactar asesor
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
       </SafeAreaView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-
-
   imageWrapper: {
     width: "100%",
     height: 260,
@@ -187,4 +159,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-

@@ -79,9 +79,8 @@ yarn-error.*
 # local env files
 .env*.local
 
-# Firebase Admin SDK credentials
-integrim-351dc-firebase-adminsdk-fbsvc-ab71a7bfc3.json
-google-services.json
+# Firebase Admin SDK credentials (sensitive)
+*firebase-adminsdk*.json
 
 # typescript
 *.tsbuildinfo

@@ -19,7 +19,7 @@ export const useBenefitAll = () => {
     staleTime: Infinity,
     gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    refetchOnReconnect: true,
     retry: 1,
   });
 };

@@ -1,0 +1,15 @@
+import { useQuery } from "@tanstack/react-query";
+import { NotificationsServices } from "../services/notifications.service";
+import { NotificationsResponse } from "../types/notifications.types";
+
+export const useNotificationsApi = () => {
+  return useQuery<NotificationsResponse>({
+    queryKey: ["notifications"],
+    queryFn: () => NotificationsServices.getNotifications(),
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: 1,
+  });
+};

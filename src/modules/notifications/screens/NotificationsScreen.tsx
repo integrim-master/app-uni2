@@ -1,63 +1,38 @@
 import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
-import { useTheme } from "@/src/context/ThemeContext";
-import TabBar from "@/src/modules/home/components/TabBar";
-import React, { useState } from "react";
+import type { NotificationData } from "@/src/context/notifications";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NotificationsList } from "../components/NotificationsList";
-import { Notification } from "../types/notifications.types";
 
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    title: "Cita confirmada",
-    message: "Tu cita para limpieza facial ha sido confirmada para el 15 de enero a las 10:00 AM",
-    date: "Hace 2h",
-    read: false,
-    type: "appointment",
-  },
-  {
-    id: "2",
-    title: "Nueva promoción",
-    message: "¡20% de descuento en todos los tratamientos faciales este mes!",
-    date: "Hace 5h",
-    read: false,
-    type: "promotion",
-  },
-  {
-    id: "3",
-    title: "Recordatorio",
-    message: "Tienes una cita mañana a las 3:00 PM. Te esperamos!",
-    date: "Ayer",
-    read: true,
-    type: "info",
-  },
- 
-];
+interface NotificationsScreenProps {
+  notifications: NotificationData[];
+  onNotificationPress: (notification: NotificationData) => void;
+  onRefresh: () => void;
+  isLoading: boolean;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+}
 
-const NotificationsScreen: React.FC = () => {
-  const { colors } = useTheme();
-  const [activeTab, setActiveTab] = useState<string>("all");
-
-  const filteredNotifications =
-    activeTab === "unread"
-      ? mockNotifications.filter((n) => !n.read)
-      : mockNotifications;
-
-  const handleNotificationPress = (notification: Notification) => {
-    console.log("Notification pressed:", notification);
-   
-  };
-
+const NotificationsScreen: React.FC<NotificationsScreenProps> = ({
+  notifications,
+  onNotificationPress,
+  onRefresh,
+  isLoading,
+  activeTab,
+  onTabChange,
+}) => {
   return (
     <Screen>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <BackButton />
+          {/* <ThemedText type="title">Notificaciones</ThemedText>
+          <View /> */}
         </View>
 
-        <View style={styles.tabContainer}>
+        {/* <View style={styles.tabContainer}>
           <TabBar
             activeTab={activeTab}
             setActiveTab={setActiveTab}
@@ -66,12 +41,14 @@ const NotificationsScreen: React.FC = () => {
               { key: "unread", label: "No leídas" },
             ]}
           />
-        </View>
+        </View> */}
 
         <View style={styles.content}>
           <NotificationsList
-            notifications={filteredNotifications}
-            onNotificationPress={handleNotificationPress}
+            notifications={notifications as any}
+            onNotificationPress={onNotificationPress}
+            onRefresh={onRefresh}
+            isLoading={isLoading}
           />
         </View>
       </SafeAreaView>
@@ -84,7 +61,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 16,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "space-between",
+
     paddingVertical: 8,
   },
   tabContainer: {

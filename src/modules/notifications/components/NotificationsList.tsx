@@ -1,21 +1,43 @@
 import EmptySvgPush from "@/assets/svg/Push.svg";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
-import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Notification } from "../types/notifications.types";
+import React, { useState } from "react";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
+import { NotificationsResponse } from "../types/notifications.types";
 import { NotificationCard } from "./NotificationCard";
+import { NotificationsSkeletonList } from "./NotificationSkeleton";
 
 interface NotificationsListProps {
-  notifications: Notification[];
-  onNotificationPress?: (notification: Notification) => void;
+  notifications: NotificationsResponse[];
+  onNotificationPress?: (notification: NotificationsResponse) => void;
+  onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
 export const NotificationsList: React.FC<NotificationsListProps> = ({
   notifications,
   onNotificationPress,
+  onRefresh,
+  isLoading = false,
 }) => {
   const { colors } = useTheme();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    if (onRefresh) {
+      setRefreshing(true);
+      await onRefresh();
+      setTimeout(() => setRefreshing(false), 500);
+    }
+  };
+
+  if (isLoading && notifications.length === 0) {
+    return (
+      <View style={styles.skeletonContainer}>
+        <NotificationsSkeletonList />
+      </View>
+    );
+  }
 
   if (notifications.length === 0) {
     return (
@@ -47,6 +69,18 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
       )}
       contentContainerStyle={styles.listContainer}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          colors={[colors.primary, colors.primaryLight]}
+          tintColor={colors.primary}
+          progressBackgroundColor={colors.background}
+          titleColor={colors.text}
+          title="Actualizando..."
+          progressViewOffset={0}
+        />
+      }
     />
   );
 };
@@ -54,6 +88,9 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
 const styles = StyleSheet.create({
   listContainer: {
     paddingVertical: 8,
+  },
+  skeletonContainer: {
+    flex: 1,
   },
   emptyContainer: {
     flex: 1,

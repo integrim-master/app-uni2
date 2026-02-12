@@ -3,8 +3,10 @@ import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
+import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useLogin } from "@/src/modules/login/hooks/useLogin";
+import { useSendNotifications } from "@/src/modules/login/hooks/useNotifications";
 import { useTerms } from "@/src/modules/login/hooks/useTerms";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -25,6 +27,9 @@ const Login = () => {
   const { mutate, isPending } = useLogin();
   const { mutate: acceptTerms, isPending: isLoadinPrivacy } = useTerms();
   const { login, logout } = useAuth();
+  const { pushToken } = useNotifications();
+
+  const { mutate: sendTokenNotifications } = useSendNotifications();
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
@@ -77,6 +82,17 @@ const Login = () => {
             data.promotions,
             data.ultimas_citas,
           );
+
+          if (pushToken) {
+            sendTokenNotifications(
+              { expo_token: pushToken, platform: "android" },
+              {
+                onError: (error) => {
+                  console.error("Error enviando push token:", error);
+                },
+              },
+            );
+          }
 
           if (data.user_data.user_terms !== "Aceptado") {
             setShowPrivacyModal(true);

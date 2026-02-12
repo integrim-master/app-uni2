@@ -1,28 +1,21 @@
+import { useVideoPlayer, VideoView } from "expo-video";
 import React from "react";
-import {
-    Dimensions,
-    Image,
-    Modal,
-    Platform,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from "react-native";
+import { Image, Modal, Pressable, Text, View } from "react-native";
+import { BannerMedia } from "../modules/banner/types/banner.type";
 
 interface BannerProps {
-  bannerData: {
-    title:  string;
-    description: string;
-    image: string;
-  };
+  bannerData: BannerMedia;
   visible: boolean;
   onClose: () => void;
 }
 
-const { width, height } = Dimensions.get("window");
-
 export const BannerModal = ({ bannerData, visible, onClose }: BannerProps) => {
+  const player = useVideoPlayer(bannerData.media, (player) => {
+    player.loop = true;
+    player.muted = false;
+    player.play();
+  });
+
   return (
     <Modal
       visible={visible}
@@ -31,125 +24,52 @@ export const BannerModal = ({ bannerData, visible, onClose }: BannerProps) => {
       onRequestClose={onClose}
       statusBarTranslucent
     >
-      <TouchableOpacity 
-        style={styles.overlay} 
-        activeOpacity={1} 
+      <Pressable
+        className="flex-1 justify-center items-center bg-black/90 px-5"
         onPress={onClose}
       >
-        <TouchableOpacity 
-          style={styles.bannerContainer} 
-          activeOpacity={1}
+        <Pressable
+          className="w-full max-w-[400px] bg-white overflow-hidden shadow-2xl "
           onPress={(e) => e.stopPropagation()}
         >
-          <TouchableOpacity 
-            style={styles.closeButton} 
+          <Pressable
+            className="absolute top-4 right-4 z-50 w-9 h-9 rounded-full bg-black/50 items-center justify-center"
             onPress={onClose}
-            hitSlop={{ top: 10, bottom: 10, left:  10, right: 10 }}
+            hitSlop={10}
           >
-            <View style={styles.closeCircle}>
-              <Text style={styles.closeText}>✕</Text>
-            </View>
-          </TouchableOpacity>
+            <Text className="text-white text-lg font-bold">✕</Text>
+          </Pressable>
 
-          
-          <Image 
-            source={require("../assets/images/campana.jpg")} 
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
+          <View
+            style={{
+              width: "100%",
+              height: 550,
+              maxHeight: 550,
+              backgroundColor: "#000",
+            }}
+          >
+            {bannerData.tipo === "image" ? (
+              <Image
+                source={{ uri: bannerData.media }}
+                style={{ width: "100%", height: "100%" }}
+                resizeMode="cover"
+              />
+            ) : (
+              <VideoView
+                player={player}
+                contentFit="fill"
+                style={{ width: "100%", height: "100%" }}
+                nativeControls={false}
+              />
+            )}
+          </View>
 
-          {/* {bannerData.title && (
-            <View style={styles.contentContainer}>
-              <Text style={styles.bannerTitle}>{bannerData.title}</Text>
-              {bannerData.description && (
-                <Text style={styles.bannerDescription}>
-                  {bannerData. description}
-                </Text>
-              )}
-            </View>
-          )} */}
-        </TouchableOpacity>
-      </TouchableOpacity>
+          {/* Opcional: Footer si lo necesitas */}
+          {/* <View className="p-5 items-center">
+             <Text className="text-xl font-bold text-gray-900">Promoción Especial</Text>
+          </View> */}
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    padding: 20,
-  },
-  bannerContainer: {
-    width: width * 0.85,
-    maxWidth: 400,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 0,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity:  0.3,
-    shadowRadius: 8,
-    elevation: 10,
-    overflow: "hidden",
-  },
-  closeButton: {
-    position: "absolute",
-    top: 10,
-    right:  10,
-    zIndex:  10,
-  },
-  closeCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-    ... Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity:  0.3,
-        shadowRadius: 3,
-      },
-      android:  {
-        elevation: 4,
-      },
-    }),
-  },
-  closeText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#fff",
-    lineHeight: 20,
-  },
-  bannerImage: {
-    width: "100%",
-    height: height * 0.65,
-    maxHeight: 550,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  contentContainer: {
-    width: "100%",
-    padding: 20,
-    paddingTop: 15,
-  },
-  bannerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    textAlign: "center",
-    color: "#1a1a1a",
-  },
-  bannerDescription: {
-    fontSize: 15,
-    color: "#666",
-    textAlign: "center",
-    lineHeight: 22,
-  },
-});

@@ -1,12 +1,13 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { formatRelativeDate } from "@/src/utils/dateUtils";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Notification } from "../types/notifications.types";
+import { NotificationsResponse } from "../types/notifications.types";
 
 interface NotificationCardProps {
-  notification: Notification;
+  notification: NotificationsResponse;
   onPress?: () => void;
 }
 
@@ -16,12 +17,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 }) => {
   const { colors } = useTheme();
 
-  const getIconName = (type: string): keyof typeof MaterialIcons.glyphMap => {
+  const getIconName = (type?: string): keyof typeof MaterialIcons.glyphMap => {
     switch (type) {
-      case "appointment":
-        return "event";
-      case "promotion":
-        return "local-offer";
+      case "sadpe":
+        return "lock-clock";
+      case "message":
+        return "message";
       case "success":
         return "check-circle";
       case "warning":
@@ -31,10 +32,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
     }
   };
 
-  const getIconColor = (type: string): string => {
+  const getIconColor = (type?: string): string => {
     switch (type) {
-      case "appointment":
-        return colors.primary;
+      case "sadpe":
+        return colors.primaryLight;
       case "promotion":
         return colors.secondary;
       case "success":
@@ -51,21 +52,23 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
       style={[
         styles.card,
         {
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-          opacity: notification.read ? 0.7 : 1,
+          opacity: notification.read_at ? 0.7 : 1,
+          borderBottomColor: colors.border,
         },
       ]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <View style={styles.iconContainer}>
+      <View
+        style={styles.iconContainer}
+        className="rounded-md bg-gray-300/10 p-1"
+      >
         <MaterialIcons
-          name={getIconName(notification.type)}
+          name={getIconName(notification.type_notification)}
           size={28}
-          color={getIconColor(notification.type)}
+          color={getIconColor(notification.type_notification)}
         />
-        {!notification.read && (
+        {!notification.read_at && (
           <View
             style={[styles.unreadBadge, { backgroundColor: colors.primary }]}
           />
@@ -74,15 +77,15 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 
       <View style={styles.content}>
         <View style={styles.header}>
-          <ThemedText
-            type="semiBold"
-            style={styles.title}
-            numberOfLines={1}
-          >
+          <ThemedText type="semiBold" style={styles.title} numberOfLines={1}>
             {notification.title}
           </ThemedText>
           <ThemedText type="caption" color={colors.textSecondary}>
-            {notification.date}
+            {formatRelativeDate(
+              notification.sent_at
+                ? new Date(notification.sent_at.replace(" ", "T"))
+                : new Date(),
+            )}
           </ThemedText>
         </View>
 
@@ -92,7 +95,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
           numberOfLines={2}
           style={styles.message}
         >
-          {notification.message}
+          {notification.body}
         </ThemedText>
       </View>
     </TouchableOpacity>
@@ -103,10 +106,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     padding: 16,
-    marginHorizontal: 16,
-    marginVertical: 6,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderBottomWidth: 1,
   },
   iconContainer: {
     width: 48,

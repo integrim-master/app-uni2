@@ -31,4 +31,18 @@ export const AuthService = {
     );
     return response.data;
   },
+
+  sendTokenNotifications: async ({
+    expo_token,
+    platform,
+  }: {
+    expo_token: string;
+    platform: any;
+  }) => {
+    const response = await api.post("/wp-json/careme/v1/push-token", {
+      expo_token: expo_token,
+      platform: platform,
+    });
+    return response.data;
+  },
 };

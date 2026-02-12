@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "64857908450",
+    "project_id": "integrim-351dc",
+    "storage_bucket": "integrim-351dc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64857908450:android:be22dc6b18ee5827e5aabb",
+        "android_client_info": {
+          "package_name": "com.imtegrim.unid2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNEeRibYsmL9j2xIKyzymT49hFVqO0BCQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

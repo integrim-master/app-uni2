@@ -46,6 +46,8 @@ export default function BeneficiosScreen({
     membership?.benefit_redeem,
   );
 
+  console.log("Membership data in BeneficiosScreen:", membership);
+
   useFocusEffect(
     React.useCallback(() => {
       setBenefitsRedemed(membership?.benefit_redeem);

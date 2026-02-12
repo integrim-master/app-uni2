@@ -79,6 +79,9 @@ yarn-error.*
 # local env files
 .env*.local
 
+# Firebase Admin SDK credentials (sensitive)
+*firebase-adminsdk*.json
+
 # typescript
 *.tsbuildinfo
 

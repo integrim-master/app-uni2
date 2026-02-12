@@ -3,6 +3,7 @@ import HomeHeader from "@/src/modules/home/components/HomeHeader";
 import { Stack, usePathname, useRouter } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
+
 export default function HomeLayout() {
   const { colors, isDark } = useTheme();
   const router = useRouter();
@@ -26,13 +27,6 @@ export default function HomeLayout() {
           headerShown: true,
         }}
       />
-      {/* <Stack.Screen
-        name="support"
-        options={{
-          title: "Tus solicitudes",
-          headerShadowVisible: false,
-        }}
-      /> */}
 
       <Stack.Screen
         name="suggest"

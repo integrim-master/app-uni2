@@ -1,7 +1,34 @@
+import type { NotificationData } from "@/src/context/notifications";
+import { useNotifications } from "@/src/context/notifications";
 import NotificationsScreen from "@/src/modules/notifications/screens/NotificationsScreen";
-import React from "react";
+import React, { useState } from "react";
 
 export default function Notifications() {
-  return <NotificationsScreen />;
-}
+  // El padre obtiene del contexto
+  const { notifications, markAsRead, refetch, isFetching } = useNotifications();
+  const [activeTab, setActiveTab] = useState<string>("all");
 
+  console.log("Current notifications in context:", notifications);
+
+  // El padre filtra
+  const filteredNotifications =
+    activeTab === "unread"
+      ? notifications.filter((n) => !n.read_at)
+      : notifications;
+
+  const handleNotificationPress = (notification: NotificationData) => {
+    markAsRead(notification.id, Number(notification.user_id));
+    console.log("Notificacion presionada:", notification);
+  };
+
+  return (
+    <NotificationsScreen
+      notifications={filteredNotifications}
+      onNotificationPress={handleNotificationPress}
+      onRefresh={refetch}
+      isLoading={isFetching}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    />
+  );
+}

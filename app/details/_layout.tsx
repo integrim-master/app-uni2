@@ -20,10 +20,11 @@ export default function ProfiLayout() {
       }}
     >
       <Stack.Screen
-        name="index"
+        name="edit/[slug]/index"
         options={{
           title: "Perfil",
           headerShadowVisible: true,
+          headerShown: false,
         }}
       />
       <Stack.Screen

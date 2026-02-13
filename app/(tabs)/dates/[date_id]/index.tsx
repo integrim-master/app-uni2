@@ -1,13 +1,13 @@
-// import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
-import { useLocalSearchParams } from "expo-router";
-// import { useCallback, useMemo, useRef, useState } from "react";
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
+import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkeleton";
+import { useDatesDetails } from "@/src/modules/dates/hooks/useDatesById";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Screen } from "../../../../src/components/shared/Screen";
 import { useTheme } from "../../../../src/context/ThemeContext";
@@ -15,9 +15,18 @@ import { useTheme } from "../../../../src/context/ThemeContext";
 export default function Index() {
   const { colors } = useTheme();
   const { date_id } = useLocalSearchParams();
-  const { user, dates } = useAuth();
+  const { user } = useAuth();
+  const { data: dateDetails, isFetching } = useDatesDetails(date_id as string);
 
-  const DateFiltered = dates?.find((d) => String(d.id) === String(date_id));
+  if (isFetching) {
+    return (
+      <Screen>
+        <View className="p-4 flex gap-2 h-full">
+          <CitaDetailsSkeleton />
+        </View>
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
@@ -49,7 +58,7 @@ export default function Index() {
             <ThemedText>Cita agenda</ThemedText>
             <Badge
               showIcon={false}
-              text={DateFiltered?.categoria}
+              text={dateDetails?.categoria || "General"}
               variant="warning"
               size="small"
             />
@@ -75,7 +84,7 @@ export default function Index() {
                 fontWeight: 800,
               }}
             >
-              {DateFiltered?.Procedimiento}
+              {dateDetails?.Procedimiento}
             </ThemedText>
             <View className="mt-4">
               <ThemedText
@@ -83,17 +92,17 @@ export default function Index() {
                 // style={{ fontWeight: 800 }}
                 type="caption"
               >
-                {formatDateToText(DateFiltered?.fecha_cita)}
+                {formatDateToText(dateDetails?.fecha_cita)}
               </ThemedText>
               <ThemedText
                 style={{ fontWeight: 700 }}
                 type="body"
                 color={colors.textPrimary}
               >
-                {DateFiltered?.hora_cita}
+                {dateDetails?.hora_cita}
               </ThemedText>
               <ThemedText color={colors.textSecondary}>
-                Profesional {DateFiltered?.profesional}
+                Profesional {dateDetails?.profesional}
               </ThemedText>
             </View>
             <View></View>
@@ -108,7 +117,7 @@ export default function Index() {
             <View>
               <ThemedText color={colors.textPrimary}>Sede</ThemedText>
               <ThemedText className="capitalize" color={colors.textSecondary}>
-                {DateFiltered?.sede}
+                {dateDetails?.sede}
               </ThemedText>
             </View>
           </View>

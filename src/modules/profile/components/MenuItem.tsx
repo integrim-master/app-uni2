@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 // import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
 
 export type MenuItemProps = {
   icon?: string;
@@ -33,7 +33,13 @@ export function MenuItem({
       style={[
         styles.menuItem,
         isLast && styles.menuItemLast,
-        { backgroundColor: 'transparent', borderColor: 'transparent', borderWidth: 0, borderRadius: 0, marginBottom: 0 },
+        {
+          backgroundColor: "transparent",
+          borderColor: "transparent",
+          borderWidth: 0,
+          borderRadius: 0,
+          marginBottom: 0,
+        },
       ]}
     >
       <View style={styles.menuContent}>
@@ -45,9 +51,16 @@ export function MenuItem({
             style={styles.menuIcon}
           />
         )}
-        <View>
+        <View className="">
           {title && (
-            <Text style={[styles.menuTitle, { color: colors.secondaryDark, opacity: 0.7 }]}>{title}</Text>
+            <Text
+              style={[
+                styles.menuTitle,
+                { color: colors.secondaryDark, opacity: 0.7 },
+              ]}
+            >
+              {title}
+            </Text>
           )}
           <Text style={[styles.menuText, { color: textColor }]}>{label}</Text>
         </View>
@@ -59,28 +72,28 @@ export function MenuItem({
 
 const styles = StyleSheet.create({
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
   },
   menuItemLast: {
     borderBottomWidth: 0,
   },
   menuContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   menuIcon: {
     marginRight: 16,
   },
   menuTitle: {
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 2,
   },
   menuText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });

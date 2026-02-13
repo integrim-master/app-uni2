@@ -1,6 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
+import { Ionicons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
 
 interface ProfileHeaderProps {
   userName: string;
@@ -14,26 +14,18 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
   return (
     <Pressable
       onPress={onPress}
-      style={[
-        styles.profileSection,
-        {
-
-          borderColor: colors.border,
-          shadowColor: colors.shadow,
-        },
-      ]}
+      style={[styles.profileSection, { borderColor: colors.border }]}
     >
       <View style={styles.profileContent}>
         <View
           style={[
             styles.profileImage,
             {
-              backgroundColor: colors.backgroundLight,
-              borderColor: colors.primary,
+              backgroundColor: colors.primaryLight,
             },
           ]}
         >
-          <Text style={[styles.profileInitial, { color: colors.primary }]}>
+          <Text style={[styles.profileInitial, { color: colors.text }]}>
             {userInitial}
           </Text>
         </View>
@@ -41,7 +33,9 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
           <Text style={[styles.profileName, { color: colors.textPrimary }]}>
             {userName}
           </Text>
-          <Text style={[styles.profileSubtext, { color: colors.textSecondary }]}>
+          <Text
+            style={[styles.profileSubtext, { color: colors.textSecondary }]}
+          >
             Ver perfil
           </Text>
         </View>
@@ -53,21 +47,16 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
 
 const styles = StyleSheet.create({
   profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 18,
-    borderRadius: 999,
+    borderBottomWidth: 1,
     marginBottom: 32,
-    borderWidth: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    elevation: 3,
   },
   profileContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   profileImage: {
@@ -76,22 +65,22 @@ const styles = StyleSheet.create({
     borderRadius: 29,
     borderWidth: 1,
     marginRight: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileInitial: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   profileTextContainer: {
     flex: 1,
   },
   profileName: {
     fontSize: 19,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   profileSubtext: {
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: "400",
   },
 });

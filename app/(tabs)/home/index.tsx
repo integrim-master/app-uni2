@@ -3,7 +3,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import HomeScreen from "@/src/modules/home/screens/HomeScreen";
 import type { UltimasCitas } from "@/src/modules/home/types/home.dates.types";
 import { useMeUser } from "@/src/modules/login/hooks/useMe";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 export default function Index() {
   const { user, membership, treatmentsCareme } = useAuth();
@@ -15,9 +15,6 @@ export default function Index() {
     await refetch();
     setRefreshing(false);
   };
-  useEffect(() => {
-    onRefresh();
-  }, []);
 
   const currentUser = data?.user_data || user;
   const currentMembership = data?.membership_data || membership;

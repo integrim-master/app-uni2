@@ -17,6 +17,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 }) => {
   const { colors } = useTheme();
 
+  console.log("Renderizando notificación:", notification.read_at);
+
   const getIconName = (type?: string): keyof typeof MaterialIcons.glyphMap => {
     switch (type) {
       case "sadpe":

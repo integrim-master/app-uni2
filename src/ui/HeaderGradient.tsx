@@ -3,12 +3,12 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
-    Platform,
-    StatusBar,
-    StyleProp,
-    Text,
-    View,
-    ViewStyle,
+  Platform,
+  StatusBar,
+  StyleProp,
+  Text,
+  View,
+  ViewStyle,
 } from "react-native";
 
 type Props = {
@@ -23,8 +23,8 @@ export default function HeaderGradient({ title, back, style }: Props) {
   return (
     <LinearGradient
       colors={colors.gradientBackground}
-      start={[0, 0]}
-      end={[1, 0]}
+      start={{ x: 0, y: 10 }}
+      end={{ x: 90, y: 10 }}
       style={{
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
       }}

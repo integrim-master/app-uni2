@@ -27,25 +27,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [treatmentsCareme, setTreatmentsCareme] = useState<TratamientoCareme[]>(
     [],
   );
-  const [dates, setDatesState] = useState<UltimasCitas | undefined>(undefined);
+  const [dates, setDatesState] = useState<UltimasCitas>([]);
 
   const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
     restoreSession();
   }, []);
-
-  const setDates = async (d?: UltimasCitas) => {
-    try {
-      setDatesState(d);
-      const saved = await SecureStore.getItemAsync(STORAGE_KEY);
-      const parsed = saved ? JSON.parse(saved) : {};
-      parsed.dates = d;
-      await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(parsed));
-    } catch (e) {
-      console.error("Error saving dates to storage:", e);
-    }
-  };
 
   const restoreSession = async () => {
     try {
@@ -86,6 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         promotions: promotions,
         dates: datesArg,
       };
+      console.log("Saving auth data to storage:", payload.dates);
 
       setToken(token);
       setUser(userData);
@@ -93,7 +82,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setTreatmentsCareme(treatments);
       setPromotions(promotions);
       await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(payload));
-      if (datesArg) await setDates(datesArg);
     } finally {
       hideLoading();
     }
@@ -105,9 +93,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setToken(null);
       setUser(null);
       setMembership(null);
-      try {
-        await setDates(undefined);
-      } catch (e) {}
+
       await AsyncStorage.clear();
       await SecureStore.deleteItemAsync(STORAGE_KEY);
     } finally {
@@ -134,7 +120,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     membership,
     treatmentsCareme,
     dates,
-    setDates,
     loading,
     login,
     logout,

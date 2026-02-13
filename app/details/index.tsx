@@ -1,28 +1,15 @@
-import { BackButton } from "@/src/components/shared/BackButton";
-import { MenuSection } from "@/src/components/shared/MenuSection";
+import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
+import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useEditProfile } from "@/src/modules/profile/hooks/useEditProfile";
+import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
 import { ui } from "@/src/themes/ui";
-import { Ionicons } from "@expo/vector-icons";
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetTextInput,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Animated,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Animated, ScrollView, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function ProfileDetailScreen() {
@@ -37,13 +24,14 @@ export default function ProfileDetailScreen() {
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const { user, setUser, updateUserInStorage } = useAuth();
+  const { setUser, updateUserInStorage } = useAuth();
   const { mutate, isPending } = useEditProfile();
+  const { data: user } = useInfoProfile();
 
   const openSheet = useCallback(() => {
     setData((prev) => ({
       ...prev,
-      user_name: user?.user_name || "",
+      user_name: user?.nombre || "",
       id: Number(user?.user_id ?? 0),
     }));
     setIsSheetOpen(true);
@@ -87,16 +75,16 @@ export default function ProfileDetailScreen() {
       },
       {
         onSuccess: async () => {
-          if (user) {
-            const updatedUser = {
-              ...user,
-              user_name: data.user_name,
-            };
-            setUser(updatedUser);
-            if (typeof updateUserInStorage === "function") {
-              await updateUserInStorage(updatedUser);
-            }
-          }
+          // if (user) {
+          //   const updatedUser = {
+          //     ...user,
+          //     user_name: data.user_name,
+          //   };
+          //   setUser(updatedUser);
+          //   if (typeof updateUserInStorage === "function") {
+          //     await updateUserInStorage(updatedUser);
+          //   }
+          // }
 
           Toast.show({
             type: "success",
@@ -133,7 +121,7 @@ export default function ProfileDetailScreen() {
 
   return (
     <Screen safeArea={true}>
-      <BackButton to={"/profile"} />
+      {/* <BackButton to={"/profile"} /> */}
       <ScrollView>
         <View style={[styles.headerContainer]}>
           <View
@@ -141,54 +129,111 @@ export default function ProfileDetailScreen() {
               styles.avatarCircle,
               {
                 backgroundColor: colors.primaryLight,
-                borderColor: colors.cardTextDark,
               },
             ]}
           >
             <Text
               style={[styles.avatarInitial, { color: colors.cardTextDark }]}
             >
-              {user?.user_name.charAt(0).toUpperCase()}
+              {user?.nombre.charAt(0).toUpperCase()}
             </Text>
           </View>
 
-          <Text style={[styles.name, { color: "#fff" }]}>
-            {user?.user_name}
-          </Text>
+          <Text style={[styles.name, { color: "#fff" }]}>{user?.nombre}</Text>
           <Text style={[styles.email, { color: "rgba(255,255,255,0.8)" }]}>
-            {user?.user_email}
+            {user?.nombre}
           </Text>
 
-          <Pressable
+          <PrimaryButton
+            title="Editar perfil"
+            onPress={() => router.push("/details/edit")}
+            style={{ marginTop: 14, alignSelf: "center" }}
+          />
+
+          {/* <Pressable
             style={[styles.editButton, { backgroundColor: colors.primaryDark }]}
             onPress={openSheet}
           >
             <Ionicons name="create-outline" size={18} color="#fff" />
             <Text style={styles.editText}>Editar perfil</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
 
-        <View style={styles.sectionWrapper}>
-          <MenuSection
-            title="Datos de contacto"
+        <View style={styles.sectionWrapper} className="flex gap-2">
+          <SimpleMenuSection
+            sectionTitle="Datos de contacto"
             items={[
-              { title: "Correo", label: user?.user_email },
-              { title: "Teléfono", label: user?.user_phone },
-              { title: "Sede", label: user?.user_sede },
+              {
+                title: "Correo",
+                subtitle: user?.nombre || "N/A",
+                icon: "mail-outline",
+              },
+              {
+                title: "Teléfono",
+                subtitle: user?.telefono || "N/A",
+                icon: "call-outline",
+              },
             ]}
           />
-
-          <MenuSection
-            title="Datos personales"
+          <SimpleMenuSection
+            sectionTitle="Datos personales"
             items={[
-              { title: "Nombre", label: user?.user_name },
-              { title: "Cédula", label: user?.user_identificacion },
+              {
+                title: "Nombre",
+                subtitle: user?.nombre || "N/A",
+                icon: "person-outline",
+              },
+              {
+                title: "Identificación",
+                subtitle: user?.type_id?.toString() || "N/A",
+                icon: "card-outline",
+              },
+              {
+                title: "Tipo de identificación",
+                subtitle: user?.identificacion || "N/A",
+                icon: "id-card-outline",
+              },
+              {
+                title: "Financiamiento",
+                subtitle: user?.fnacimiento || "N/A",
+                icon: "calendar-outline",
+              },
+            ]}
+          />
+          <SimpleMenuSection
+            sectionTitle="Datos de residencia"
+            items={[
+              {
+                title: "País origen",
+                subtitle: user?.pais_origen || "N/A",
+                icon: "flag-outline",
+              },
+              {
+                title: "País residencia",
+                subtitle: user?.pais_residencia || "N/A",
+                icon: "home-outline",
+              },
+              {
+                title: "Provincia",
+                subtitle: user?.provincia || "N/A",
+                icon: "map-outline",
+              },
+              {
+                title: "Ciudad",
+                subtitle: user?.pais_residencia || "N/A",
+                icon: "business-outline",
+              },
+              {
+                title: "Postal",
+                subtitle: user?.postal || "N/A",
+                icon: "mail-open-outline",
+              },
             ]}
           />
         </View>
       </ScrollView>
 
-      <BottomSheet
+      {/* <BottomSheet
         ref={bottomSheetRef}
         index={isSheetOpen ? 0 : -1}
         snapPoints={snapPoints}
@@ -258,7 +303,7 @@ export default function ProfileDetailScreen() {
               </Text>
               <View style={[styles.fieldBox, styles.fieldBoxDisabled]}>
                 <Text style={[styles.fieldText, { opacity: 0.7 }]}>
-                  {user?.user_email}
+                  {user?.nombre}
                 </Text>
               </View>
               <Text style={styles.helperText}>
@@ -307,14 +352,13 @@ export default function ProfileDetailScreen() {
             </Animated.View>
           </BottomSheetView>
         </LinearGradient>
-      </BottomSheet>
+      </BottomSheet> */}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   headerContainer: {
-    paddingTop: 10,
     paddingBottom: 40,
     alignItems: "center",
     borderBottomRightRadius: ui.radii.xl,
@@ -324,7 +368,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: ui.radii.pill,
-    borderWidth: 3,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 6,

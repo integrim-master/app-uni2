@@ -1,11 +1,11 @@
 import ConfirmActionModal from "@/src/components/shared/Modal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
+import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
-import { MenuSection } from "../../../components/shared/MenuSection";
 import { Screen } from "../../../components/shared/Screen";
 import { useTheme } from "../../../context/ThemeContext";
 import { ProfileHeader } from "../components/ProfileHeader";
@@ -58,9 +58,34 @@ export function ProfileScreen() {
             userName={userName}
             onPress={() => router.push("/details")}
           />
-
-          <MenuSection title="General" items={generalItems} />
-          <MenuSection title="Soporte" items={supportItems} />
+          <View className="h-ful mb-10 ">
+            <SimpleMenuSection
+              title="General"
+              subtitle="Lorem ipsum dolor sit"
+              icon="person-circle-outline"
+              rightIcon="person-circle-outline"
+            />
+            {supportItems.map((item, idx) => (
+              <SimpleMenuSection
+                key={idx}
+                title={item.label}
+                subtitle={
+                  item.label === "Tratamiento de datos"
+                    ? "Ver política de datos"
+                    : "Soporte y ayuda"
+                }
+                icon={item.icon}
+                rightIcon="chevron-forward"
+                onPress={item.onPress}
+              />
+            ))}
+            <SimpleMenuSection
+              title="General"
+              subtitle="Lorem ipsum dolor sit"
+              icon="person-circle-outline"
+              rightIcon="person-circle-outline"
+            />
+          </View>
 
           <PrimaryButton
             title="Cerrar sesión"

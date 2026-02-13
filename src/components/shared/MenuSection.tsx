@@ -1,7 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../context/ThemeContext';
-import { MenuItem } from '../../modules/profile/components/MenuItem';
-
+import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
+import { MenuItem } from "../../modules/profile/components/MenuItem";
 
 interface MenuSectionProps {
   title: string;
@@ -36,22 +35,22 @@ export function MenuSection({
           { backgroundColor: colors.card, borderColor: resolvedBorderColor },
         ]}
       >
-        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}> 
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
           {title}
         </Text>
         {items.map((item, index) =>
-          renderItem
-            ? renderItem(item, index, index === items.length - 1)
-            : (
-                <MenuItem
-                  key={index}
-                  {...item}
-                  color={resolvedColor}
-                  textColor={resolvedTextColor}
-                  borderColor={resolvedBorderColor}
-                  isLast={index === items.length - 1}
-                />
-              )
+          renderItem ? (
+            renderItem(item, index, index === items.length - 1)
+          ) : (
+            <MenuItem
+              key={index}
+              {...item}
+              color={resolvedColor}
+              textColor={resolvedTextColor}
+              borderColor={resolvedBorderColor}
+              isLast={index === items.length - 1}
+            />
+          ),
         )}
       </View>
     </View>
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     paddingTop: 16,
     paddingHorizontal: 16,
     paddingBottom: 8,
@@ -72,9 +71,9 @@ const styles = StyleSheet.create({
   menuGroup: {
     borderRadius: 16,
     borderWidth: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.90,
+    shadowOpacity: 0.9,
     shadowRadius: 1,
     elevation: 1.2,
   },

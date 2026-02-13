@@ -17,8 +17,8 @@ export const NotificationsServices = {
   markedRead: async (data: { id_notification: string; user_id: number }) => {
     try {
       const response = await api.put(`wp-json/careme/v1/notification/read`, {
-        user_id: data.user_id,
         id_notification: data.id_notification,
+        user_id: data.user_id,
       });
       return response.data;
     } catch (error: any) {

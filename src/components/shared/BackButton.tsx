@@ -1,4 +1,3 @@
-
 import { useTheme } from "@/src/context/ThemeContext";
 import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,18 +6,28 @@ import { Pressable, StyleSheet } from "react-native";
 
 interface BackButtonProps {
   to?: string;
+  icon?: React.ReactNode;
+  iconName?: keyof typeof Ionicons.glyphMap;
 }
 
-export function BackButton({ to }: BackButtonProps) {
+export function BackButton({ to, icon, iconName }: BackButtonProps) {
   const { colors } = useTheme();
   const router = useRouter();
 
   return (
     <Pressable
-      onPress={() => to ? router.push(to) : router.back()}
-      style={[styles.button, {  }]}
+      onPress={() => (to ? router.push(to) : router.back())}
+      style={[styles.button]}
     >
-      <Ionicons name="chevron-back" size={22} color={colors.text} />
+      {icon ? (
+        icon
+      ) : (
+        <Ionicons
+          name={iconName || "chevron-back"}
+          size={22}
+          color={colors.text}
+        />
+      )}
     </Pressable>
   );
 }
@@ -30,6 +39,5 @@ const styles = StyleSheet.create({
     borderRadius: ui.radii.lg,
     justifyContent: "center",
     alignItems: "center",
- 
   },
 });

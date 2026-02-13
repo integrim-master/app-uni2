@@ -27,7 +27,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
     if (onRefresh) {
       setRefreshing(true);
       await onRefresh();
-      setTimeout(() => setRefreshing(false), 500);
+      setRefreshing(false);
     }
   };
 
@@ -39,23 +39,21 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
     );
   }
 
-  if (notifications.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <EmptySvgPush width={280} height={280} style={styles.emptyImage} />
-        <ThemedText
-          type="subtitle"
-          color={colors.primaryLight}
-          style={styles.emptyTitle}
-        >
-          Sin notificaciones aún
-        </ThemedText>
-        <ThemedText color={colors.textSecondary} style={styles.emptyText}>
-          Cuando recibas novedades, las verás en este espacio.
-        </ThemedText>
-      </View>
-    );
-  }
+  const renderEmptyState = () => (
+    <View style={styles.emptyContainer}>
+      <EmptySvgPush width={280} height={280} style={styles.emptyImage} />
+      <ThemedText
+        type="subtitle"
+        color={colors.primaryLight}
+        style={styles.emptyTitle}
+      >
+        Sin notificaciones aún
+      </ThemedText>
+      <ThemedText color={colors.textSecondary} style={styles.emptyText}>
+        Cuando recibas novedades, las verás en este espacio.
+      </ThemedText>
+    </View>
+  );
 
   return (
     <FlatList
@@ -67,7 +65,8 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
           onPress={() => onNotificationPress?.(item)}
         />
       )}
-      contentContainerStyle={styles.listContainer}
+      ListEmptyComponent={renderEmptyState}
+      contentContainerStyle={[styles.listContainer, true && { flex: 1 }]}
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl
@@ -78,7 +77,6 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
           progressBackgroundColor={colors.background}
           titleColor={colors.text}
           title="Actualizando..."
-          progressViewOffset={0}
         />
       }
     />

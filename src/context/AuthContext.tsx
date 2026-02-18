@@ -74,8 +74,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         promotions: promotions,
         dates: datesArg,
       };
-      console.log("Saving auth data to storage:", payload.dates);
-
       setToken(token);
       setUser(userData);
       setMembership(membershipData);

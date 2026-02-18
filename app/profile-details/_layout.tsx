@@ -20,7 +20,7 @@ export default function ProfiLayout() {
       }}
     >
       <Stack.Screen
-        name="index"
+        name="edit/[slug]/index"
         options={{
           title: "Perfil",
           headerShadowVisible: true,
@@ -28,26 +28,19 @@ export default function ProfiLayout() {
         }}
       />
       <Stack.Screen
-        name="support"
+        name="index"
         options={{
-          title: "Tus solicitudes",
-          headerShadowVisible: false,
+          // title: "Tus solicitudes",
+          // headerShadowVisible: false,
+          headerShown: false,
+          animation: 'ios_from_left',
+
+          
+          
         }}
       />
-      <Stack.Screen
-        name="privacy"
-        options={{
-          title: "Política de privacidad",
-          headerShadowVisible: false,
-        }}
-      />
-      <Stack.Screen
-        name="favorites"
-        options={{
-          title: "Favoritos",
-          headerShadowVisible: false,
-        }}
-      />
+
+    
     </Stack>
   );
 }

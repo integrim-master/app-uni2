@@ -12,7 +12,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
-import { router, Slot } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import "react-native-gesture-handler";
@@ -134,26 +134,42 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <NotificationsProvider>
-          <NotificationListener />
-          <BottomSheetModalProvider>
-            <ThemeProvider>
-              <LoadingProvider>
-                <AuthProvider>
-                  <DiagnosticProvider>
-                    <PromotionGuard>
-                      <Slot />
-                    </PromotionGuard>
-                  </DiagnosticProvider>
-                </AuthProvider>
-              </LoadingProvider>
-            </ThemeProvider>
-          </BottomSheetModalProvider>
-        </NotificationsProvider>
-      </QueryClientProvider>
-      <Toast config={toastConfig} />
-    </GestureHandlerRootView>
+
+
+  <GestureHandlerRootView>
+    <QueryClientProvider client={queryClient}>
+      <NotificationsProvider>
+        <NotificationListener />
+        <BottomSheetModalProvider>
+          <ThemeProvider>
+            <LoadingProvider>
+              <AuthProvider>
+                <DiagnosticProvider>
+                  <PromotionGuard>
+
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="(tabs)" />
+                      <Stack.Screen
+                        name="profile-modal/details"
+                        options={{
+                          presentation: "modal",
+                          animation: 'fade_from_bottom',
+                        }}
+                      />
+                    </Stack>
+
+                  </PromotionGuard>
+                </DiagnosticProvider>
+              </AuthProvider>
+            </LoadingProvider>
+          </ThemeProvider>
+        </BottomSheetModalProvider>
+      </NotificationsProvider>
+    </QueryClientProvider>
+
+    <Toast config={toastConfig} />
+  </GestureHandlerRootView>
+
+
   );
 }

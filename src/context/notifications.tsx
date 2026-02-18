@@ -1,24 +1,25 @@
-import React, { createContext, useContext, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import React, { createContext, useContext, useState } from "react";
 import { useMarkerReadNotifications } from "../modules/notifications/hooks/useMarkerNotifications";
 import { useNotificationsApi } from "../modules/notifications/hooks/useNotifications";
+import { NotificationsResponse } from "../modules/notifications/types/notifications.types";
 
-export interface NotificationData {
-  id: string;
-  user_id?: string;
-  type_notification?: string;
-  id_notification?: string;
-  title: string;
-  body?: string;
-  receivedAt?: Date;
-  status?: string;
-  sent_at?: string;
-  read_at?: string | null;
-}
+// export interface NotificationData {
+//   id: string;
+//   user_id?: string;
+//   type_notification?: string;
+//   id_notification?: string;
+//   title: string;
+//   body?: string;
+//   receivedAt?: Date;
+//   status?: string;
+//   sent_at?: string;
+//   read_at?: string | null;
+// }
 
 interface NotificationsContextProps {
-  notifications: NotificationData[];
-  addNotification: (notification: NotificationData) => void;
+  notifications: NotificationsResponse[];
+  addNotification: (notification: Partial<NotificationsResponse>) => void;
   markAsRead: (id_notification: string, user_id: number) => void;
   markAllAsRead: () => void;
   clearNotifications: () => void;
@@ -55,18 +56,18 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const queryKey = ["notifications"]; 
 
-  const addNotification = (notification: NotificationData) => {
-    queryClient.setQueryData(queryKey, (oldData: NotificationData[] | undefined) => {
+  const addNotification = (notification: Partial<NotificationsResponse>) => {
+    queryClient.setQueryData(queryKey, (oldData: NotificationsResponse[] | undefined) => {
       const exists = oldData?.some((notif) => notif.id === notification.id);
       if (exists) return oldData;
-      return [notification, ...(oldData || [])];
+      return [notification as NotificationsResponse, ...(oldData || [])];
     });
   };
 
   const markAsRead = (id_notification: string, user_id: number) => {
-    const previousNotifications = queryClient.getQueryData<NotificationData[]>(queryKey);
+    const previousNotifications = queryClient.getQueryData<Notification[]>(queryKey);
 
-    queryClient.setQueryData(queryKey, (oldData: NotificationData[] | undefined) => {
+    queryClient.setQueryData(queryKey, (oldData: NotificationsResponse[] | undefined) => {
       return oldData?.map((notif) =>
         notif.id_notification === id_notification
           ? { ...notif, read_at: new Date().toISOString() }
@@ -86,7 +87,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const markAllAsRead = () => {
-    queryClient.setQueryData(queryKey, (oldData: NotificationData[] | undefined) => {
+    queryClient.setQueryData(queryKey, (oldData: Notification[] | undefined) => {
       return oldData?.map((notif) => ({
         ...notif,
         read_at: new Date().toISOString(),
@@ -98,7 +99,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     queryClient.setQueryData(queryKey, []);
   };
 
-  const unreadCount = notifications.filter((n) => !n.read_at).length;
+  // const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   return (
     <NotificationsContext.Provider
@@ -108,7 +109,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
         markAsRead,
         markAllAsRead,
         clearNotifications,
-        unreadCount,
+        // unreadCount,
         pushToken,
         setPushToken,
         refetch,

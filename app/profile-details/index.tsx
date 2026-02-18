@@ -1,3 +1,4 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
@@ -120,8 +121,9 @@ export default function ProfileDetailScreen() {
   };
 
   return (
-    <Screen safeArea={true}>
-      {/* <BackButton to={"/profile"} /> */}
+    <Screen safeArea={true} leftButton={<BackButton iconName='close-outline' />}>
+      
+      
       <ScrollView>
         <View style={[styles.headerContainer]}>
           <View
@@ -146,7 +148,7 @@ export default function ProfileDetailScreen() {
 
           <PrimaryButton
             title="Editar perfil"
-            onPress={() => router.push("/details/edit")}
+            onPress={() => router.push("/profile-details/edit")}
             style={{ marginTop: 14, alignSelf: "center" }}
           />
 

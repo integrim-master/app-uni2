@@ -51,12 +51,12 @@ export function ProfileScreen() {
   ];
 
   return (
-    <Screen>
+    <Screen safeArea={true}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.safeArea}>
           <ProfileHeader
             userName={userName}
-            onPress={() => router.push("/details")}
+            onPress={() => router.push("/profile-details")}
           />
           <View className="h-ful mb-10 ">
             <SimpleMenuSection

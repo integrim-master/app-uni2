@@ -133,6 +133,7 @@ export default function TabsLayout() {
           headerShown: false,
         }}
       />
+      
 
       <Tabs.Screen
         name="profile"

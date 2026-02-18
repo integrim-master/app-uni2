@@ -3,7 +3,7 @@ export interface Notification {
   title: string;
   body: string;
   data?: any;
-  receivedAt: Date;
+  receivedAt?: Date;
   read: boolean;
 }
 
@@ -22,4 +22,5 @@ export interface NotificationsResponse {
   status: string;
   sent_at: string;
   read_at: string | null;
+  receivedAt?: Date;
 }

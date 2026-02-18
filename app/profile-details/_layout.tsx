@@ -33,14 +33,9 @@ export default function ProfiLayout() {
           // title: "Tus solicitudes",
           // headerShadowVisible: false,
           headerShown: false,
-          animation: 'ios_from_left',
-
-          
-          
+          animation: "ios_from_left",
         }}
       />
-
-    
     </Stack>
   );
 }

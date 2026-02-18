@@ -17,18 +17,15 @@ export async function AnalyzeImage(photo: PhotoAsset): Promise<any> {
   } as any);
 
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
-
     const response = await fetch(N8N_URL, {
       method: "POST",
       body: formData,
       headers: {
         Accept: "application/json",
       },
-      signal: controller.signal,
-    }).finally(() => clearTimeout(timeoutId));
+    });
     const text = await response.text();
+    console.log("N8N response:", text);
     if (!text) return null;
 
     try {
@@ -37,9 +34,6 @@ export async function AnalyzeImage(photo: PhotoAsset): Promise<any> {
       return text;
     }
   } catch (error: any) {
-    if (error.name === "AbortError") {
-      throw new Error("Timeout conectando con N8N");
-    }
     throw new Error(error?.message || "Error desconocido en N8N");
   }
 }

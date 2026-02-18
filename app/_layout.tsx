@@ -19,7 +19,11 @@ import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import "../global.css";
+
+const BG_COLOR = "#302D34";
+
 SplashScreen.preventAutoHideAsync();
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -38,35 +42,15 @@ function NotificationListener() {
     const register = async () => {
       try {
         const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permission not granted for notifications");
-          return;
-        }
+        if (status !== "granted") return;
         const token = (await Notifications.getExpoPushTokenAsync()).data;
-        console.log("Expo Push Token:", token);
         setPushToken(token);
-        return token;
       } catch (error) {
         console.error("Error getting push token:", error);
       }
     };
     register();
   }, [setPushToken]);
-
-  useEffect(() => {
-    if (lastNotificationResponse) {
-      const { title, body, data } =
-        lastNotificationResponse.notification.request.content;
-      addNotification({
-        id: lastNotificationResponse.notification.request.identifier,
-        title: title || "Notificación",
-        body: body || "",
-        data: data,
-        receivedAt: new Date(lastNotificationResponse.notification.date),
-      });
-      console.log("App opened from notification:", lastNotificationResponse);
-    }
-  }, [lastNotificationResponse, addNotification]);
 
   useEffect(() => {
     const receivedSubscription = Notifications.addNotificationReceivedListener(
@@ -79,7 +63,6 @@ function NotificationListener() {
           data: data,
           receivedAt: new Date(),
         });
-        console.log("Notification received:", notification);
       },
     );
 
@@ -93,9 +76,7 @@ function NotificationListener() {
           data: data,
           receivedAt: new Date(response.notification.date),
         });
-
         router.navigate("notifications");
-        console.log("Notification response received:", response);
       });
 
     return () => {
@@ -134,42 +115,34 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-
-
-  <GestureHandlerRootView>
-    <QueryClientProvider client={queryClient}>
-      <NotificationsProvider>
-        <NotificationListener />
-        <BottomSheetModalProvider>
-          <ThemeProvider>
-            <LoadingProvider>
-              <AuthProvider>
-                <DiagnosticProvider>
-                  <PromotionGuard>
-
-                    <Stack screenOptions={{ headerShown: false }}>
-                      <Stack.Screen name="(tabs)" />
-                      <Stack.Screen
-                        name="profile-modal/details"
-                        options={{
-                          presentation: "modal",
-                          animation: 'fade_from_bottom',
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: BG_COLOR }}>
+      <QueryClientProvider client={queryClient}>
+        <NotificationsProvider>
+          <NotificationListener />
+          <BottomSheetModalProvider>
+            <ThemeProvider>
+              <LoadingProvider>
+                <AuthProvider>
+                  <DiagnosticProvider>
+                    <PromotionGuard>
+                      <Stack
+                        screenOptions={{
+                          headerShown: false,
+                          contentStyle: { backgroundColor: BG_COLOR },
                         }}
-                      />
-                    </Stack>
+                      >
+                        <Stack.Screen name="(tabs)" />
+                      </Stack>
+                    </PromotionGuard>
+                  </DiagnosticProvider>
+                </AuthProvider>
+              </LoadingProvider>
+            </ThemeProvider>
+          </BottomSheetModalProvider>
+        </NotificationsProvider>
+      </QueryClientProvider>
 
-                  </PromotionGuard>
-                </DiagnosticProvider>
-              </AuthProvider>
-            </LoadingProvider>
-          </ThemeProvider>
-        </BottomSheetModalProvider>
-      </NotificationsProvider>
-    </QueryClientProvider>
-
-    <Toast config={toastConfig} />
-  </GestureHandlerRootView>
-
-
+      <Toast config={toastConfig} />
+    </GestureHandlerRootView>
   );
 }

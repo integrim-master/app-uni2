@@ -27,7 +27,8 @@ export default function DiagnosticsTab() {
   });
 
   const diagnostic = sessionDiagnostic ?? lastDiagnostic?.data ?? null;
-  const photoUri = sessionDiagnostic?.photoUri ?? undefined;
+  const photoUri =
+    sessionDiagnostic?.photoUri ?? lastDiagnostic?.data?.photoUri ?? undefined;
 
   if (isLoading && !diagnostic) {
     return (

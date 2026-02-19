@@ -1,7 +1,7 @@
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile"; // Importa tu hook
+import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
 import React from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
@@ -19,6 +19,7 @@ export default function EditProfileScreen() {
       </Screen>
     );
   }
+  console.log("Usuario:", user);
 
   return (
     <Screen safeArea={true}>
@@ -43,14 +44,14 @@ export default function EditProfileScreen() {
             subtitle={user?.type_id?.toString() || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.type_id}?name=type_id`}
+            link={`/profile-details/edit/${user?.type_id || "vacio"}}?name=type_id`}
           />
           <SimpleMenuSection
             title="Fecha de nacimiento"
             subtitle={user?.fnacimiento || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.fnacimiento}?name=fnacimiento`}
+            link={`/profile-details/edit/${user?.fnacimiento || "vacio"}?name=fnacimiento`}
           />
 
           <SimpleMenuSection
@@ -58,7 +59,7 @@ export default function EditProfileScreen() {
             subtitle={user?.pais_origen || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.pais_origen}?name=pais_origen`}
+            link={`/profile-details/edit/${user?.pais_origen || ""}?name=pais_origen`}
           />
 
           <SimpleMenuSection
@@ -66,7 +67,7 @@ export default function EditProfileScreen() {
             subtitle={user?.pais_residencia || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.pais_residencia}?name=pais_residencia`}
+            link={`/profile-details/edit/${user?.pais_residencia || ""}?name=pais_residencia`}
           />
 
           <SimpleMenuSection
@@ -74,7 +75,7 @@ export default function EditProfileScreen() {
             subtitle={user?.telefono || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.telefono}?name=telefono`}
+            link={`/profile-details/edit/${user?.telefono || ""}}?name=telefono`}
           />
 
           <SimpleMenuSection
@@ -82,7 +83,7 @@ export default function EditProfileScreen() {
             subtitle={user?.ciudad || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.ciudad}?name=ciudad`}
+            link={`/profile-details/edit/${user?.ciudad || "vacio"}}?name=ciudad`}
           />
 
           <SimpleMenuSection
@@ -90,7 +91,7 @@ export default function EditProfileScreen() {
             subtitle={user?.provincia || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.provincia}?name=provincia`}
+            link={`/profile-details/edit/${user?.provincia || "vacio"}}?name=provincia`}
           />
 
           <SimpleMenuSection
@@ -98,7 +99,7 @@ export default function EditProfileScreen() {
             subtitle={user?.postal || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.postal}?name=postal`}
+            link={`/profile-details/edit/${user?.postal || "vacio"}}?name=postal`}
           />
         </View>
       </ScrollView>

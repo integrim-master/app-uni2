@@ -4,8 +4,8 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import SendPhoto from "@/src/modules/diagnostics/components/loadingPhoto";
 import {
-    useCreateDiagnostic,
-    useUploadDiagnosticImage,
+  useCreateDiagnostic,
+  useUploadDiagnosticImage,
 } from "@/src/modules/diagnostics/hooks/useDiagnostic";
 import { DIAGNOSTIC_SESSION_KEY } from "@/src/modules/diagnostics/hooks/useDiagnosticSession";
 import ErrorScreen from "@/src/modules/diagnostics/screens/ErrorScreen";
@@ -16,13 +16,13 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { useTheme } from "../../src/context/ThemeContext";
 
@@ -129,6 +129,7 @@ export default function CameraScreen() {
         : analysisResult;
 
       if (data.valido === false || data.valido === "false") {
+        setIsProcessing(false);
         setValidationError({
           message: data.error || "La imagen no cumple con los requisitos",
           reason: data.motivo || "invalid_image",
@@ -142,17 +143,30 @@ export default function CameraScreen() {
         token,
       });
 
-      await createDiagnostic({
+      const dat = await createDiagnostic({
         diagnostico: data.diagnostico || data,
         procedimientos: data.procedimientos || [],
         imageId: uploadResult.id,
         userId: String(userId),
       });
 
+      console.log("Diagnostic created:", dat);
+
       queryClient.setQueryData(DIAGNOSTIC_SESSION_KEY, {
         analysis: data,
         photoUri,
         mediaId: uploadResult.id,
+      });
+
+      queryClient.setQueryData(["last-diagnostic", String(userId)], {
+        success: true,
+        data: {
+          diagnostico: data.diagnostico || data,
+          procedimientos: data.procedimientos || [],
+          imagen_url: photoUri.uri,
+          photoUri,
+          analysis: data,
+        },
       });
 
       router.back();
@@ -166,11 +180,7 @@ export default function CameraScreen() {
   };
 
   return (
-    <Screen
-      safeArea
-      leftButton={<BackButton to="diagnostics" />}
-      style={styles.container}
-    >
+    <Screen safeArea leftButton={<BackButton />} style={styles.container}>
       <View style={styles.instructionsContainer}>
         {photoUri ? (
           <>
@@ -193,7 +203,6 @@ export default function CameraScreen() {
         )}
       </View>
 
-      {/* Cámara / Preview */}
       <View style={[styles.cameraContainer, { borderColor: colors.primary }]}>
         {photoUri ? (
           <Image
@@ -228,7 +237,6 @@ export default function CameraScreen() {
         )}
       </View>
 
-      {/* Controles */}
       <View style={styles.controls}>
         {!photoUri ? (
           <Pressable

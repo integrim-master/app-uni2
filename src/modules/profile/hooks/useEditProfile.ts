@@ -1,11 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-    editProfileById,
-    EditProfilePayload,
-} from "../services/editProfile.service";
+import { EditProfilePayload, MeService } from "../services/profile.service";
 
 export const useEditProfile = () => {
   return useMutation({
-    mutationFn: (params: EditProfilePayload) => editProfileById(params),
+    mutationFn: (params: EditProfilePayload) =>
+      MeService.editProfileById(params),
   });
 };

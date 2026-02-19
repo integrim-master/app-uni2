@@ -9,10 +9,12 @@ export function Screen({
   children,
   style,
   safeArea = false,
+  leftButton = false,
 }: {
   children: React.ReactNode;
   style?: object;
   safeArea?: boolean;
+  leftButton?: React.ReactNode;
 }) {
   const { colors } = useTheme();
 
@@ -24,7 +26,10 @@ export function Screen({
         end={{ x: 1, y: 1 }}
         style={[styles.container, style]}
       >
-  <SafeAreaView style={styles.container}>{children}</SafeAreaView>
+        <SafeAreaView style={styles.container}>
+          {leftButton && <React.Fragment>{leftButton}</React.Fragment>}
+          {children}
+        </SafeAreaView>
       </LinearGradient>
     );
   }
@@ -36,6 +41,7 @@ export function Screen({
       end={{ x: 1, y: 1 }}
       style={[styles.container, style]}
     >
+      {leftButton && <React.Fragment>{leftButton}</React.Fragment>}
       {children}
     </LinearGradient>
   );

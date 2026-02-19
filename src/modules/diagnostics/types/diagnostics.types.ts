@@ -1,5 +1,3 @@
-import { CameraType, useCameraPermissions } from "expo-camera";
-
 export interface Report {
   id: string;
   fecha: string;
@@ -29,20 +27,6 @@ export interface ItemProductProps {
   productReport: string[];
 }
 
-export type DiagnosticScreenProps = {
-  currentStep: number;
-  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-  steps: string[];
-  nextStep: () => void;
-  prevStep: () => void;
-  permission: ReturnType<typeof useCameraPermissions>[0];
-  requestPermission: () => void;
-  facing: CameraType;
-  setFacing: React.Dispatch<React.SetStateAction<CameraType>>;
-};
-
-
-
 export type ResultViewProps = {
   photoUri?: {
     uri: string;
@@ -51,9 +35,9 @@ export type ResultViewProps = {
   };
   diagnostic: any;
   onReset: () => void;
+  onNewDiagnostic: () => void;
   onClose?: () => void;
 };
-
 
 export interface TreatmentCardProps {
   title: string;

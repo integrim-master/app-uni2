@@ -5,8 +5,7 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { TratamientoCareme } from "@/src/types/shared/Benefits.type";
 import { normalizeString } from "@/src/utils/stringUtils";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 import * as secureStore from "expo-secure-store";
 import React, { useEffect, useMemo } from "react";
 import {
@@ -28,6 +27,7 @@ export default function ResultView({
   photoUri,
   diagnostic,
   onReset,
+  onNewDiagnostic,
   onClose,
 }: ResultViewProps) {
   const { colors } = useTheme();
@@ -54,6 +54,7 @@ export default function ResultView({
   const data = diagnostic?.analysis?.[0] || diagnostic;
   const imageUri =
     photoUri?.uri || diagnostic?.photoUri?.uri || diagnostic?.imagen;
+  console.log(" extraídos:", imageUri);
   const diagnosticoArray = data?.diagnostico || [];
   const procedimientosString = data?.procedimientos || "";
   const procedimientosArray =
@@ -109,21 +110,8 @@ export default function ResultView({
   }
 
   return (
-    <Screen style={{ flex: 1 }}>
+    <Screen>
       <SafeAreaView>
-        <Pressable
-          onPress={() => router.back()}
-          style={[
-            styles.backButton,
-            { top: insets.top + 8, backgroundColor: colors.card },
-          ]}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          android_ripple={{ color: "rgba(255,255,255,0.12)" }}
-          accessibilityLabel="Volver"
-          accessibilityRole="button"
-        >
-          <Ionicons name="chevron-back" size={24} color={colors.primary} />
-        </Pressable>
         {/* <Pressable
           style={[
             styles.closeBtn,
@@ -265,7 +253,10 @@ export default function ResultView({
             </>
           )}
 
-          <PrimaryButton title="Realizar nuevo diagnóstico" onPress={onReset} />
+          <PrimaryButton
+            title="Realizar nuevo diagnóstico"
+            onPress={onNewDiagnostic}
+          />
         </ScrollView>
       </SafeAreaView>
     </Screen>
@@ -275,7 +266,6 @@ export default function ResultView({
 const styles = StyleSheet.create({
   container: {
     padding: 22,
-    paddingBottom: 48,
   },
   center: {
     flex: 1,
@@ -307,7 +297,6 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    marginBottom: 28,
   },
   headerIcon: {
     width: 64,

@@ -1,67 +1,62 @@
 import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { useAuth } from "@/src/context/AuthContext";
+import SendPhoto from "@/src/modules/diagnostics/components/loadingPhoto";
+import {
+    useCreateDiagnostic,
+    useUploadDiagnosticImage,
+} from "@/src/modules/diagnostics/hooks/useDiagnostic";
+import { DIAGNOSTIC_SESSION_KEY } from "@/src/modules/diagnostics/hooks/useDiagnosticSession";
+import ErrorScreen from "@/src/modules/diagnostics/screens/ErrorScreen";
+import { useAnalyzeImage } from "@/src/n8n/hooks/useAnalizeImage";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
-import ErrorScreen from "../screens/ErrorScreen";
-import SendPhoto from "./loadingPhoto";
-import ResultView from "./ResultView";
+import { useTheme } from "../../src/context/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
-
 const OVAL_WIDTH = width * 0.55;
 const OVAL_HEIGHT = height * 0.35;
+const CAMERA_HEIGHT = height * 0.55;
+const CAMERA_WIDTH = width * 0.9;
 
-type PhotoAsset = {
-  uri: string;
-  type?: string;
-  fileName?: string;
-};
+type PhotoAsset = { uri: string; type?: string; fileName?: string };
 
-type DiagnosticView = "camera" | "loading" | "result" | "error";
-
-type Props = {
-  view: DiagnosticView;
-  photoUri: PhotoAsset | null;
-  setPhotoUri: (uri: PhotoAsset | null) => void;
-  diagnosticReport?: any;
-  onSendPhoto: () => void;
-  onReset: () => void;
-  onNewDiagnostic: () => void;
-  onBack?: () => void;
-  validationError?: {
-    message: string;
-    reason?: string;
-  } | null;
-};
-
-export default function StepTwo({
-  view,
-  photoUri,
-  setPhotoUri,
-  diagnosticReport,
-  onSendPhoto,
-  onReset,
-  onNewDiagnostic,
-  validationError,
-  onBack,
-}: Props) {
+export default function CameraScreen() {
   const { colors } = useTheme();
+  const { user, token } = useAuth();
+  const userId = user?.user_id;
+  const queryClient = useQueryClient();
+
   const cameraRef = useRef<CameraView>(null);
   const [facing, setFacing] = useState<CameraType>("front");
   const [capturing, setCapturing] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
+
+  const [photoUri, setPhotoUri] = useState<PhotoAsset | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [validationError, setValidationError] = useState<{
+    message: string;
+    reason?: string;
+  } | null>(null);
+
+  const { mutateAsync: uploadImage, reset: resetUpload } =
+    useUploadDiagnosticImage();
+  const { mutateAsync: analyzeImage, isPending: isAnalyzing } =
+    useAnalyzeImage();
+  const { mutateAsync: createDiagnostic } = useCreateDiagnostic();
 
   if (!permission) return <View />;
 
@@ -75,7 +70,6 @@ export default function StepTwo({
         <ThemedText style={styles.permissionSubtitle}>
           Para capturar tu foto de diagnóstico
         </ThemedText>
-
         <Pressable
           style={[styles.permissionButton, { backgroundColor: colors.primary }]}
           onPress={requestPermission}
@@ -86,46 +80,32 @@ export default function StepTwo({
     );
   }
 
-  if (view === "loading") return <SendPhoto />;
+  if (isAnalyzing || isProcessing) return <SendPhoto />;
 
-  if (view === "error") {
+  if (validationError) {
     return (
       <ErrorScreen
-        message={validationError?.message || "La foto no es válida"}
-        reason={validationError?.reason}
-        onRetry={onNewDiagnostic}
-        photoUri={photoUri ? photoUri.uri : undefined}
-      />
-    );
-  }
-
-  if (view === "result" && diagnosticReport) {
-    return (
-      <ResultView
-        photoUri={photoUri || undefined}
-        diagnostic={diagnosticReport}
-        onReset={onReset}
-        onNewDiagnostic={onNewDiagnostic}
+        message={validationError.message}
+        reason={validationError.reason}
+        photoUri={photoUri?.uri}
+        onRetry={() => {
+          setValidationError(null);
+          setPhotoUri(null);
+          resetUpload();
+        }}
       />
     );
   }
 
   const takePicture = async () => {
     if (capturing) return;
-
     try {
       setCapturing(true);
       const photo = await cameraRef.current?.takePictureAsync({
         quality: 1,
         base64: false,
       });
-
-      if (!photo?.uri) {
-        console.warn("No se capturó ninguna foto");
-        return;
-      }
-      console.log("Foto capturada:", photo);
-
+      if (!photo?.uri) return;
       setPhotoUri({
         uri: photo.uri,
         fileName: `diagnostic_${Date.now()}.jpg`,
@@ -138,42 +118,82 @@ export default function StepTwo({
     }
   };
 
-  const resetPhoto = () => {
-    setPhotoUri(null);
-  };
+  const handleSendPhoto = async () => {
+    if (!photoUri || !userId) return;
+    setValidationError(null);
+    setIsProcessing(true);
+    try {
+      const analysisResult = await analyzeImage(photoUri);
+      const data = Array.isArray(analysisResult)
+        ? analysisResult[0]
+        : analysisResult;
 
-  const toggleCamera = () => {
-    setFacing((prev) => (prev === "front" ? "back" : "front"));
+      if (data.valido === false || data.valido === "false") {
+        setValidationError({
+          message: data.error || "La imagen no cumple con los requisitos",
+          reason: data.motivo || "invalid_image",
+        });
+        return;
+      }
+
+      const uploadResult = await uploadImage({
+        photo: photoUri,
+        userId: String(userId),
+        token,
+      });
+
+      await createDiagnostic({
+        diagnostico: data.diagnostico || data,
+        procedimientos: data.procedimientos || [],
+        imageId: uploadResult.id,
+        userId: String(userId),
+      });
+
+      queryClient.setQueryData(DIAGNOSTIC_SESSION_KEY, {
+        analysis: data,
+        photoUri,
+        mediaId: uploadResult.id,
+      });
+
+      router.back();
+    } catch (error: any) {
+      setIsProcessing(false);
+      setValidationError({
+        message:
+          error.message || "Ocurrió un error inesperado al procesar la imagen",
+      });
+    }
   };
 
   return (
-    <Screen safeArea style={styles.container}>
-      <View style={styles.header}>
-        <BackButton />
+    <Screen
+      safeArea
+      leftButton={<BackButton to="diagnostics" />}
+      style={styles.container}
+    >
+      <View style={styles.instructionsContainer}>
+        {photoUri ? (
+          <>
+            <ThemedText type="subtitle" style={styles.instructionTitle}>
+              ¿Te gusta la foto?
+            </ThemedText>
+            <ThemedText style={styles.instructionSubtitle}>
+              Confirma o toma otra
+            </ThemedText>
+          </>
+        ) : (
+          <>
+            <ThemedText type="subtitle" style={styles.instructionTitle}>
+              Posiciona tu rostro
+            </ThemedText>
+            <ThemedText style={styles.instructionSubtitle}>
+              Centra tu cara dentro del marco ovalado
+            </ThemedText>
+          </>
+        )}
       </View>
 
-      {!photoUri && (
-        <View style={styles.instructionsContainer}>
-          <ThemedText type="subtitle" style={styles.instructionTitle}>
-            Posiciona tu rostro
-          </ThemedText>
-          <ThemedText style={styles.instructionSubtitle}>
-            Centra tu cara dentro del marco ovalado
-          </ThemedText>
-        </View>
-      )}
-
-      {photoUri && (
-        <View style={styles.instructionsContainer}>
-          <ThemedText type="subtitle" style={styles.instructionTitle}>
-            ¿Te gusta la foto?
-          </ThemedText>
-          <ThemedText style={styles.instructionSubtitle}>
-            Confirma o toma otra
-          </ThemedText>
-        </View>
-      )}
-
+      {/* Cámara / Preview */}
       <View style={[styles.cameraContainer, { borderColor: colors.primary }]}>
         {photoUri ? (
           <Image
@@ -192,7 +212,6 @@ export default function StepTwo({
           <View style={styles.overlayContainer}>
             <View style={styles.ovalWrapper}>
               <View style={[styles.oval, { borderColor: colors.primary }]} />
-
               <View style={styles.guideTextContainer}>
                 <MaterialIcons name="face" size={28} color="white" />
                 <Text style={styles.guideText}>Alinea tu rostro aquí</Text>
@@ -209,11 +228,12 @@ export default function StepTwo({
         )}
       </View>
 
+      {/* Controles */}
       <View style={styles.controls}>
         {!photoUri ? (
           <Pressable
             style={[styles.smallBtn, { borderColor: colors.primary }]}
-            onPress={toggleCamera}
+            onPress={() => setFacing((p) => (p === "front" ? "back" : "front"))}
             disabled={capturing}
           >
             <MaterialIcons
@@ -235,7 +255,7 @@ export default function StepTwo({
               borderColor: photoUri ? colors.primary : "transparent",
             },
           ]}
-          onPress={photoUri ? resetPhoto : takePicture}
+          onPress={photoUri ? () => setPhotoUri(null) : takePicture}
           disabled={capturing}
         >
           {photoUri ? (
@@ -248,7 +268,7 @@ export default function StepTwo({
         {photoUri ? (
           <Pressable
             style={[styles.smallBtn, { backgroundColor: colors.primary }]}
-            onPress={onSendPhoto}
+            onPress={handleSendPhoto}
           >
             <MaterialIcons name="check" size={28} color="#fff" />
           </Pressable>
@@ -256,47 +276,15 @@ export default function StepTwo({
           <View style={styles.smallBtnPlaceholder} />
         )}
       </View>
-
-      <View style={styles.bottomSpacer} />
     </Screen>
   );
 }
-
-const CAMERA_HEIGHT = height * 0.55;
-const CAMERA_WIDTH = width * 0.9;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
   },
-
-  header: {
-    width: "100%",
-    paddingHorizontal: 4,
-    paddingTop: 4,
-    marginBottom: 8,
-  },
-
-  instructionsContainer: {
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 16,
-  },
-
-  instructionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 6,
-  },
-
-  instructionSubtitle: {
-    fontSize: 14,
-    textAlign: "center",
-    opacity: 0.7,
-  },
-
   permissionContainer: {
     flex: 1,
     alignItems: "center",
@@ -304,36 +292,29 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 12,
   },
-
-  permissionTitle: {
-    fontSize: 22,
-    marginTop: 16,
-  },
-
-  permissionSubtitle: {
-    fontSize: 15,
-    opacity: 0.7,
-    textAlign: "center",
-  },
-
+  permissionTitle: { fontSize: 22, marginTop: 16 },
+  permissionSubtitle: { fontSize: 15, opacity: 0.7, textAlign: "center" },
   permissionButton: {
     marginTop: 24,
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 12,
     elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
-
-  permissionText: {
-    color: "#fff",
+  permissionText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  instructionsContainer: {
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginBottom: 16,
+    marginTop: 8,
+  },
+  instructionTitle: {
+    fontSize: 20,
     fontWeight: "700",
-    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 6,
   },
-
+  instructionSubtitle: { fontSize: 14, textAlign: "center", opacity: 0.7 },
   cameraContainer: {
     width: CAMERA_WIDTH,
     height: CAMERA_HEIGHT,
@@ -343,112 +324,38 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     marginBottom: 20,
     elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
   },
-
-  camera: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-
+  camera: { flex: 1, width: "100%", height: "100%" },
   overlayContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
   },
-
-  darkMask: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.55)",
-  },
-
-  ovalWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 2,
-  },
-
+  ovalWrapper: { justifyContent: "center", alignItems: "center", zIndex: 2 },
   oval: {
     width: OVAL_WIDTH,
     height: OVAL_HEIGHT,
     borderWidth: 3,
     borderRadius: OVAL_WIDTH / 2,
-    borderStyle: "solid",
     backgroundColor: "transparent",
   },
-
-  corner: {
-    position: "absolute",
-    width: 35,
-    height: 35,
-    borderWidth: 4,
-  },
-
-  cornerTopLeft: {
-    top: 10,
-    left: 30,
-    borderBottomWidth: 0,
-    borderRightWidth: 0,
-    borderTopLeftRadius: 8,
-  },
-
-  cornerTopRight: {
-    top: 10,
-    right: 30,
-    borderBottomWidth: 0,
-    borderLeftWidth: 0,
-    borderTopRightRadius: 8,
-  },
-
-  cornerBottomLeft: {
-    bottom: 10,
-    left: 30,
-    borderTopWidth: 0,
-    borderRightWidth: 0,
-    borderBottomLeftRadius: 8,
-  },
-
-  cornerBottomRight: {
-    bottom: 10,
-    right: 30,
-    borderTopWidth: 0,
-    borderLeftWidth: 0,
-    borderBottomRightRadius: 8,
-  },
-
-  guideTextContainer: {
-    position: "absolute",
-    alignItems: "center",
-    gap: 8,
-  },
-
+  guideTextContainer: { position: "absolute", alignItems: "center", gap: 8 },
   guideText: {
     color: "white",
     fontSize: 15,
     fontWeight: "600",
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowColor: "rgba(0,0,0,0.75)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0,0,0,0.7)",
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
   },
-
-  loadingText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-
+  loadingText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   controls: {
     flexDirection: "row",
     alignItems: "center",
@@ -456,7 +363,6 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: 20,
   },
-
   smallBtn: {
     width: 52,
     height: 52,
@@ -465,17 +371,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 2,
     elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
-
-  smallBtnPlaceholder: {
-    width: 52,
-    height: 52,
-  },
-
+  smallBtnPlaceholder: { width: 52, height: 52 },
   captureBtn: {
     width: 70,
     height: 70,
@@ -483,20 +380,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     elevation: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
   },
-
   innerCapture: {
     width: 50,
     height: 50,
     borderRadius: 25,
     backgroundColor: "#fff",
-  },
-
-  bottomSpacer: {
-    height: 20,
   },
 });

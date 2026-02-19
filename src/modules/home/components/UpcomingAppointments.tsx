@@ -1,13 +1,11 @@
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
-import { Colors } from "@/src/themes/colors";
 import { formatDateToText } from "@/src/utils/stringUtils";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
 import React from "react";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import UpcomingAppointmentsSkeleton from "./UpcomingAppointmentsSkeleton";
 
 type Props = {
@@ -94,7 +92,7 @@ export default function UpcomingAppointments({ dates, isLoading }: Props) {
                       </ThemedText>
                     </View>
                   </View>
-                  <View>
+                  {/* <View>
                     <Pressable
                       onPress={() => router.push(`/dates/${item.id}`)}
                       style={{ backgroundColor: Colors.primaryLight }}
@@ -106,7 +104,7 @@ export default function UpcomingAppointments({ dates, isLoading }: Props) {
                         color={Colors.cardTextDark}
                       />
                     </Pressable>
-                  </View>
+                  </View> */}
                 </View>
               </Card>
             </MotiView>

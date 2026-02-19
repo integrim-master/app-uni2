@@ -15,7 +15,6 @@ export function PromotionGuard({ children }: { children: React.ReactNode }) {
     const checkPromo = async () => {
       if (user && data) {
         const promoVisto = await AsyncStorage.getItem("promo_visto");
-        console.log("Promo visto:", promoVisto);
         if (!promoVisto) {
           setPromoData(data);
           setShowPromo(true);

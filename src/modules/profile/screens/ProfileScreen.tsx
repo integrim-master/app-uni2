@@ -19,18 +19,18 @@ export function ProfileScreen() {
 
   const userName = user?.user_name || "Usuario";
 
-  const generalItems = [
-    {
-      icon: "home-outline",
-      label: "Inicio",
-      onPress: () => router.push("/home"),
-    },
-    // {
-    //   icon: "star-outline",
-    //   label: "Favoritos",
-    //   onPress: () => router.push("profile/favorites"),
-    // },
-  ];
+  // const generalItems = [
+  //   {
+  //     icon: "home-outline",
+  //     label: "Inicio",
+  //     onPress: () => router.push("/home"),
+  //   },
+  //   // {
+  //   //   icon: "star-outline",
+  //   //   label: "Favoritos",
+  //   //   onPress: () => router.push("profile/favorites"),
+  //   // },
+  // ];
 
   const supportItems = [
     // {
@@ -52,18 +52,16 @@ export function ProfileScreen() {
 
   return (
     <Screen safeArea={true}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.safeArea}>
-          <ProfileHeader
-            userName={userName}
-            onPress={() => router.push("/profile-details")}
-          />
-          <View className="h-ful mb-10 ">
-            <SimpleMenuSection
-              title="General"
-              subtitle="Lorem ipsum dolor sit"
-              icon="person-circle-outline"
-              rightIcon="person-circle-outline"
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ height: "100%" }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.safeArea} className="h-full justify-between py-4  ">
+          <View>
+            <ProfileHeader
+              userName={userName}
+              onPress={() => router.push("/profile-details")}
             />
             {supportItems.map((item, idx) => (
               <SimpleMenuSection
@@ -79,12 +77,6 @@ export function ProfileScreen() {
                 onPress={item.onPress}
               />
             ))}
-            <SimpleMenuSection
-              title="General"
-              subtitle="Lorem ipsum dolor sit"
-              icon="person-circle-outline"
-              rightIcon="person-circle-outline"
-            />
           </View>
 
           <PrimaryButton

@@ -25,7 +25,6 @@ export async function AnalyzeImage(photo: PhotoAsset): Promise<any> {
       },
     });
     const text = await response.text();
-    console.log("N8N response:", text);
     if (!text) return null;
 
     try {

@@ -3,6 +3,7 @@ import { BackButton } from "@/src/components/shared/BackButton";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useEditProfile } from "@/src/modules/profile/hooks/useEditProfile";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -28,11 +29,11 @@ const Index = () => {
   const [value, setValue] = useState((slug as string) || "");
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { setUser, user } = useAuth();
 
-  const [isPending, setIsPending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const { mutate: updateProfile } = useEditProfile();
+  const { mutate: updateProfile, isPending } = useEditProfile();
   const queryClient = useQueryClient();
 
   const [index, setIndex] = useState(0);
@@ -53,8 +54,6 @@ const Index = () => {
   }, [isPending]);
 
   const handleSave = () => {
-    setIsPending(true);
-
     const finalValue =
       name === "fnacimiento" ? date.toISOString().split("T")[0] : value;
 
@@ -69,12 +68,11 @@ const Index = () => {
               [name as string]: finalValue,
             };
           });
-          console.log("Perfil actualizado:", { [name as string]: finalValue });
-          setIsPending(false);
+
           setIsSuccess(true);
         },
         onError: () => {
-          setIsPending(false);
+          throw new Error("Error al actualizar el perfil");
         },
       },
     );

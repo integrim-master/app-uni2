@@ -149,8 +149,7 @@ export default function CameraScreen() {
         imageId: uploadResult.id,
         userId: String(userId),
       });
-
-      console.log("Diagnostic created:", dat);
+      console.log("Diagnóstico creado:", dat);
 
       queryClient.setQueryData(DIAGNOSTIC_SESSION_KEY, {
         analysis: data,
@@ -169,6 +168,11 @@ export default function CameraScreen() {
         },
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["last-diagnostic", String(userId)],
+      });
+
+      setIsProcessing(false);
       router.back();
     } catch (error: any) {
       setIsProcessing(false);

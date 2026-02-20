@@ -55,7 +55,6 @@ export default function ResultView({
 
   const imageUri =
     photoUri?.uri || diagnostic?.photoUri?.uri || diagnostic?.imagen;
-  console.log(" extraídos:", imageUri);
   const diagnosticoArray = data?.diagnostico || [];
   const procedimientosString = data?.procedimientos || "";
   const procedimientosArray =

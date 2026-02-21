@@ -6,8 +6,6 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { useTheme } from "../../../context/ThemeContext";
-// Asegúrate de tener este SVG o cámbialo por un icono/Lottie
-// import EmptySvgPush from "@/src/components/svg/EmptySvgPush";
 
 type SendPhotoProps = {
   onComplete?: () => void;
@@ -22,6 +20,7 @@ const SendPhoto = ({ onComplete }: SendPhotoProps) => {
     "Analizando rostro...",
     "Procesando datos...",
     "Generando diagnóstico...",
+    
   ];
 
   useEffect(() => {

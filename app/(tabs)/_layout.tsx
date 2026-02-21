@@ -142,6 +142,15 @@ export default function TabsLayout() {
           headerShown: false,
         }}
       />
+      <Tabs.Screen
+        name="profile/support"
+        options={{
+          title: "Perfil",
+          tabBarIcon: ({ color }) => <UserICon color={color} />,
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+      />
     </Tabs>
   );
 }

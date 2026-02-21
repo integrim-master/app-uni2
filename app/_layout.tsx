@@ -1,6 +1,5 @@
 import { toastConfig } from "@/src/constants/toastConfig";
 import { AuthProvider } from "@/src/context/AuthContext";
-import { DiagnosticProvider } from "@/src/context/DiagnosticContext";
 import { LoadingProvider } from "@/src/context/LoadingContext";
 import {
   NotificationsProvider,
@@ -123,18 +122,16 @@ export default function RootLayout() {
             <ThemeProvider>
               <LoadingProvider>
                 <AuthProvider>
-                  <DiagnosticProvider>
-                    <PromotionGuard>
-                      <Stack
-                        screenOptions={{
-                          headerShown: false,
-                          contentStyle: { backgroundColor: BG_COLOR },
-                        }}
-                      >
-                        <Stack.Screen name="(tabs)" />
-                      </Stack>
-                    </PromotionGuard>
-                  </DiagnosticProvider>
+                  <PromotionGuard>
+                    <Stack
+                      screenOptions={{
+                        headerShown: false,
+                        contentStyle: { backgroundColor: BG_COLOR },
+                      }}
+                    >
+                      <Stack.Screen name="(tabs)" />
+                    </Stack>
+                  </PromotionGuard>
                 </AuthProvider>
               </LoadingProvider>
             </ThemeProvider>

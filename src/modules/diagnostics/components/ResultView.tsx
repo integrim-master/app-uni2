@@ -51,10 +51,10 @@ export default function ResultView({
     tratamientos();
   }, []);
 
-  const data = diagnostic?.analysis?.[0] || diagnostic;
+  const data = diagnostic;
+
   const imageUri =
     photoUri?.uri || diagnostic?.photoUri?.uri || diagnostic?.imagen;
-  console.log(" extraídos:", imageUri);
   const diagnosticoArray = data?.diagnostico || [];
   const procedimientosString = data?.procedimientos || "";
   const procedimientosArray =

@@ -13,6 +13,8 @@ export const TreatmentsSection: React.FC<SuggestedTreatmentsProps> = ({
 }) => {
   const { colors } = useTheme();
 
+  console.log("Tratamientos sugeridos:", SuggestedTreatments);
+
   return (
     <View style={styles.benefitsContent}>
       <View style={styles.sectionHeader}>

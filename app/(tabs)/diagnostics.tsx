@@ -26,8 +26,17 @@ export default function DiagnosticsTab() {
     token: String(token),
   });
 
-  const diagnostic = sessionDiagnostic ?? lastDiagnostic?.data ?? null;
-  const photoUri = sessionDiagnostic?.photoUri ?? undefined;
+  const normalizedSession = sessionDiagnostic
+    ? {
+        ...sessionDiagnostic.analysis,
+        photoUri: sessionDiagnostic.photoUri,
+        imagen_url: sessionDiagnostic.photoUri?.uri,
+      }
+    : null;
+
+  const diagnostic = normalizedSession ?? lastDiagnostic?.data ?? null;
+  const photoUri =
+    normalizedSession?.photoUri ?? lastDiagnostic?.data?.photoUri ?? undefined;
 
   if (isLoading && !diagnostic) {
     return (

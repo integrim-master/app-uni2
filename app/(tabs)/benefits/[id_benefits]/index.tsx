@@ -49,6 +49,7 @@ export default function Index() {
         options={{
           title: benefit?.title ?? "Beneficio",
           headerShadowVisible: false,
+          headerBackVisible: true,
         }}
       />
 

@@ -13,7 +13,10 @@ export default function HomeLayout() {
         headerTitleAlign: "center",
         headerTintColor: "white",
         header: ({ navigation, options, back }) => (
-          <HeaderGradient title={options.title as string} back={!!back} />
+          <HeaderGradient
+            title={options.title as string}
+            back={options.headerBackVisible === true}
+          />
         ),
       }}
     >

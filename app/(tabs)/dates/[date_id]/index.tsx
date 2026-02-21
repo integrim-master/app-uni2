@@ -7,7 +7,7 @@ import { useDatesDetails } from "@/src/modules/dates/hooks/useDatesById";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Screen } from "../../../../src/components/shared/Screen";
 import { useTheme } from "../../../../src/context/ThemeContext";
@@ -30,6 +30,12 @@ export default function Index() {
 
   return (
     <Screen>
+      <Stack.Screen
+        options={{
+          headerShadowVisible: false,
+          headerBackVisible: true,
+        }}
+      />
       <View>
         <LinearGradient
           className="pb-2 flex-row items-center gap-4 "

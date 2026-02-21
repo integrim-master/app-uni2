@@ -77,10 +77,16 @@ export default function ErrorScreen({
           animate={{ opacity: 1, translateY: 0 }}
           style={styles.headerContainer}
         >
-          <ThemedText type="title" style={styles.title}>
+          <ThemedText
+            color={colors.primaryLight}
+            type="title"
+            style={styles.title}
+          >
             Análisis Fallido
           </ThemedText>
-          <ThemedText style={styles.messageText}>{message}</ThemedText>
+          <ThemedText color={colors.dangerLight} style={styles.messageText}>
+            {message}
+          </ThemedText>
         </MotiView>
 
         {/* Comentado: Recomendación dinámica del back

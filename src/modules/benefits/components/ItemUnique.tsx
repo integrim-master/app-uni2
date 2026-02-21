@@ -25,16 +25,16 @@ export default function ItemUnique({
   const isThisBenefitRedeemedByBackend =
     Number(benefitRedemed?.id_procedimiento) === data.id;
 
-  console.log(
-    "Rendering ItemUnique for benefit ID:",
-    data.id,
-    " | isThisBenefitActive:",
-    isThisBenefitActive,
-    " | isAnyBenefitActive:",
-    isAnyBenefitActive,
-    " | isThisBenefitRedeemedByBackend:",
-    isThisBenefitRedeemedByBackend,
-  );
+  // console.log(
+  //   "Rendering ItemUnique for benefit ID:",
+  //   data.id,
+  //   " | isThisBenefitActive:",
+  //   isThisBenefitActive,
+  //   " | isAnyBenefitActive:",
+  //   isAnyBenefitActive,
+  //   " | isThisBenefitRedeemedByBackend:",
+  //   isThisBenefitRedeemedByBackend,
+  // );
 
   return (
     <Pressable

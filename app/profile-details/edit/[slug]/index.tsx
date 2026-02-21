@@ -3,11 +3,22 @@ import { BackButton } from "@/src/components/shared/BackButton";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
+import { useEditProfile } from "@/src/modules/profile/hooks/useEditProfile";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { AnimatePresence, MotiView } from "moti";
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, TextInput, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Easing } from "react-native-reanimated";
 
 const Index = () => {
@@ -16,11 +27,14 @@ const Index = () => {
   const router = useRouter();
 
   const [value, setValue] = useState((slug as string) || "");
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const { setUser, user } = useAuth();
 
-  const [isPending, setIsPending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  // Comentamos el hook real por ahora:
-  // const { mutate: updateProfile } = useEditProfile();
+
+  const { mutate: updateProfile, isPending } = useEditProfile();
+  const queryClient = useQueryClient();
 
   const [index, setIndex] = useState(0);
   const texts = [
@@ -40,22 +54,36 @@ const Index = () => {
   }, [isPending]);
 
   const handleSave = () => {
-    setIsPending(true);
+    const finalValue =
+      name === "fnacimiento" ? date.toISOString().split("T")[0] : value;
 
-    setTimeout(() => {
-      setIsPending(false);
-      setIsSuccess(true);
+    updateProfile(
+      { [name as string]: finalValue },
+      {
+        onSuccess: () => {
+          queryClient.setQueryData(["profile-info"], (old: any) => {
+            if (!old) return old;
+            return {
+              ...old,
+              [name as string]: finalValue,
+            };
+          });
 
-      /* 
-      updateProfile(
-        { [name as string]: value },
-        {
-          onSuccess: () => setIsSuccess(true),
-          onError: () => setIsPending(false),
-        }
-      );
-      */
-    }, 6000);
+          setIsSuccess(true);
+        },
+        onError: () => {
+          throw new Error("Error al actualizar el perfil");
+        },
+      },
+    );
+  };
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (selectedDate) {
+      setDate(selectedDate);
+      setValue(selectedDate.toLocaleDateString());
+    }
   };
 
   return (
@@ -73,74 +101,62 @@ const Index = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col justify-around h-full p-4"
           >
-            <View className="flex gap-10">
+            <View className="flex gap-10 items-center">
               <EmptySvgPush width={180} height={180} />
               <View>
-                <ThemedText type="subtitle" color={colors.textDark}>
+                <ThemedText type="subtitle" style={{ textAlign: "center" }}>
                   Listo
                 </ThemedText>
-                <ThemedText type="body" color={colors.textSecondary}>
-                  Gracias por ayudarnos a tener tus datos al día. Puedes seguir
-                  editando tu perfil cuando quieras desde la sección de
-                  detalles.
+                <ThemedText
+                  type="body"
+                  style={{ textAlign: "center", marginTop: 10 }}
+                >
+                  Tu perfil ha sido actualizado correctamente.
                 </ThemedText>
               </View>
             </View>
-            <PrimaryButton
-              style={{
-                marginBottom: 20,
-              }}
-              title="Continuar"
-              onPress={() => router.back()}
-            />
+            <PrimaryButton title="Continuar" onPress={() => router.back()} />
           </MotiView>
         ) : isPending ? (
           <MotiView
             key="loading"
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex-1 justify-end  p-10"
+            className="flex-1 justify-center p-10"
           >
-            <View style={{ width: "100%", alignItems: "flex-start" }}>
-              <AnimatePresence exitBeforeEnter>
-                <MotiView
-                  key={index}
-                  from={{ opacity: 0, translateY: 15 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  exit={{ opacity: 0, translateY: -15 }}
-                  transition={{ type: "timing", duration: 500 }}
-                >
-                  <ThemedText type="title" style={{ textAlign: "center" }}>
-                    {texts[index]}
-                  </ThemedText>
-                </MotiView>
-              </AnimatePresence>
-
-              <View
-                style={{
-                  height: 6,
-                  width: "100%",
-                  backgroundColor: colors.border,
-                  borderRadius: 3,
-                  marginTop: 30,
-                  overflow: "hidden",
-                }}
+            <AnimatePresence exitBeforeEnter>
+              <MotiView
+                key={index}
+                from={{ opacity: 0, translateY: 15 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                exit={{ opacity: 0, translateY: -15 }}
+                transition={{ type: "timing", duration: 500 }}
               >
-                <MotiView
-                  from={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{
-                    type: "timing",
-                    duration: 6000,
-                    easing: Easing.linear,
-                  }}
-                  style={{
-                    height: "100%",
-                    backgroundColor: colors.primary,
-                  }}
-                />
-              </View>
+                <ThemedText type="title" style={{ textAlign: "center" }}>
+                  {texts[index]}
+                </ThemedText>
+              </MotiView>
+            </AnimatePresence>
+            <View
+              style={{
+                height: 6,
+                width: "100%",
+                backgroundColor: colors.border,
+                borderRadius: 3,
+                marginTop: 30,
+                overflow: "hidden",
+              }}
+            >
+              <MotiView
+                from={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{
+                  type: "timing",
+                  duration: 4000,
+                  easing: Easing.linear,
+                }}
+                style={{ height: "100%", backgroundColor: colors.primary }}
+              />
             </View>
           </MotiView>
         ) : (
@@ -148,60 +164,90 @@ const Index = () => {
             key="form"
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             style={{ flex: 1 }}
           >
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : "height"}
               style={{ flex: 1 }}
             >
-              <View className="flex flex-1  mt-4 mb-10 p-6">
-                <View className="flex-1 ">
+              <View className="flex flex-1 mt-4 p-6">
+                <View className="flex-1">
                   <ThemedText
                     type="title"
                     style={{ fontSize: 28, marginBottom: 40 }}
                   >
                     {name === "nombre"
                       ? "Cómo quieres que te llamemos"
-                      : `Editar ${name?.toString().replace("_", " ")}`}
+                      : name === "fnacimiento"
+                        ? "Fecha de nacimiento"
+                        : `Editar ${name?.toString().replace("_", " ")}`}
                   </ThemedText>
 
-                  <TextInput
-                    placeholder="Escribe aquí..."
-                    placeholderTextColor={colors.textSecondary + "80"}
-                    value={value}
-                    onChangeText={setValue}
-                    autoFocus
-                    className="text-2xl py-3 border-b-2"
-                    style={{
-                      borderColor:
-                        value.length > 0 ? colors.primary : colors.border,
-                      color: colors.text,
-                    }}
-                  />
-                  {name === "nombre" && (
-                    <ThemedText
-                      type="caption"
-                      color={colors.textSecondary}
-                      style={{ marginTop: 20 }}
+                  {name === "type_id" ? (
+                    <View
+                      style={{
+                        borderBottomWidth: 2,
+                        borderColor: colors.primary,
+                        marginBottom: 20,
+                      }}
                     >
-                      Este sera tu nombre de usuario visible en la plataforma.
-                      Puedes cambiarlo cuando quieras desde la sección de
-                      detalles de tu perfil.
-                    </ThemedText>
+                      <Picker
+                        selectedValue={value}
+                        onValueChange={(itemValue) => setValue(itemValue)}
+                        style={{ color: colors.text }}
+                      >
+                        <Picker.Item
+                          label="Selecciona tipo de identificación"
+                          value=""
+                        />
+                        <Picker.Item label="Cédula" value="cc" />
+                        <Picker.Item label="Pasaporte" value="ppto" />
+                      </Picker>
+                    </View>
+                  ) : name === "fnacimiento" ? (
+                    <TouchableOpacity
+                      onPress={() => setShowDatePicker(true)}
+                      style={{
+                        borderBottomWidth: 2,
+                        borderColor: colors.primary,
+                        paddingVertical: 10,
+                      }}
+                    >
+                      <ThemedText style={{ fontSize: 24 }}>
+                        {date.toLocaleDateString()}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ) : (
+                    <TextInput
+                      placeholder="Escribe aquí..."
+                      value={value}
+                      onChangeText={setValue}
+                      autoFocus
+                      className="text-2xl py-3 border-b-2"
+                      style={{
+                        borderColor:
+                          value.length > 0 ? colors.primary : colors.border,
+                        color: colors.text,
+                      }}
+                    />
+                  )}
+
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={date}
+                      mode="date"
+                      display={Platform.OS === "ios" ? "spinner" : "default"}
+                      onChange={onDateChange}
+                      maximumDate={new Date()}
+                    />
                   )}
                 </View>
 
-                <View
-                  style={{
-                    width: "100%",
-                    marginBottom: Platform.OS === "ios" ? 60 : 30,
-                  }}
-                >
+                <View style={{ marginBottom: Platform.OS === "ios" ? 40 : 20 }}>
                   <PrimaryButton
                     title="Guardar cambios"
                     onPress={handleSave}
-                    disabled={!value.trim()}
+                    disabled={name !== "fnacimiento" && !value.trim()}
                   />
                 </View>
               </View>

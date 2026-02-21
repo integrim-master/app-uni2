@@ -18,12 +18,12 @@ interface MeApiResponse {
 
 interface AuthContextType {
   token: string | undefined;
-  user: UserData | null;
-  membership: MembershipData | null;
-  treatmentsCareme: TratamientoCareme[];
+  // user: UserData | null;
+  // membership: MembershipData | null;
+  // treatmentsCareme: TratamientoCareme[];
   loading: boolean;
-  dates?: UltimasCitas;
-  setDates?: (d?: UltimasCitas) => Promise<void>;
+  // dates?: UltimasCitas;
+  // setDates?: (d?: UltimasCitas) => Promise<void>;
   login: (
     token: string,
     userData: UserData,
@@ -34,8 +34,8 @@ interface AuthContextType {
     dates?: UltimasCitas,
   ) => Promise<void>;
   logout: () => Promise<void>;
-  setUser: (userData: UserData | null) => void;
-  updateUserInStorage: (userData: UserData) => Promise<void>;
+  // setUser: (userData: UserData | null) => void;
+  // updateUserInStorage: (userData: UserData) => Promise<void>;
 }
 
 interface AuthProviderProps {

@@ -14,8 +14,7 @@ import * as SecureStore from "expo-secure-store";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Promotion } from "../modules/home/types/home.promotions.types";
 import { useLoading } from "./LoadingContext";
-
-const STORAGE_KEY = "auth_data";
+import { setMemoryToken } from "@/src/api/base";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -32,12 +31,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const restoreSession = async () => {
     try {
       const saved = await SecureStore.getItemAsync("TOKEN");
-      console.log("Restoring session, found token:", saved);
       if (!saved) return;
-
       const parsed = JSON.parse(saved);
-      console.log("Parsed token:", parsed.token);
       setToken(parsed.token);
+      setMemoryToken(parsed.token);
     } catch (error) {
       console.error("Error restoring session:", error);
     } finally {
@@ -56,16 +53,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   ) => {
     showLoading("Iniciando sesión...");
     try {
-      // const payload = {
-      //   token,
-      //   user: userData,
-      //   membership: membershipData,
-      //   tratamientos_careme: treatments,
-      //   treatments_suggest: treatments_suggest,
-      //   promotions: promotions,
-      //   dates: datesArg,
-      // };
       setToken(token);
+      setMemoryToken(token);
       await SecureStore.setItemAsync("TOKEN", JSON.stringify({ token }));
 
       queryClient.setQueryData(["full-profile"], {
@@ -76,8 +65,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         promotions: promotions,
         ultimas_citas: datesArg,
       });
-
-      // await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(payload));
     } finally {
       hideLoading();
     }
@@ -87,6 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     showLoading("Cerrando sesión...");
     try {
       setToken(null);
+      setMemoryToken(null);
       queryClient.clear();
       await SecureStore.deleteItemAsync("TOKEN");
       await AsyncStorage.clear();
@@ -95,30 +83,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // const updateUserInStorage = async (updatedUser: UserData) => {
-  //   try {
-  //     const saved = await SecureStore.getItemAsync(STORAGE_KEY);
-  //     if (saved) {
-  //       const parsed = JSON.parse(saved);
-  //       parsed.user = updatedUser;
-  //       await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(parsed));
-  //     }
-  //   } catch (e) {
-  //     console.error("Error actualizando SecureStore:", e);
-  //   }
-  // };
-
   const value: AuthContextType = {
     token: token || undefined,
-    // user,
-    // membership,
-    // treatmentsCareme,
-    // dates,
     loading,
     login,
     logout,
-    // setUser,
-    // updateUserInStorage,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

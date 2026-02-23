@@ -1,7 +1,7 @@
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
-import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
+import { userUser } from "@/src/modules/banner/hooks/userHome";
 import { useBenefit } from "@/src/modules/benefits/hooks/useBenefits";
 import { useRedemed } from "@/src/modules/benefits/hooks/useRedem";
 import BenefitScreen from "@/src/modules/benefits/screens/BenefitsDetailsScreen";
@@ -13,7 +13,7 @@ export default function Index() {
   const { id_benefits } = useLocalSearchParams<{ id_benefits: string }>();
   const { colors } = useTheme();
   const { data: benefit, isLoading, isError, error } = useBenefit(id_benefits);
-  const { user } = useAuth();
+  const { data: user } = userUser();
   const { mutate, isPending, isSuccess } = useRedemed();
   const [sucessRedeem, setSuccessRedeem] = useState(false);
 

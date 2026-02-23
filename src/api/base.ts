@@ -1,19 +1,26 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
+
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://api.careme360.com";
+
+
+let _memoryToken: string | null = null;
+
+export function setMemoryToken(token: string | null) {
+  _memoryToken = token;
+}
+
+export function getMemoryToken(): string | null {
+  return _memoryToken;
+}
 
 const api = axios.create({
-  baseURL: "https://api.careme360.com",
+  baseURL: API_BASE_URL,
   timeout: 10000,
 });
 
 api.interceptors.request.use(async (config) => {
-  const stored = await SecureStore.getItemAsync("auth_data");
-
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    if (parsed.token) {
-      config.headers.Authorization = `Bearer ${parsed.token}`;
-    }
+  if (_memoryToken) {
+    config.headers.Authorization = `Bearer ${_memoryToken}`;
   }
 
   config.headers.Accept = "application/json";

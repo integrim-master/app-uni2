@@ -82,7 +82,7 @@ export default function EditProfileScreen() {
             subtitle={user?.ciudad || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.ciudad || "vacio"}}?name=ciudad`}
+            link={`/profile-details/edit/${user?.ciudad || "vacio"}?name=ciudad`}
           />
 
           <SimpleMenuSection

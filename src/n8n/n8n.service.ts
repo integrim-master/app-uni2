@@ -1,5 +1,5 @@
 const N8N_URL =
-  process.env.N8N_URL ??
+  process.env.EXPO_PUBLIC_N8N_URL ??
   "https://n8n-gqev.onrender.com/webhook/b9ff3f44-cd3d-4e95-865b-76ffc441f7be";
 
 interface PhotoAsset {
@@ -8,7 +8,17 @@ interface PhotoAsset {
   fileName?: string;
 }
 
-export async function AnalyzeImage(photo: PhotoAsset): Promise<any> {
+export interface AnalyzeImageResult {
+  valido: boolean | string;
+  diagnostico?: any;
+  procedimientos?: any[];
+  error?: string;
+  motivo?: string;
+}
+
+export async function AnalyzeImage(
+  photo: PhotoAsset,
+): Promise<AnalyzeImageResult> {
   const formData = new FormData();
   formData.append("file", {
     uri: photo.uri,
@@ -16,23 +26,26 @@ export async function AnalyzeImage(photo: PhotoAsset): Promise<any> {
     name: photo.fileName ?? "photo.jpg",
   } as any);
 
-  try {
-    const response = await fetch(N8N_URL, {
-      method: "POST",
-      body: formData,
-      headers: {
-        Accept: "application/json",
-      },
-    });
-    const text = await response.text();
-    if (!text) return null;
+  const response = await fetch(N8N_URL, {
+    method: "POST",
+    body: formData,
+    headers: {
+      Accept: "application/json",
+    },
+  });
 
-    try {
-      return JSON.parse(text);
-    } catch {
-      return text;
-    }
-  } catch (error: any) {
-    throw new Error(error?.message || "Error desconocido en N8N");
+  if (!response.ok) {
+    throw new Error(`Error en análisis de imagen: status ${response.status}`);
+  }
+
+  const text = await response.text();
+  if (!text) {
+    throw new Error("Respuesta vacía del servidor de análisis");
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error("Respuesta inválida del servidor de análisis");
   }
 }

@@ -8,11 +8,13 @@ import { useState } from "react";
 import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Screen } from "../../../components/shared/Screen";
 import { useTheme } from "../../../context/ThemeContext";
+import { userUser } from "../../banner/hooks/userHome";
 import { ProfileHeader } from "../components/ProfileHeader";
 
 export function ProfileScreen() {
   const { colors } = useTheme();
-  const { user, logout } = useAuth();
+  const { data: user } = userUser();
+  const { logout } = useAuth();
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showDataModal, setShowDataModal] = useState(false);

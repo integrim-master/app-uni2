@@ -84,8 +84,9 @@ const Login = () => {
           );
 
           if (pushToken) {
+            const platform = Platform.OS === "ios" ? "ios" : "android";
             sendTokenNotifications(
-              { expo_token: pushToken, platform: "android" },
+              { expo_token: pushToken, platform },
               {
                 onError: (error) => {
                   console.error("Error enviando push token:", error);

@@ -6,14 +6,14 @@ import { useBanner } from "../hooks/useBanner";
 import { BannerMedia } from "../types/banner.type";
 
 export function PromotionGuard({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { token } = useAuth();
   const [showPromo, setShowPromo] = useState(false);
   const [promoData, setPromoData] = useState<BannerMedia | null>(null);
   const { data } = useBanner();
 
   useEffect(() => {
     const checkPromo = async () => {
-      if (user && data) {
+      if (token && data) {
         const promoVisto = await AsyncStorage.getItem("promo_visto");
         if (!promoVisto) {
           setPromoData(data);
@@ -22,7 +22,7 @@ export function PromotionGuard({ children }: { children: React.ReactNode }) {
       }
     };
     checkPromo();
-  }, [user, data]);
+  }, [token, data]);
 
   const handleClose = async () => {
     setShowPromo(false);

@@ -1,6 +1,7 @@
 import { Screen } from "@/src/components/shared/Screen";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
+import { userUser } from "@/src/modules/banner/hooks/userHome";
 import ResultView from "@/src/modules/diagnostics/components/ResultView";
 import StepOne from "@/src/modules/diagnostics/components/StepOne";
 import {
@@ -16,11 +17,12 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 
 export default function DiagnosticsTab() {
   const { colors } = useTheme();
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
   const clearSession = useClearDiagnosticSession();
 
   const { data: sessionDiagnostic } = useDiagnosticSession();
+  const { data: user } = userUser();
   const { data: lastDiagnostic, isLoading } = useLastDiagnostic({
     userId: String(user?.user_id),
     token: String(token),

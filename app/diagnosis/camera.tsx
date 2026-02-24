@@ -2,6 +2,7 @@ import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
+import { useUser } from "@/src/modules/banner/hooks/userHome";
 import SendPhoto from "@/src/modules/diagnostics/components/loadingPhoto";
 import {
   useCreateDiagnostic,
@@ -17,28 +18,29 @@ import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
   Pressable,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useTheme } from "../../src/context/ThemeContext";
-
-const { width, height } = Dimensions.get("window");
-const OVAL_WIDTH = width * 0.55;
-const OVAL_HEIGHT = height * 0.35;
-const CAMERA_HEIGHT = height * 0.55;
-const CAMERA_WIDTH = width * 0.9;
 
 type PhotoAsset = { uri: string; type?: string; fileName?: string };
 
 export default function CameraScreen() {
   const { colors } = useTheme();
-  const { user, token } = useAuth();
-  const userId = user?.user_id;
+  const { token } = useAuth();
+  const { data: userInfo } = useUser();
+  const userId = userInfo?.user_id;
   const queryClient = useQueryClient();
+  const { width, height } = useWindowDimensions();
+
+  const OVAL_WIDTH = width * 0.55;
+  const OVAL_HEIGHT = height * 0.35;
+  const CAMERA_HEIGHT = height * 0.55;
+  const CAMERA_WIDTH = width * 0.9;
 
   const cameraRef = useRef<CameraView>(null);
   const [facing, setFacing] = useState<CameraType>("front");
@@ -59,7 +61,6 @@ export default function CameraScreen() {
   const { mutateAsync: createDiagnostic } = useCreateDiagnostic();
 
   if (!permission) return <View />;
-
   if (!permission.granted) {
     return (
       <View style={styles.permissionContainer}>
@@ -149,7 +150,6 @@ export default function CameraScreen() {
         imageId: uploadResult.id,
         userId: String(userId),
       });
-      console.log("Diagnóstico creado:", dat);
 
       queryClient.setQueryData(DIAGNOSTIC_SESSION_KEY, {
         analysis: data,
@@ -207,7 +207,16 @@ export default function CameraScreen() {
         )}
       </View>
 
-      <View style={[styles.cameraContainer, { borderColor: colors.primary }]}>
+      <View
+        style={[
+          styles.cameraContainer,
+          {
+            borderColor: colors.primary,
+            width: CAMERA_WIDTH,
+            height: CAMERA_HEIGHT,
+          },
+        ]}
+      >
         {photoUri ? (
           <Image
             source={{ uri: photoUri.uri }}
@@ -224,7 +233,17 @@ export default function CameraScreen() {
         {!photoUri && (
           <View style={styles.overlayContainer}>
             <View style={styles.ovalWrapper}>
-              <View style={[styles.oval, { borderColor: colors.primary }]} />
+              <View
+                style={[
+                  styles.oval,
+                  {
+                    borderColor: colors.primary,
+                    width: OVAL_WIDTH,
+                    height: OVAL_HEIGHT,
+                    borderRadius: OVAL_WIDTH / 2,
+                  },
+                ]}
+              />
               <View style={styles.guideTextContainer}>
                 <MaterialIcons name="face" size={28} color="white" />
                 <Text style={styles.guideText}>Alinea tu rostro aquí</Text>
@@ -328,8 +347,6 @@ const styles = StyleSheet.create({
   },
   instructionSubtitle: { fontSize: 14, textAlign: "center", opacity: 0.7 },
   cameraContainer: {
-    width: CAMERA_WIDTH,
-    height: CAMERA_HEIGHT,
     borderRadius: 24,
     borderWidth: 3,
     overflow: "hidden",
@@ -345,10 +362,7 @@ const styles = StyleSheet.create({
   },
   ovalWrapper: { justifyContent: "center", alignItems: "center", zIndex: 2 },
   oval: {
-    width: OVAL_WIDTH,
-    height: OVAL_HEIGHT,
     borderWidth: 3,
-    borderRadius: OVAL_WIDTH / 2,
     backgroundColor: "transparent",
   },
   guideTextContainer: { position: "absolute", alignItems: "center", gap: 8 },

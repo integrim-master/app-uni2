@@ -1,3 +1,5 @@
+import api, { API_BASE_URL, getMemoryToken } from "@/src/api/base";
+
 export interface UploadImageParams {
   photo: {
     uri: string;
@@ -48,7 +50,6 @@ export const DiagnosticsServices = {
   uploadImage: async ({
     photo,
     userId,
-    token = "",
   }: UploadImageParams): Promise<UploadImageResult> => {
     try {
       const formData = new FormData();
@@ -61,9 +62,8 @@ export const DiagnosticsServices = {
 
       formData.append("title", `${userId}-${Date.now()}`);
 
-      const url = "https://api.careme360.com/wp-json/wp/v2/media";
-
-      const res = await fetch(url, {
+      const token = getMemoryToken();
+      const res = await fetch(`${API_BASE_URL}/wp-json/wp/v2/media`, {
         method: "POST",
         body: formData,
         headers: {
@@ -84,7 +84,6 @@ export const DiagnosticsServices = {
 
       return { id: data.id };
     } catch (error: any) {
-      console.error("Error uploading image:", error);
       throw new Error(error?.message ?? "Error subiendo imagen");
     }
   },
@@ -95,53 +94,27 @@ export const DiagnosticsServices = {
     imageId,
     userId,
   }: CreateDiagnosticParams): Promise<CreateDiagnosticResult> => {
-    const url = "https://api.careme360.com/wp-json/facecheck/v1/analisis";
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        diagnostico,
-        procedimientos,
-        identificacion: userId,
-        imagen_id: imageId,
-      }),
+    const response = await api.post("/wp-json/facecheck/v1/analisis", {
+      diagnostico,
+      procedimientos,
+      identificacion: userId,
+      imagen_id: imageId,
     });
-    if (!res.ok) {
-      throw new Error(`Error creando diagnóstico: status ${res.status}`);
-    }
-    return await res.json();
+    return response.data;
   },
 
   getLastDiagnostic: async ({
     userId,
-    token,
   }: GetLastDiagnosticParams): Promise<LastDiagnosticResult> => {
     try {
-      const url = `https://api.careme360.com/wp-json/facecheck/v1/ultimo-informe?identificacion=${userId}`;
-
-      const res = await fetch(url, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-
-      if (!res.ok) {
-        if (res.status === 404) {
-          return { success: false, message: "No se encontró diagnóstico" };
-        }
-        throw new Error(`Error consultando diagnóstico: status ${res.status}`);
-      }
-
-      const data = await res.json();
-      return { success: true, data };
+      const response = await api.get(
+        `/wp-json/facecheck/v1/ultimo-informe?identificacion=${userId}`,
+      );
+      return { success: true, data: response.data };
     } catch (error: any) {
-      console.error("Error fetching last diagnostic:", error);
+      if (error?.status === 404) {
+        return { success: false, message: "No se encontró diagnóstico" };
+      }
       return {
         success: false,
         message: error?.message ?? "Error consultando diagnóstico",

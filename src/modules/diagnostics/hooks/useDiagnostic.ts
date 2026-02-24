@@ -3,21 +3,9 @@ import {
   CreateDiagnosticParams,
   CreateDiagnosticResult,
   DiagnosticsServices,
+  UploadImageParams,
+  UploadImageResult,
 } from "../services/diagnostic.service";
-
-export interface UploadImageParams {
-  photo: {
-    uri: string;
-    type?: string;
-    fileName?: string;
-  };
-  userId: string;
-  token?: string;
-}
-
-export interface UploadImageResult {
-  id: number;
-}
 
 export const useUploadDiagnosticImage = () => {
   return useMutation<UploadImageResult, Error, UploadImageParams>({

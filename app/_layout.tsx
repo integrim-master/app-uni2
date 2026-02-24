@@ -1,3 +1,4 @@
+import { ErrorBoundary } from "@/src/components/shared/ErrorBoundary";
 import { toastConfig } from "@/src/constants/toastConfig";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { LoadingProvider } from "@/src/context/LoadingContext";
@@ -114,32 +115,34 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: BG_COLOR }}>
-      <QueryClientProvider client={queryClient}>
-        <NotificationsProvider>
-          <NotificationListener />
-          <BottomSheetModalProvider>
-            <ThemeProvider>
-              <LoadingProvider>
-                <AuthProvider>
-                  <PromotionGuard>
-                    <Stack
-                      screenOptions={{
-                        headerShown: false,
-                        contentStyle: { backgroundColor: BG_COLOR },
-                      }}
-                    >
-                      <Stack.Screen name="(tabs)" />
-                    </Stack>
-                  </PromotionGuard>
-                </AuthProvider>
-              </LoadingProvider>
-            </ThemeProvider>
-          </BottomSheetModalProvider>
-        </NotificationsProvider>
-      </QueryClientProvider>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: BG_COLOR }}>
+        <QueryClientProvider client={queryClient}>
+          <NotificationsProvider>
+            <NotificationListener />
+            <BottomSheetModalProvider>
+              <ThemeProvider>
+                <LoadingProvider>
+                  <AuthProvider>
+                    <PromotionGuard>
+                      <Stack
+                        screenOptions={{
+                          headerShown: false,
+                          contentStyle: { backgroundColor: BG_COLOR },
+                        }}
+                      >
+                        <Stack.Screen name="(tabs)" />
+                      </Stack>
+                    </PromotionGuard>
+                  </AuthProvider>
+                </LoadingProvider>
+              </ThemeProvider>
+            </BottomSheetModalProvider>
+          </NotificationsProvider>
+        </QueryClientProvider>
 
-      <Toast config={toastConfig} />
-    </GestureHandlerRootView>
+        <Toast config={toastConfig} />
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }

@@ -12,7 +12,8 @@ type BadgeVariant =
   | "error"
   | "info"
   | "premium"
-  | "neutral";
+  | "neutral"
+  | "white"; // Variante añadida
 
 type BadgeSize = "small" | "medium" | "large";
 
@@ -28,9 +29,6 @@ interface BadgeProps {
   fullWidth?: boolean;
   sharp?: boolean;
   showIcon?: boolean;
-  /**
-   * Layout del badge: horizontal (ícono al lado) o vertical (ícono arriba)
-   */
   layout?: BadgeLayout;
   style?: ViewStyle;
 }
@@ -50,6 +48,12 @@ export default function Badge({
 
   const getVariantColors = () => {
     switch (variant) {
+      case "white":
+        return {
+          background: "rgba(255, 255, 255, 0.2)",
+          text: "#FFFFFF",
+          border: "rgba(255, 255, 255, 0.35)",
+        };
       case "success":
         return {
           background: `${colors.success || "#10b981"}14`,
@@ -145,6 +149,8 @@ export default function Badge({
         return "info";
       case "premium":
         return "star";
+      case "white":
+        return "auto-awesome";
       default:
         return undefined;
     }
@@ -167,7 +173,8 @@ export default function Badge({
           gap: sizeStyles.gap,
           alignSelf: fullWidth ? "stretch" : "flex-start",
           flexDirection: layout === "vertical" ? "column" : "row",
-          alignItems: layout === "vertical" ? "center" : "center",
+          alignItems: "center",
+          justifyContent: "center",
         },
         style,
       ]}
@@ -186,9 +193,9 @@ export default function Badge({
             fontSize: sizeStyles.fontSize,
             flex: fullWidth && layout === "horizontal" ? 1 : undefined,
             textAlign: layout === "vertical" ? "center" : "left",
+            color: variantColors.text, // Forzamos el color del texto del badge
           },
         ]}
-        color={variantColors.text}
         numberOfLines={fullWidth ? undefined : 1}
       >
         {text}
@@ -199,13 +206,11 @@ export default function Badge({
 
 const styles = StyleSheet.create({
   badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
     borderWidth: 1,
   },
   badgeText: {
-    fontWeight: "700",
-    letterSpacing: 0.3,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
 });

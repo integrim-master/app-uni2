@@ -56,7 +56,8 @@
           "recordAudioAndroid": true
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "react-native-vision-camera"
     ],
     "extra": {
       "router": {},

@@ -25,6 +25,13 @@ export const useTreatments = () =>
     queryKey: ["full-profile"],
     queryFn: AuthService.getMeUser,
     staleTime: PROFILE_STALE_TIME,
+    select: (data) => data.treatments_careme,
+  });
+export const useTreatmentSuggest = () =>
+  useQuery({
+    queryKey: ["full-profile"],
+    queryFn: AuthService.getMeUser,
+    staleTime: PROFILE_STALE_TIME,
     select: (data) => data.treatments_suggest,
   });
 

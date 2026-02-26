@@ -1,7 +1,7 @@
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
-import { useAuth } from "@/src/context/AuthContext";
+import { useUser } from "@/src/modules/banner/hooks/userHome";
 import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkeleton";
 import { useDatesDetails } from "@/src/modules/dates/hooks/useDatesById";
 import { formatDateToText } from "@/src/utils/stringUtils";
@@ -15,7 +15,7 @@ import { useTheme } from "../../../../src/context/ThemeContext";
 export default function Index() {
   const { colors } = useTheme();
   const { date_id } = useLocalSearchParams();
-  const { user } = useAuth();
+  const { data: user } = useUser();
   const { data: dateDetails, isFetching } = useDatesDetails(date_id as string);
 
   if (isFetching) {

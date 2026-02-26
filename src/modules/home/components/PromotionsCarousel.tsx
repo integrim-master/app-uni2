@@ -3,15 +3,15 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { Link } from "expo-router";
 import React from "react";
 import {
-    ImageBackground,
-    StyleSheet,
-    useWindowDimensions,
-    View,
+  ImageBackground,
+  StyleSheet,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
-    ICarouselInstance,
-    Pagination,
+  ICarouselInstance,
+  Pagination,
 } from "react-native-reanimated-carousel";
 import Campana from "../../../../assets/images/campana.jpg";
 import { useTheme } from "../../../context/ThemeContext";
@@ -50,7 +50,7 @@ export const PromotionsCarousel = ({
       <View style={styles.sectionHeader}>
         <ThemedText
           type="subtitle"
-          color={colors.textDark}
+          color={colors.textPrimary}
           className="font-bold"
         >
           Promociones exclusivas

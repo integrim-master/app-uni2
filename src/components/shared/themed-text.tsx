@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 17,
     lineHeight: 24,
-    fontFamily: "Roboto-Medium",
+    fontFamily: "Roboto-Bold",
   },
 
   caption: {

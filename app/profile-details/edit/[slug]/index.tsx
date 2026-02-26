@@ -1,5 +1,6 @@
 import EmptySvgPush from "@/assets/svg/Push.svg";
 import { BackButton } from "@/src/components/shared/BackButton";
+import CustomPicker from "@/src/components/shared/CustomPicker";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
@@ -14,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
@@ -24,16 +26,21 @@ const Index = () => {
   const { slug, name } = useLocalSearchParams();
   const { colors } = useTheme();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [value, setValue] = useState((slug as string) || "");
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const { mutate: updateProfile, isPending } = useEditProfile();
-  const queryClient = useQueryClient();
 
-  const [index, setIndex] = useState(0);
-  const texts = [
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+
+  const { mutate: updateProfile, isPending } = useEditProfile();
+
+  const [loadingIndex, setLoadingIndex] = useState(0);
+  const loadingTexts = [
     "Actualizando datos",
     "Conectando al servidor",
     "Casi terminamos",
@@ -43,32 +50,30 @@ const Index = () => {
     let interval: NodeJS.Timeout;
     if (isPending) {
       interval = setInterval(() => {
-        setIndex((prev) => (prev + 1) % texts.length);
+        setLoadingIndex((prev) => (prev + 1) % loadingTexts.length);
       }, 2000);
     }
     return () => clearInterval(interval);
   }, [isPending]);
 
   const handleSave = () => {
-    const finalValue =
-      name === "fnacimiento" ? date.toISOString().split("T")[0] : value;
+    let finalValue: string = value;
+
+    if (name === "fnacimiento") {
+      finalValue = date.toISOString().split("T")[0];
+    } else if (name === "localizacion") {
+      finalValue = `${city}, ${state}, ${country}`;
+    }
 
     updateProfile(
       { [name as string]: finalValue },
       {
         onSuccess: () => {
-          queryClient.setQueryData(["profile-info"], (old: any) => {
-            if (!old) return old;
-            return {
-              ...old,
-              [name as string]: finalValue,
-            };
-          });
-
+          queryClient.invalidateQueries({ queryKey: ["profile-info"] });
           setIsSuccess(true);
         },
         onError: () => {
-          throw new Error("Error al actualizar el perfil");
+          console.error("Error al actualizar");
         },
       },
     );
@@ -95,9 +100,9 @@ const Index = () => {
             key="success"
             from={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col justify-around h-full p-4"
+            style={styles.fullCenter}
           >
-            <View className="flex gap-10 items-center">
+            <View className="items-center gap-10">
               <EmptySvgPush width={180} height={180} />
               <View>
                 <ThemedText type="subtitle" style={{ textAlign: "center" }}>
@@ -111,37 +116,32 @@ const Index = () => {
                 </ThemedText>
               </View>
             </View>
-            <PrimaryButton title="Continuar" onPress={() => router.back()} />
+            <View style={{ width: "100%", marginTop: 40 }}>
+              <PrimaryButton title="Continuar" onPress={() => router.back()} />
+            </View>
           </MotiView>
         ) : isPending ? (
           <MotiView
             key="loading"
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex-1 justify-center p-10"
+            style={styles.loadingWrapper}
           >
             <AnimatePresence exitBeforeEnter>
               <MotiView
-                key={index}
+                key={loadingIndex}
                 from={{ opacity: 0, translateY: 15 }}
                 animate={{ opacity: 1, translateY: 0 }}
                 exit={{ opacity: 0, translateY: -15 }}
                 transition={{ type: "timing", duration: 500 }}
               >
                 <ThemedText type="title" style={{ textAlign: "center" }}>
-                  {texts[index]}
+                  {loadingTexts[loadingIndex]}
                 </ThemedText>
               </MotiView>
             </AnimatePresence>
             <View
-              style={{
-                height: 6,
-                width: "100%",
-                backgroundColor: colors.border,
-                borderRadius: 3,
-                marginTop: 30,
-                overflow: "hidden",
-              }}
+              style={[styles.progressBarBg, { backgroundColor: colors.border }]}
             >
               <MotiView
                 from={{ width: "0%" }}
@@ -166,26 +166,63 @@ const Index = () => {
               behavior={Platform.OS === "ios" ? "padding" : "height"}
               style={{ flex: 1 }}
             >
-              <View className="flex flex-1 mt-4 p-6">
+              <View className="flex-1 mt-4 p-6">
                 <View className="flex-1">
-                  <ThemedText
-                    type="title"
-                    style={{ fontSize: 28, marginBottom: 40 }}
-                  >
+                  <ThemedText type="title" style={styles.mainHeaderTitle}>
                     {name === "nombre"
                       ? "Cómo quieres que te llamemos"
                       : name === "fnacimiento"
                         ? "Fecha de nacimiento"
-                        : `Editar ${name?.toString().replace("_", " ")}`}
+                        : name === "localizacion"
+                          ? "Tu ubicación"
+                          : `Editar ${name?.toString().replace("_", " ")}`}
                   </ThemedText>
 
-                  {name === "type_id" ? (
+                  {name === "localizacion" ? (
+                    <View>
+                      <CustomPicker
+                        label="País"
+                        selectedValue={country}
+                        onValueChange={(v: string) => {
+                          setCountry(v);
+                          setState("");
+                          setCity("");
+                        }}
+                        items={[
+                          { l: "Colombia", v: "CO" },
+                          { l: "México", v: "MX" },
+                        ]}
+                      />
+                      <CustomPicker
+                        label="Estado / Departamento"
+                        visible={!!country}
+                        selectedValue={state}
+                        onValueChange={(v: string) => {
+                          setState(v);
+                          setCity("");
+                        }}
+                        items={[
+                          { l: "Atlántico", v: "ATL" },
+                          { l: "Antioquia", v: "ANT" },
+                        ]}
+                      />
+                      <CustomPicker
+                        label="Ciudad / Municipio"
+                        visible={!!state}
+                        selectedValue={city}
+                        onValueChange={(v: string) => setCity(v)}
+                        items={[
+                          { l: "Barranquilla", v: "BAQ" },
+                          { l: "Medellín", v: "MED" },
+                        ]}
+                      />
+                    </View>
+                  ) : name === "type_id" ? (
                     <View
-                      style={{
-                        borderBottomWidth: 2,
-                        borderColor: colors.primary,
-                        marginBottom: 20,
-                      }}
+                      style={[
+                        styles.inputBorder,
+                        { borderColor: colors.primary },
+                      ]}
                     >
                       <Picker
                         selectedValue={value}
@@ -203,11 +240,10 @@ const Index = () => {
                   ) : name === "fnacimiento" ? (
                     <TouchableOpacity
                       onPress={() => setShowDatePicker(true)}
-                      style={{
-                        borderBottomWidth: 2,
-                        borderColor: colors.primary,
-                        paddingVertical: 10,
-                      }}
+                      style={[
+                        styles.inputBorder,
+                        { borderColor: colors.primary, paddingVertical: 15 },
+                      ]}
                     >
                       <ThemedText style={{ fontSize: 24 }}>
                         {date.toLocaleDateString()}
@@ -219,12 +255,15 @@ const Index = () => {
                       value={value}
                       onChangeText={setValue}
                       autoFocus
-                      className="text-2xl py-3 border-b-2"
-                      style={{
-                        borderColor:
-                          value.length > 0 ? colors.primary : colors.border,
-                        color: colors.text,
-                      }}
+                      placeholderTextColor={colors.textSecondary}
+                      style={[
+                        styles.textInput,
+                        {
+                          borderColor:
+                            value.length > 0 ? colors.primary : colors.border,
+                          color: colors.text,
+                        },
+                      ]}
                     />
                   )}
 
@@ -243,7 +282,11 @@ const Index = () => {
                   <PrimaryButton
                     title="Guardar cambios"
                     onPress={handleSave}
-                    disabled={name !== "fnacimiento" && !value.trim()}
+                    disabled={
+                      name === "localizacion"
+                        ? !country || !state || !city
+                        : name !== "fnacimiento" && !value.trim()
+                    }
                   />
                 </View>
               </View>
@@ -254,5 +297,26 @@ const Index = () => {
     </Screen>
   );
 };
+
+const styles = StyleSheet.create({
+  fullCenter: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-around",
+    padding: 16,
+  },
+  loadingWrapper: { flex: 1, justifyContent: "center", padding: 40 },
+  progressBarBg: {
+    height: 6,
+    width: "100%",
+    borderRadius: 3,
+    marginTop: 30,
+    overflow: "hidden",
+  },
+  mainHeaderTitle: { fontSize: 28, marginBottom: 32, fontWeight: "700" },
+  pickerContainer: { marginBottom: 20, borderBottomWidth: 2, paddingBottom: 4 },
+  inputBorder: { borderBottomWidth: 2, marginBottom: 20 },
+  textInput: { fontSize: 24, paddingVertical: 12, borderBottomWidth: 2 },
+});
 
 export default Index;

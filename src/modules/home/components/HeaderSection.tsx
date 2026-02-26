@@ -1,4 +1,6 @@
+import Badge from "@/src/components/shared/Badge";
 import ThemedText from "@/src/components/shared/themed-text";
+import { Link } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
@@ -33,6 +35,19 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ fullName }) => {
           <ThemedText color={colors.textSecondary}>
             Tu bienestar es nuestra prioridad
           </ThemedText>
+          <Link href="/blog">
+            <Badge
+              variant="white"
+              text="Blog"
+              size="small"
+              icon="book"
+              style={{
+                borderRadius: 900,
+                paddingLeft: 10,
+                paddingRight: 10,
+              }}
+            />
+          </Link>
         </View>
       </View>
     </View>
@@ -43,7 +58,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     display: "flex",
     flexDirection: "column",
-    marginTop: 2,
+    marginTop: 8,
     height: 130,
 
     paddingHorizontal: 15,
@@ -56,7 +71,7 @@ const styles = StyleSheet.create({
     height: "auto",
     display: "flex",
     flexDirection: "column",
-    gap: 10,
+    gap: 4,
   },
   logoImageDark: {
     width: 140,
@@ -93,7 +108,7 @@ const styles = StyleSheet.create({
   suggestionsContainer: {
     display: "flex",
     flexDirection: "column",
-    gap: 20,
+    gap: 10,
     justifyContent: "flex-start",
     alignItems: "flex-start",
     marginBottom: 10,

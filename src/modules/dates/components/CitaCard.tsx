@@ -24,21 +24,23 @@ export default function CitaCard({
       style={[styles.card] as any}
     >
       <View style={styles.content}>
-        <Badge
-          text={cita.categoria}
-          variant={cita.categoria === "Estetico" ? "info" : "warning"}
-          size="small"
-          icon="health-and-safety"
-          showIcon={false}
-          style={{ marginBottom: 6 }}
-        />
-        <Text
-          style={[styles.procedimiento, { color: colors.text }]}
-          numberOfLines={2}
-          ellipsizeMode="tail"
-        >
-          {cita.Procedimiento}
-        </Text>
+        <View className="flex flex-row  gap-2 justify-between">
+          <ThemedText
+            type="subtitle"
+            color={colors.textPrimary}
+            className="capitalize"
+          >
+            {cita.Procedimiento}
+          </ThemedText>
+          <Badge
+            text={cita.categoria}
+            variant={cita.categoria === "Estetico" ? "white" : "warning"}
+            size="small"
+            icon="health-and-safety"
+            showIcon={false}
+            style={{ marginBottom: 6 }}
+          />
+        </View>
 
         <View style={styles.rowSingle}>
           <Ionicons

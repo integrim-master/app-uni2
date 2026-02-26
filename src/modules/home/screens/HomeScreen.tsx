@@ -1,10 +1,9 @@
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import { ui } from "@/src/themes/ui";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
-import ThemedText from "@/src/components/shared/themed-text";
 import BenefitsPreview from "../components/BenefitsPreview";
 import { CardHome } from "../components/CardHome";
 import HeaderSection from "../components/HeaderSection";
@@ -60,10 +59,6 @@ const HomeScreen: React.FC<Props> = ({
         benefits={benefits}
         onPressAll={() => router.push("/(tabs)/benefits")}
       />
-      <Link href="/blog" style={{ marginTop: 20 }}>
-        <ThemedText>blog</ThemedText>
-      </Link>
-
       <PromotionsCarousel isLoading={isLoading} promotions={promotions} />
 
       <TreatmentsSection SuggestedTreatments={treatmentsCareme} />

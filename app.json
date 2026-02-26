@@ -40,6 +40,7 @@
       "expo-web-browser",
       "expo-notifications",
       "expo-secure-store",
+
       [
         "expo-media-library",
         {

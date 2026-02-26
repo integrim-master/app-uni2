@@ -17,6 +17,12 @@ export const useDiagnosticSession = () => {
   });
 };
 
+export const useSetDiagnosticSession = () => {
+  const queryClient = useQueryClient();
+  return (session: DiagnosticSession | null) =>
+    queryClient.setQueryData(DIAGNOSTIC_SESSION_KEY, session);
+};
+
 export const useClearDiagnosticSession = () => {
   const queryClient = useQueryClient();
   return () => queryClient.removeQueries({ queryKey: DIAGNOSTIC_SESSION_KEY });

@@ -1,7 +1,7 @@
 import { Screen } from "@/src/components/shared/Screen";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
-import { userUser } from "@/src/modules/banner/hooks/userHome";
+import { useUser } from "@/src/modules/banner/hooks/userHome";
 import ResultView from "@/src/modules/diagnostics/components/ResultView";
 import StepOne from "@/src/modules/diagnostics/components/StepOne";
 import {
@@ -22,11 +22,13 @@ export default function DiagnosticsTab() {
   const clearSession = useClearDiagnosticSession();
 
   const { data: sessionDiagnostic } = useDiagnosticSession();
-  const { data: user } = userUser();
+  const { data: user } = useUser();
   const { data: lastDiagnostic, isLoading } = useLastDiagnostic({
     userId: String(user?.user_id),
     token: String(token),
   });
+
+  console.log("Session Diagnosticssssssssssss:", sessionDiagnostic);
 
   const normalizedSession = sessionDiagnostic
     ? {
@@ -37,6 +39,7 @@ export default function DiagnosticsTab() {
     : null;
 
   const diagnostic = normalizedSession ?? lastDiagnostic?.data ?? null;
+
   const photoUri =
     normalizedSession?.photoUri ?? lastDiagnostic?.data?.photoUri ?? undefined;
 

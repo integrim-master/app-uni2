@@ -8,18 +8,18 @@ import { useState } from "react";
 import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Screen } from "../../../components/shared/Screen";
 import { useTheme } from "../../../context/ThemeContext";
-import { userUser } from "../../banner/hooks/userHome";
 import { ProfileHeader } from "../components/ProfileHeader";
+import { useInfoProfile } from "../hooks/useMeProfile";
 
 export function ProfileScreen() {
   const { colors } = useTheme();
-  const { data: user } = userUser();
+  const { data: user } = useInfoProfile();
   const { logout } = useAuth();
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showDataModal, setShowDataModal] = useState(false);
 
-  const userName = user?.user_name || "Usuario";
+  const userName = user?.nombre || "Usuario";
 
   // const generalItems = [
   //   {

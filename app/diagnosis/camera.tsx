@@ -1,23 +1,24 @@
 import { BackButton } from "@/src/components/shared/BackButton";
+import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
+import { useTheme } from "@/src/context/ThemeContext";
 import { useUser } from "@/src/modules/banner/hooks/userHome";
 import SendPhoto from "@/src/modules/diagnostics/components/loadingPhoto";
 import {
   useCreateDiagnostic,
   useUploadDiagnosticImage,
 } from "@/src/modules/diagnostics/hooks/useDiagnostic";
-import { DIAGNOSTIC_SESSION_KEY } from "@/src/modules/diagnostics/hooks/useDiagnosticSession";
+import { useSetDiagnosticSession } from "@/src/modules/diagnostics/hooks/useDiagnosticSession";
 import ErrorScreen from "@/src/modules/diagnostics/screens/ErrorScreen";
 import { useAnalyzeImage } from "@/src/n8n/hooks/useAnalizeImage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
-import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import * as ImageManipulator from "expo-image-manipulator";
 import { router } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   Pressable,
   StyleSheet,
@@ -25,9 +26,18 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { useTheme } from "../../src/context/ThemeContext";
-
-type PhotoAsset = { uri: string; type?: string; fileName?: string };
+import {
+  Camera,
+  runAsync,
+  useCameraDevice,
+  useCameraPermission,
+  useFrameProcessor,
+} from "react-native-vision-camera";
+import {
+  Face,
+  useFaceDetector,
+} from "react-native-vision-camera-face-detector";
+import { Worklets } from "react-native-worklets-core";
 
 export default function CameraScreen() {
   const { colors } = useTheme();
@@ -35,24 +45,35 @@ export default function CameraScreen() {
   const { data: userInfo } = useUser();
   const userId = userInfo?.user_id;
   const queryClient = useQueryClient();
-  const { width, height } = useWindowDimensions();
+  const setDiagnosticSession = useSetDiagnosticSession();
 
-  const OVAL_WIDTH = width * 0.55;
-  const OVAL_HEIGHT = height * 0.35;
-  const CAMERA_HEIGHT = height * 0.55;
-  const CAMERA_WIDTH = width * 0.9;
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
 
-  const cameraRef = useRef<CameraView>(null);
-  const [facing, setFacing] = useState<CameraType>("front");
+  const CAMERA_WIDTH = SCREEN_WIDTH * 0.92;
+  const CAMERA_HEIGHT = SCREEN_HEIGHT * 0.58;
+  const OVAL_WIDTH = CAMERA_WIDTH * 0.62;
+  const OVAL_HEIGHT = CAMERA_HEIGHT * 0.65;
+
+  const cameraRef = useRef<Camera>(null);
+  const [facing, setFacing] = useState<"front" | "back">("front");
   const [capturing, setCapturing] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
+  const [status, setStatus] = useState<"none" | "far" | "uncentered" | "ok">(
+    "none",
+  );
+  const isFaceAligned = status === "ok";
 
-  const [photoUri, setPhotoUri] = useState<PhotoAsset | null>(null);
+  const [photoUri, setPhotoUri] = useState<{ uri: string } | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [validationError, setValidationError] = useState<{
     message: string;
     reason?: string;
   } | null>(null);
+
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const device = useCameraDevice(facing);
+  const { detectFaces, stopListeners } = useFaceDetector({
+    performanceMode: "fast",
+  });
 
   const { mutateAsync: uploadImage, reset: resetUpload } =
     useUploadDiagnosticImage();
@@ -60,60 +81,73 @@ export default function CameraScreen() {
     useAnalyzeImage();
   const { mutateAsync: createDiagnostic } = useCreateDiagnostic();
 
-  if (!permission) return <View />;
-  if (!permission.granted) {
-    return (
-      <View style={styles.permissionContainer}>
-        <MaterialIcons name="camera-alt" size={70} color={colors.primary} />
-        <ThemedText type="subtitle" style={styles.permissionTitle}>
-          Necesitamos tu permiso
-        </ThemedText>
-        <ThemedText style={styles.permissionSubtitle}>
-          Para capturar tu foto de diagnóstico
-        </ThemedText>
-        <Pressable
-          style={[styles.permissionButton, { backgroundColor: colors.primary }]}
-          onPress={requestPermission}
-        >
-          <Text style={styles.permissionText}>Conceder permiso</Text>
-        </Pressable>
-      </View>
-    );
-  }
+  useEffect(() => {
+    return () => stopListeners();
+  }, []);
 
-  if (isAnalyzing || isProcessing) return <SendPhoto />;
+  const handleDetectedFaces = Worklets.createRunOnJS(
+    (faces: Face[], fWidth: number, fHeight: number) => {
+      if (faces.length === 0) {
+        if (status !== "none") setStatus("none");
+        return;
+      }
+      const { bounds } = faces[0];
+      const sX = CAMERA_WIDTH / fHeight;
+      const sY = CAMERA_HEIGHT / fWidth;
+      const fCX = (bounds.x + bounds.width / 2) * sX;
+      const fCY = (bounds.y + bounds.height / 2) * sY;
 
-  if (validationError) {
-    return (
-      <ErrorScreen
-        message={validationError.message}
-        reason={validationError.reason}
-        photoUri={photoUri?.uri}
-        onRetry={() => {
-          setValidationError(null);
-          setPhotoUri(null);
-          resetUpload();
-        }}
-      />
-    );
-  }
+      const isCentered =
+        Math.sqrt(
+          Math.pow(fCX - CAMERA_WIDTH / 2, 2) +
+            Math.pow(fCY - CAMERA_HEIGHT / 2, 2),
+        ) < 60;
+      const isCloseEnough = bounds.width * sX > OVAL_WIDTH * 0.8;
+
+      let newStatus: typeof status = isCentered
+        ? isCloseEnough
+          ? "ok"
+          : "far"
+        : "uncentered";
+      if (status !== newStatus) setStatus(newStatus);
+    },
+  );
+
+  const frameProcessor = useFrameProcessor(
+    (frame) => {
+      "worklet";
+      runAsync(frame, () => {
+        "worklet";
+        const faces = detectFaces(frame);
+        handleDetectedFaces(faces, frame.width, frame.height);
+      });
+    },
+    [handleDetectedFaces],
+  );
 
   const takePicture = async () => {
-    if (capturing) return;
+    if (capturing || !cameraRef.current || !isFaceAligned) return;
     try {
       setCapturing(true);
-      const photo = await cameraRef.current?.takePictureAsync({
-        quality: 1,
-        base64: false,
-      });
-      if (!photo?.uri) return;
-      setPhotoUri({
-        uri: photo.uri,
-        fileName: `diagnostic_${Date.now()}.jpg`,
-        type: "image/jpeg",
-      });
-    } catch (error) {
-      console.error("Error al capturar foto:", error);
+      const photo = await cameraRef.current.takePhoto({ flash: "off" });
+      const scale = photo.height / CAMERA_HEIGHT;
+      const cropped = await ImageManipulator.manipulateAsync(
+        `file://${photo.path}`,
+        [
+          {
+            crop: {
+              originX: (photo.width - OVAL_WIDTH * scale) / 2,
+              originY: (photo.height - OVAL_HEIGHT * scale) / 2,
+              width: OVAL_WIDTH * scale,
+              height: OVAL_HEIGHT * scale,
+            },
+          },
+        ],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
+      );
+      setPhotoUri({ uri: cropped.uri });
+    } catch (e) {
+      console.error(e);
     } finally {
       setCapturing(false);
     }
@@ -121,190 +155,261 @@ export default function CameraScreen() {
 
   const handleSendPhoto = async () => {
     if (!photoUri || !userId) return;
-    setValidationError(null);
     setIsProcessing(true);
     try {
-      const analysisResult = await analyzeImage(photoUri);
-      const data = Array.isArray(analysisResult)
-        ? analysisResult[0]
-        : analysisResult;
-
+      const res = await analyzeImage(photoUri as any);
+      const data = Array.isArray(res) ? res[0] : res;
       if (data.valido === false || data.valido === "false") {
-        setIsProcessing(false);
-        setValidationError({
-          message: data.error || "La imagen no cumple con los requisitos",
-          reason: data.motivo || "invalid_image",
-        });
+        setValidationError({ message: data.error, reason: data.motivo });
         return;
       }
-
-      const uploadResult = await uploadImage({
-        photo: photoUri,
+      const upload = await uploadImage({
+        photo: photoUri as any,
         userId: String(userId),
         token,
       });
-
-      const dat = await createDiagnostic({
-        diagnostico: data.diagnostico || data,
+      await createDiagnostic({
+        diagnostico: data.diagnostico,
         procedimientos: data.procedimientos || [],
-        imageId: uploadResult.id,
+        imageId: upload.id,
         userId: String(userId),
       });
-
-      queryClient.setQueryData(DIAGNOSTIC_SESSION_KEY, {
-        analysis: data,
-        photoUri,
-        mediaId: uploadResult.id,
-      });
-
-      queryClient.setQueryData(["last-diagnostic", String(userId)], {
-        success: true,
-        data: {
-          diagnostico: data.diagnostico || data,
-          procedimientos: data.procedimientos || [],
-          imagen_url: photoUri.uri,
-          photoUri,
-          analysis: data,
-        },
-      });
-
+      try {
+        const session = {
+          analysis: {
+            diagnostico: data.diagnostico,
+            procedimientos: data.procedimientos || [],
+          },
+          photoUri: photoUri,
+          mediaId: upload.id,
+        } as any;
+        setDiagnosticSession(session);
+      } catch (e) {
+        console.warn("setDiagnosticSession failed", e);
+      }
       queryClient.invalidateQueries({
         queryKey: ["last-diagnostic", String(userId)],
       });
-
-      setIsProcessing(false);
       router.back();
     } catch (error: any) {
+      setValidationError({ message: error.message || "Error de red" });
+    } finally {
       setIsProcessing(false);
-      setValidationError({
-        message:
-          error.message || "Ocurrió un error inesperado al procesar la imagen",
-      });
     }
   };
 
+  if (!hasPermission)
+    return (
+      <Screen
+        safeArea
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        <View className="h-full flex justify-center w-full p-2">
+          <PrimaryButton title="Permitir Cámara" onPress={requestPermission} />
+        </View>
+        {/* <Pressable
+          onPress={requestPermission}
+          style={[
+            styles.primaryBtn,
+            { backgroundColor: colors.primary, paddingHorizontal: 20 },
+          ]}
+        >
+          <Text style={{ color: colors.background }}>Permitir Cámara</Text>
+        </Pressable> */}
+      </Screen>
+    );
+
+  if (isAnalyzing || isProcessing) return <SendPhoto />;
+
+  if (validationError)
+    return (
+      <ErrorScreen
+        photoUri={photoUri?.uri}
+        message={validationError.message}
+        onRetry={() => {
+          setValidationError(null);
+          setPhotoUri(null);
+          resetUpload();
+        }}
+      />
+    );
+
   return (
-    <Screen safeArea leftButton={<BackButton />} style={styles.container}>
-      <View style={styles.instructionsContainer}>
-        {photoUri ? (
-          <>
-            <ThemedText type="subtitle" style={styles.instructionTitle}>
-              ¿Te gusta la foto?
-            </ThemedText>
-            <ThemedText style={styles.instructionSubtitle}>
-              Confirma o toma otra
-            </ThemedText>
-          </>
-        ) : (
-          <>
-            <ThemedText type="subtitle" style={styles.instructionTitle}>
-              Posiciona tu rostro
-            </ThemedText>
-            <ThemedText style={styles.instructionSubtitle}>
-              Centra tu cara dentro del marco ovalado
-            </ThemedText>
-          </>
-        )}
+    <Screen
+      safeArea
+      leftButton={<BackButton />}
+      style={{ backgroundColor: colors.background }}
+    >
+      <View style={styles.header}>
+        <ThemedText
+          type="title"
+          color={isFaceAligned ? colors.success : colors.primaryLight}
+        >
+          {photoUri
+            ? "Revisa tu foto"
+            : status === "far"
+              ? "Acércate más"
+              : status === "uncentered"
+                ? "Centra tu rostro en ovalo "
+                : isFaceAligned
+                  ? "¡Perfecto!"
+                  : "Encuadra tu rostro"}
+        </ThemedText>
+        <Text style={[styles.subText, { color: colors.textSecondary }]}>
+          Escaneo facial
+        </Text>
       </View>
 
       <View
         style={[
-          styles.cameraContainer,
-          {
-            borderColor: colors.primary,
-            width: CAMERA_WIDTH,
-            height: CAMERA_HEIGHT,
-          },
+          styles.card,
+          { backgroundColor: colors.card, shadowColor: colors.shadow },
+          isFaceAligned && { borderColor: colors.success, borderWidth: 2 },
         ]}
       >
-        {photoUri ? (
-          <Image
-            source={{ uri: photoUri.uri }}
-            style={[
-              styles.camera,
-              facing === "front" && { transform: [{ scaleX: -1 }] },
-            ]}
-            resizeMode="cover"
-          />
-        ) : (
-          <CameraView ref={cameraRef} style={styles.camera} facing={facing} />
-        )}
+        <View
+          style={[
+            styles.camContainer,
+            { width: CAMERA_WIDTH, height: CAMERA_HEIGHT },
+          ]}
+        >
+          {photoUri ? (
+            <Image source={{ uri: photoUri.uri }} style={styles.cameraImg} />
+          ) : (
+            <>
+              <Camera
+                ref={cameraRef}
+                style={StyleSheet.absoluteFill}
+                device={device!}
+                isActive={true}
+                photo={true}
+                frameProcessor={frameProcessor}
+                pixelFormat="yuv"
+              />
+              <View style={styles.overlay}>
+                <View
+                  style={[
+                    styles.oval,
+                    {
+                      width: OVAL_WIDTH,
+                      height: OVAL_HEIGHT,
+                      borderColor: isFaceAligned
+                        ? colors.success
+                        : colors.borderLight,
+                    },
+                  ]}
+                >
+                  {!isFaceAligned && (
+                    <View
+                      style={[
+                        styles.glassLabel,
+                        { backgroundColor: colors.backgroundDark + "99" },
+                      ]}
+                    >
+                      <MaterialIcons
+                        name="face"
+                        size={18}
+                        color={colors.primaryLight}
+                      />
+                      <Text style={{ color: colors.text, fontWeight: "700" }}>
+                        {status === "far" ? "Más cerca" : "Alinear"}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+            </>
+          )}
+        </View>
+      </View>
 
-        {!photoUri && (
-          <View style={styles.overlayContainer}>
-            <View style={styles.ovalWrapper}>
+      <View style={styles.footer}>
+        {!photoUri ? (
+          <View style={styles.shutterRow}>
+            <Pressable
+              onPress={() =>
+                setFacing((f) => (f === "front" ? "back" : "front"))
+              }
+              style={[
+                styles.iconBtn,
+                { backgroundColor: colors.backgroundDark },
+              ]}
+            >
+              <MaterialIcons
+                name="flip-camera-android"
+                size={26}
+                color={colors.primaryLight}
+              />
+            </Pressable>
+
+            <Pressable
+              onPress={takePicture}
+              disabled={!isFaceAligned || capturing}
+              style={[
+                styles.shutterOuter,
+                { borderColor: isFaceAligned ? colors.success : colors.border },
+              ]}
+            >
               <View
                 style={[
-                  styles.oval,
+                  styles.shutterInner,
                   {
-                    borderColor: colors.primary,
-                    width: OVAL_WIDTH,
-                    height: OVAL_HEIGHT,
-                    borderRadius: OVAL_WIDTH / 2,
+                    backgroundColor: isFaceAligned
+                      ? colors.success
+                      : colors.borderLight,
                   },
                 ]}
               />
-              <View style={styles.guideTextContainer}>
-                <MaterialIcons name="face" size={28} color="white" />
-                <Text style={styles.guideText}>Alinea tu rostro aquí</Text>
-              </View>
-            </View>
-          </View>
-        )}
+            </Pressable>
 
-        {capturing && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Capturando...</Text>
+            <View style={{ width: 50 }} />
           </View>
-        )}
-      </View>
-
-      <View style={styles.controls}>
-        {!photoUri ? (
-          <Pressable
-            style={[styles.smallBtn, { borderColor: colors.primary }]}
-            onPress={() => setFacing((p) => (p === "front" ? "back" : "front"))}
-            disabled={capturing}
-          >
-            <MaterialIcons
-              name="flip-camera-ios"
-              size={24}
-              color={colors.primary}
+        ) : (
+          <View style={styles.btnGroup}>
+            <PrimaryButton
+              title="Repetir"
+              onPress={() => setPhotoUri(null)}
+              style={{ flex: 1, backgroundColor: colors.backgroundDark }}
+              textStyle={{ color: colors.textSecondary }}
             />
-          </Pressable>
-        ) : (
-          <View style={styles.smallBtnPlaceholder} />
-        )}
-
-        <Pressable
-          style={[
-            styles.captureBtn,
-            {
-              backgroundColor: photoUri ? "#eee" : colors.primary,
-              borderWidth: photoUri ? 2 : 0,
-              borderColor: photoUri ? colors.primary : "transparent",
-            },
-          ]}
-          onPress={photoUri ? () => setPhotoUri(null) : takePicture}
-          disabled={capturing}
-        >
-          {photoUri ? (
-            <MaterialIcons name="refresh" size={30} color={colors.primary} />
-          ) : (
-            <View style={styles.innerCapture} />
-          )}
-        </Pressable>
-
-        {photoUri ? (
-          <Pressable
-            style={[styles.smallBtn, { backgroundColor: colors.primary }]}
-            onPress={handleSendPhoto}
-          >
-            <MaterialIcons name="check" size={28} color="#fff" />
-          </Pressable>
-        ) : (
-          <View style={styles.smallBtnPlaceholder} />
+            {/* <Pressable
+              onPress={() => setPhotoUri(null)}
+              style={[
+                styles.secondaryBtn,
+                { backgroundColor: colors.backgroundDark },
+              ]}
+            >
+              <Text style={{ color: colors.textSecondary, fontWeight: "700" }}>
+                Repetir
+              </Text>
+            </Pressable> */}
+            {/* <Pressable
+              onPress={handleSendPhoto}
+              style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
+            >
+              <Text
+                style={{
+                  color: colors.background,
+                  fontWeight: "700",
+                  fontSize: 16,
+                }}
+              >
+                Analizar ahora
+              </Text>
+              <MaterialIcons name="check" size={20} color={colors.background} />
+            </Pressable> */}
+            <PrimaryButton
+              title="Analizar ahora"
+              onPress={handleSendPhoto}
+              textStyle={{ color: colors.background }}
+            />
+          </View>
         )}
       </View>
     </Screen>
@@ -312,105 +417,86 @@ export default function CameraScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  header: { alignItems: "center", marginVertical: 20 },
+  statusText: { fontSize: 22, fontWeight: "800", textAlign: "center" },
+  subText: {
+    fontSize: 13,
+    marginTop: 4,
+    fontWeight: "500",
+    textTransform: "uppercase",
+    letterSpacing: 1,
   },
-  permissionContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-    gap: 12,
+  card: {
+    alignSelf: "center",
+    borderRadius: 42,
+    padding: 6,
+    borderWidth: 2,
+    borderColor: "transparent",
+    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
   },
-  permissionTitle: { fontSize: 22, marginTop: 16 },
-  permissionSubtitle: { fontSize: 15, opacity: 0.7, textAlign: "center" },
-  permissionButton: {
-    marginTop: 24,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    elevation: 3,
-  },
-  permissionText: { color: "#fff", fontWeight: "700", fontSize: 16 },
-  instructionsContainer: {
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  instructionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 6,
-  },
-  instructionSubtitle: { fontSize: 14, textAlign: "center", opacity: 0.7 },
-  cameraContainer: {
-    borderRadius: 24,
-    borderWidth: 3,
-    overflow: "hidden",
-    backgroundColor: "#000",
-    marginBottom: 20,
-    elevation: 8,
-  },
-  camera: { flex: 1, width: "100%", height: "100%" },
-  overlayContainer: {
+  camContainer: { borderRadius: 36, overflow: "hidden" },
+  cameraImg: { flex: 1 },
+  overlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
   },
-  ovalWrapper: { justifyContent: "center", alignItems: "center", zIndex: 2 },
   oval: {
-    borderWidth: 3,
-    backgroundColor: "transparent",
-  },
-  guideTextContainer: { position: "absolute", alignItems: "center", gap: 8 },
-  guideText: {
-    color: "white",
-    fontSize: 15,
-    fontWeight: "600",
-    textShadowColor: "rgba(0,0,0,0.75)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    alignItems: "center",
+    borderRadius: 180,
+    borderWidth: 2,
+    borderStyle: "dashed",
     justifyContent: "center",
-    gap: 12,
+    alignItems: "center",
   },
-  loadingText: { color: "#fff", fontSize: 16, fontWeight: "600" },
-  controls: {
+  glassLabel: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 24,
-    paddingHorizontal: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 6,
   },
-  smallBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+  footer: { flex: 1, justifyContent: "center", paddingHorizontal: 35 },
+  shutterRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    elevation: 4,
   },
-  smallBtnPlaceholder: { width: 52, height: 52 },
-  captureBtn: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+  shutterOuter: {
+    width: 78,
+    height: 78,
+    borderRadius: 39,
+    borderWidth: 4,
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "center",
-    elevation: 6,
   },
-  innerCapture: {
+  shutterInner: { width: 60, height: 60, borderRadius: 30 },
+  iconBtn: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  btnGroup: { flexDirection: "row", gap: 12 },
+  secondaryBtn: {
+    flex: 1,
+    height: 56,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  primaryBtn: {
+    flex: 2,
+    height: 56,
+    borderRadius: 18,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
   },
 });

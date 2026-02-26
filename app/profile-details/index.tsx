@@ -3,7 +3,8 @@ import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useTheme } from "@/src/context/ThemeContext";
-import { userUser } from "@/src/modules/banner/hooks/userHome";
+import { useUser } from "@/src/modules/banner/hooks/userHome";
+
 import { ProfileSkeleton } from "@/src/modules/profile/components/ProfileSkeleton";
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
 import { ui } from "@/src/themes/ui";
@@ -14,7 +15,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 export default function ProfileDetailScreen() {
   const { colors } = useTheme();
   const { data: user, isPending: isInfoPending } = useInfoProfile();
-  const { data: email } = userUser();
+  const { data: email } = useUser();
   return (
     <Screen
       safeArea={true}

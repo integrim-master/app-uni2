@@ -121,7 +121,7 @@ export default function TabsLayout() {
               </View>
             </View>
           ),
-          headerShown: true,
+          headerShown: false,
         }}
       />
 

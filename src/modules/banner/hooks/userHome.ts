@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AuthService } from "../../login/services/auth.service";
 
-const PROFILE_STALE_TIME = 1000 * 60 * 5; // 5 minutos
+const PROFILE_STALE_TIME = 1000 * 60 * 5;
 
 export const useUser = () =>
   useQuery({
@@ -11,9 +11,6 @@ export const useUser = () =>
     staleTime: PROFILE_STALE_TIME,
     select: (data) => data.user_data,
   });
-
-/** @deprecated Use useUser instead */
-export const userUser = useUser;
 
 export const useMembership = () =>
   useQuery({

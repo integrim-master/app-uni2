@@ -1,25 +1,30 @@
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
+import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-// import { useVideoPlayer, VideoView } from "expo-video";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { MotiView } from "moti";
 import React, { useEffect } from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Index() {
   const { loading, token } = useAuth();
   const { colors } = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
-  // --- Video comentado temporalmente ---
-  // const videoSource =
-  //   "https://api.careme360.com/wp-content/uploads/2026/01/loop-tratamientos-10-seg.mp4";
-  // const player = useVideoPlayer(videoSource, (player) => {
-  //   player.loop = true;
-  //   player.play();
-  // });
+  // --- CONFIGURACIÓN DEL VIDEO ---
+  const videoSource =
+    "https://api.careme360.com/wp-content/uploads/2026/02/loop-tratamientos-10-seg.mp4";
+
+  const player = useVideoPlayer(videoSource, (player) => {
+    player.loop = true;
+    player.muted = true;
+    player.play();
+  });
 
   useEffect(() => {
     if (token) {
@@ -29,76 +34,91 @@ export default function Index() {
 
   if (loading) {
     return (
-      <LinearGradient colors={colors.gradientBackground} style={styles.center}>
+      <View style={[styles.center, { backgroundColor: "#000" }]}>
         <ActivityIndicator size="large" color="#D4AF37" />
-      </LinearGradient>
+      </View>
     );
   }
 
   if (token) return null;
 
   return (
-    <LinearGradient
-      colors={[
-        colors.gradientCardStart,
-        colors.backgroundLight,
-        colors.gradientCardEnd,
-      ]}
-      locations={[0, 0.5, 1]}
-      style={styles.container}
-    >
-      <View style={styles.glowTopLeft} />
-      <View style={styles.glowBottomRight} />
+    <View style={styles.container}>
+      <VideoView
+        player={player}
+        contentFit="cover"
+        style={StyleSheet.absoluteFillObject}
+        nativeControls={false}
+      />
 
-      <View style={styles.body}>
-        <MotiView
-          from={{ scale: 0.85 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "timing", duration: 700 }}
-          style={styles.logoWrapper}
-        >
-          <Image
-            source={require("@/assets/images/logo-careme-white.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </MotiView>
+      <View style={styles.darkOverlay} />
 
-        <MotiView
-          from={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ type: "timing", duration: 600, delay: 200 }}
-          style={styles.divider}
-        />
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.8)"]}
+        style={styles.bottomGradient}
+      />
 
-        <MotiView
-          from={{ translateY: 12 }}
-          animate={{ translateY: 0 }}
-          transition={{ type: "timing", duration: 600, delay: 350 }}
-        >
-          <Text style={styles.tagline}>Tu bienestar, nuestra prioridad</Text>
-        </MotiView>
-      </View>
-
-      <MotiView
-        from={{ translateY: 30 }}
-        animate={{ translateY: 0 }}
-        transition={{ type: "timing", duration: 600, delay: 400 }}
-        style={styles.footer}
+      <View
+        style={[
+          styles.contentWrapper,
+          {
+            paddingTop: insets.top,
+            paddingBottom: Math.max(insets.bottom, 20),
+          },
+        ]}
       >
-        <View>
-          <PrimaryButton
-            title="Entrar"
-            size="lg"
-            onPress={() => router.push("/login")}
-            style={styles.button}
+        <View style={styles.body}>
+          <MotiView
+            from={{ opacity: 0, translateY: 20, scale: 0.9 }}
+            animate={{ opacity: 1, translateY: 0, scale: 1 }}
+            transition={{ type: "spring", duration: 1200, delay: 300 }}
+            style={styles.logoWrapper}
+          >
+            <Image
+              source={require("@/assets/images/logo-careme-white.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </MotiView>
+
+          <MotiView
+            from={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ type: "timing", duration: 800, delay: 700 }}
+            style={styles.divider}
           />
         </View>
-        <Text style={styles.footerNote}>
-          Plataforma exclusiva de salud y bienestar
-        </Text>
-      </MotiView>
-    </LinearGradient>
+
+        <MotiView
+          from={{ opacity: 0, translateY: 40 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: "spring", duration: 1000, delay: 1200 }}
+          style={styles.footer}
+        >
+          <View className="w-full">
+            <PrimaryButton
+              title="Entrar"
+              onPress={() => router.push("/login")}
+              textStyle={{ color: "#000", fontWeight: "800" }}
+            />
+          </View>
+          <MotiView
+            from={{ opacity: 0, translateY: 15 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: "timing", duration: 800, delay: 900 }}
+          >
+            <ThemedText
+              type="micro"
+              style={{
+                textTransform: "uppercase",
+              }}
+            >
+              Tu bienestar, es nuestra prioridad
+            </ThemedText>
+          </MotiView>
+        </MotiView>
+      </View>
+    </View>
   );
 }
 
@@ -107,96 +127,72 @@ const GOLD = "#D4AF37";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
   },
-
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
 
-  glowTopLeft: {
-    position: "absolute",
-    top: -80,
-    left: -80,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: "rgba(212,175,55,0.10)",
+  darkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
-  glowBottomRight: {
+  bottomGradient: {
     position: "absolute",
-    bottom: -100,
-    right: -60,
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    backgroundColor: "rgba(138,43,226,0.10)",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "40%",
   },
 
+  contentWrapper: {
+    flex: 1,
+    justifyContent: "space-between",
+    zIndex: 10, // Asegura que esté por encima de las capas del video
+  },
+
+  // -- CUERPO CENTRAL (Logo) --
   body: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     paddingHorizontal: 32,
   },
-
   logoWrapper: {
     marginBottom: 24,
     shadowColor: GOLD,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 24,
-    elevation: 12,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8, // Leve sombra dorada detrás del logo blanco
   },
-
   logo: {
-    width: 200,
-    height: 80,
+    width: 220, // Un poco más grande para impactar
+    height: 90,
   },
-
   divider: {
     width: 60,
     height: 2,
     backgroundColor: GOLD,
     borderRadius: 2,
     marginBottom: 20,
-    opacity: 0.8,
+    opacity: 0.9,
   },
 
-  tagline: {
-    color: "rgba(255,255,255,0.55)",
-    fontSize: 14,
-    fontWeight: "400",
-    letterSpacing: 1.4,
-    textTransform: "uppercase",
-    textAlign: "center",
-  },
+  // -- FOOTER (Botones) --
   footer: {
     width: "100%",
     paddingHorizontal: 28,
-    paddingBottom: 52,
+    paddingBottom: 20, // El insets.bottom del wrapper maneja el resto
     alignItems: "center",
-    gap: 14,
-  },
-
-  button: {
-    borderRadius: 14,
-    width: "100%",
-  },
-
-  buttonText: {
-    fontSize: 17,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-    textAlign: "center",
+    gap: 16,
   },
 
   footerNote: {
-    color: "rgba(255,255,255,0.28)",
+    color: "rgba(255,255,255,0.6)",
     fontSize: 12,
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
     textAlign: "center",
   },
 });

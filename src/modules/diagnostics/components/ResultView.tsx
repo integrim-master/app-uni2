@@ -36,8 +36,6 @@ export default function ResultView({
   const insets = useSafeAreaInsets();
   const { data: treatmentsData } = useTreatments();
 
-  console.log("Datos del diagnóstico:", treatmentsData);
-
   const imageUri =
     photoUri?.uri || diagnostic?.photoUri?.uri || diagnostic?.imagen;
   const diagnosticoArray = diagnostic?.diagnostico || [];
@@ -53,14 +51,8 @@ export default function ResultView({
   const procChips = useMemo(
     () =>
       procedimientosArray.map((p: string) => {
-        console.log("Tratamientos disponibles:", p);
         const pNormalized = normalizeString(p);
-        console.log(
-          "Tratamiento normalizadossssssssssssssssssssssssssssssssss:",
-          treatmentsData,
-        );
         const treatment = treatmentsData?.find((t: any) => {
-          console.log("Comparandosssssssssssssssssssss con tratamiento:", t);
           const titleNormalized = normalizeString(t.title);
 
           return (
@@ -73,7 +65,7 @@ export default function ResultView({
           key: p,
           label: treatment ? treatment.title : p,
           link: treatment ? treatment.link : undefined,
-          image: treatment ? treatment.image : undefined,
+          image: treatment ? treatment.image || treatment.imagen : undefined,
         };
       }),
     [procedimientosArray, treatmentsData],

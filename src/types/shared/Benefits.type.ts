@@ -3,6 +3,7 @@ interface TratamientoCareme {
   title: string;
   link: string;
   image: string;
+  imagen?: string;
 }
 
 interface MembershipData {

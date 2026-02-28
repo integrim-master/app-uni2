@@ -28,8 +28,6 @@ export default function DiagnosticsTab() {
     token: String(token),
   });
 
-  console.log("Session Diagnosticssssssssssss:", sessionDiagnostic);
-
   const normalizedSession = sessionDiagnostic
     ? {
         ...sessionDiagnostic.analysis,

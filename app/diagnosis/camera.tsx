@@ -28,7 +28,6 @@ import {
 } from "react-native";
 import {
   Camera,
-  runAsync,
   useCameraDevice,
   useCameraPermission,
   useFrameProcessor,
@@ -116,13 +115,10 @@ export default function CameraScreen() {
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-      runAsync(frame, () => {
-        "worklet";
-        const faces = detectFaces(frame);
-        handleDetectedFaces(faces, frame.width, frame.height);
-      });
+      const faces = detectFaces(frame);
+      handleDetectedFaces(faces, frame.width, frame.height);
     },
-    [handleDetectedFaces],
+    [detectFaces, handleDetectedFaces],
   );
 
   const takePicture = async () => {
@@ -190,7 +186,7 @@ export default function CameraScreen() {
       queryClient.invalidateQueries({
         queryKey: ["last-diagnostic", String(userId)],
       });
-      router.back();
+      router.replace("/(tabs)/diagnostics");
     } catch (error: any) {
       setValidationError({ message: error.message || "Error de red" });
     } finally {

@@ -57,8 +57,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setMemoryToken(token);
       await SecureStore.setItemAsync("TOKEN", JSON.stringify({ token }));
 
-      console.log("Datos del usuario:", treatments);
-
       queryClient.setQueryData(["full-profile"], {
         user_data: userData,
         membership_data: membershipData,

@@ -3,7 +3,6 @@
  * Útil para comparaciones y búsquedas sin importar acentos o mayúsculas
  */
 export function normalizeString(str: string | undefined | null): string {
-  console.log("Normalizando:", str);
   if (!str) return "";
   return str
     .normalize("NFD")

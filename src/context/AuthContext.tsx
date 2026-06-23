@@ -56,7 +56,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setToken(token);
       setMemoryToken(token);
       await SecureStore.setItemAsync("TOKEN", JSON.stringify({ token }));
-
       queryClient.setQueryData(["full-profile"], {
         user_data: userData,
         membership_data: membershipData,

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://api.careme360.com";
-
+export const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL ?? "https://api.careme360.com";
 
 let _memoryToken: string | null = null;
 

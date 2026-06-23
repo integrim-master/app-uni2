@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.imtegrim.unid2",
+      "package": "com.imtegrim.uni2",
       "runtimeVersion": "1.0.0",
       "googleServicesFile": "./google-services.json"
     },

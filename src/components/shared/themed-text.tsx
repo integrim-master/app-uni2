@@ -3,7 +3,16 @@ import { StyleSheet, Text, TextProps } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
 export interface AppTextProps extends TextProps {
-  type?: "body" | "title" | "subtitle" | "caption" | "semiBold" | "link";
+  type?:
+    | "body"
+    | "title"
+    | "titleSm"
+    | "subtitle"
+    | "caption"
+    | "semiBold"
+    | "link"
+    | "micro"
+    | "label";
   color?: string;
 }
 
@@ -56,17 +65,39 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
 
+
+  titleSm: {
+    fontSize: 18,      
+    lineHeight: 24,
+    fontFamily: "Roboto-Bold",
+    fontWeight: "800",  
+  },
+
+
   subtitle: {
     fontSize: 17,
     lineHeight: 24,
-    fontFamily: "Roboto-Medium",
+    fontFamily: "Roboto-Bold",
   },
 
   caption: {
     fontSize: 13,
+    lineHeight: 18,
+    opacity: 0.8,
+  },
 
+  label: {
+    fontSize: 12,
     lineHeight: 16,
-    opacity: 0.7,
+    fontFamily: "Roboto-Medium", 
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+  },
+
+  micro: {
+    fontSize: 10,
+    lineHeight: 14,
+    opacity: 0.6, 
   },
 
   link: {

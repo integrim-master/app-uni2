@@ -64,6 +64,7 @@ export default function DatesScreen({
                 <FlatList
                   data={processedDates}
                   keyExtractor={(item, index) => `cita-${item.id ?? index}`}
+                  ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
                   renderItem={({ item }) => (
                     <CitaCard
                       cita={item}

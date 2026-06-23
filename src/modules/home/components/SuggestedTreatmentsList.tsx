@@ -66,16 +66,34 @@ export function SuggestedTreatmentsList({
         item.id ? item.id.toString() : index.toString()
       }
       renderItem={({ item }) => (
-        <TreatmentCard title={item.title} image={item.image} link={item.link} />
+        <View style={styles.gridItem}>
+          <TreatmentCard
+            title={item.title}
+            image={item.image}
+            link={item.link}
+          />
+        </View>
       )}
       numColumns={2}
       scrollEnabled={false}
-      contentContainerStyle={{ paddingBottom: 4 }}
-      columnWrapperStyle={{ gap: 12, justifyContent: "space-between" }}
+      columnWrapperStyle={styles.columnWrapper}
+      contentContainerStyle={styles.listContent}
     />
   );
 }
+
 const styles = StyleSheet.create({
+  gridItem: {
+    flex: 1,
+  },
+  columnWrapper: {
+    gap: 16,
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    gap: 16,
+  },
   itemContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -83,28 +101,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: ui.radii.lg,
     borderWidth: ui.borders.width,
-
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 2,
   },
-
   info: {
     flex: 1,
     gap: 4,
   },
-
   title: {
     fontSize: 15,
     fontWeight: "700",
   },
-
   desc: {
     fontSize: 13,
     lineHeight: 18,
   },
-
   badge: {
     alignSelf: "flex-start",
     paddingHorizontal: 10,
@@ -112,7 +125,6 @@ const styles = StyleSheet.create({
     borderRadius: ui.radii.md,
     marginTop: 4,
   },
-
   badgeText: {
     fontSize: 11,
     fontWeight: "700",

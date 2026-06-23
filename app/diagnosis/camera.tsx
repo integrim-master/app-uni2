@@ -28,7 +28,6 @@ import {
 } from "react-native";
 import {
   Camera,
-  runAsync,
   useCameraDevice,
   useCameraPermission,
   useFrameProcessor,
@@ -116,13 +115,10 @@ export default function CameraScreen() {
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-      runAsync(frame, () => {
-        "worklet";
-        const faces = detectFaces(frame);
-        handleDetectedFaces(faces, frame.width, frame.height);
-      });
+      const faces = detectFaces(frame);
+      handleDetectedFaces(faces, frame.width, frame.height);
     },
-    [handleDetectedFaces],
+    [detectFaces, handleDetectedFaces],
   );
 
   const takePicture = async () => {
@@ -190,7 +186,7 @@ export default function CameraScreen() {
       queryClient.invalidateQueries({
         queryKey: ["last-diagnostic", String(userId)],
       });
-      router.back();
+      router.replace("/(tabs)/diagnostics");
     } catch (error: any) {
       setValidationError({ message: error.message || "Error de red" });
     } finally {
@@ -371,44 +367,14 @@ export default function CameraScreen() {
             <View style={{ width: 50 }} />
           </View>
         ) : (
-          <View style={styles.btnGroup}>
+          <View className="flex gap-4 w-full p-2 ">
             <PrimaryButton
+              variant="secondary"
               title="Repetir"
               onPress={() => setPhotoUri(null)}
-              style={{ flex: 1, backgroundColor: colors.backgroundDark }}
-              textStyle={{ color: colors.textSecondary }}
             />
-            {/* <Pressable
-              onPress={() => setPhotoUri(null)}
-              style={[
-                styles.secondaryBtn,
-                { backgroundColor: colors.backgroundDark },
-              ]}
-            >
-              <Text style={{ color: colors.textSecondary, fontWeight: "700" }}>
-                Repetir
-              </Text>
-            </Pressable> */}
-            {/* <Pressable
-              onPress={handleSendPhoto}
-              style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
-            >
-              <Text
-                style={{
-                  color: colors.background,
-                  fontWeight: "700",
-                  fontSize: 16,
-                }}
-              >
-                Analizar ahora
-              </Text>
-              <MaterialIcons name="check" size={20} color={colors.background} />
-            </Pressable> */}
-            <PrimaryButton
-              title="Analizar ahora"
-              onPress={handleSendPhoto}
-              textStyle={{ color: colors.background }}
-            />
+
+            <PrimaryButton title="Analizar ahora" onPress={handleSendPhoto} />
           </View>
         )}
       </View>
@@ -482,7 +448,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  btnGroup: { flexDirection: "row", gap: 12 },
+
   secondaryBtn: {
     flex: 1,
     height: 56,

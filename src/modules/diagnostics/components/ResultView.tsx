@@ -54,6 +54,7 @@ export default function ResultView({
         const pNormalized = normalizeString(p);
         const treatment = treatmentsData?.find((t: any) => {
           const titleNormalized = normalizeString(t.title);
+
           return (
             titleNormalized.includes(pNormalized) ||
             pNormalized.includes(titleNormalized)
@@ -64,18 +65,17 @@ export default function ResultView({
           key: p,
           label: treatment ? treatment.title : p,
           link: treatment ? treatment.link : undefined,
-          image: treatment ? treatment.image : undefined,
+          image: treatment ? treatment.image || treatment.imagen : undefined,
         };
       }),
     [procedimientosArray, treatmentsData],
   );
-
   if (
     !diagnostic ||
     (!diagnosticoArray.length && !Object.keys(diagnosticoArray).length)
   ) {
     return (
-      <Screen style={styles.center}>
+      <Screen>
         <Text style={{ color: colors.textSecondary }}>
           No se recibió información del diagnóstico
         </Text>
@@ -93,13 +93,13 @@ export default function ResultView({
   }
 
   return (
-    <Screen style={{ backgroundColor: colors.background }}>
+    <Screen>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[
             styles.container,
-            { paddingBottom: insets.bottom + 40 },
+            { paddingBottom: insets.bottom + 10 },
           ]}
         >
           <ResultHeader colors={colors} imageUri={imageUri} />
@@ -145,7 +145,7 @@ export default function ResultView({
           {procChips.some((c) => c.link) && (
             <View style={styles.treatmentsSection}>
               <ThemedText
-                type="subtitle"
+                type="titleSm"
                 color={colors.primaryLight}
                 style={{
                   marginBottom: 10,
@@ -153,22 +153,26 @@ export default function ResultView({
               >
                 Tratamientos Recomendados
               </ThemedText>
-              <View style={styles.treatmentsGrid}>
+              <View className="w-full flex-row flex-wrap justify-between p-2">
                 {procChips
-                  .filter((c) => c.link)
+                  // .filter((c) => c.link)
                   .map((c) => (
-                    <TreatmentCard
+                    <View
                       key={c.key}
-                      title={c.label}
-                      image={c.image}
-                      link={c.link}
-                    />
+                      style={{ width: "48%", marginBottom: 16 }}
+                    >
+                      <TreatmentCard
+                        title={c.label}
+                        image={c.image}
+                        link={c.link}
+                      />
+                    </View>
                   ))}
               </View>
             </View>
           )}
 
-          <View style={styles.footer}>
+          <View>
             <PrimaryButton title="Nuevo Escaneo" onPress={onNewDiagnostic} />
           </View>
         </ScrollView>
@@ -178,7 +182,7 @@ export default function ResultView({
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 24, paddingTop: 20 },
+  container: { paddingHorizontal: 15, paddingTop: 20 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   resultsSection: { marginBottom: 20 },
   sectionRow: {
@@ -189,13 +193,7 @@ const styles = StyleSheet.create({
   },
   counterBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   treatmentsSection: { marginTop: 10 },
-  treatmentsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    marginBottom: 30,
-  },
-  footer: { marginTop: 10 },
+
   button: { paddingVertical: 18, paddingHorizontal: 24, borderRadius: 18 },
   buttonText: { color: "#fff", fontWeight: "700" },
 });

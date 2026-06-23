@@ -1,13 +1,13 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import React, { ReactNode } from "react";
-import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
+import { Platform, Pressable, StyleSheet, View, ViewStyle } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
 interface CardProps {
   href?: string;
   className?: string;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   children?: ReactNode;
   onPress?: () => void;
   backgroundColor?: string;
@@ -25,7 +25,7 @@ export function Card({
   onPress,
   backgroundColor,
   borderColor,
-  pressedOpacity = 0.5,
+  pressedOpacity = 0.9,
   pressable = true,
   disablePressEffect = false,
 }: CardProps) {
@@ -35,19 +35,17 @@ export function Card({
 
   const CardInner = ({ pressed }: { pressed?: boolean }) => (
     <LinearGradient
-      // colors={colors.gradientCard}
-      // start={{ x: 0, y: 0 }}
-      // end={{ x: 1, y: 1 }}
       colors={[colors.gradientCardStart, colors.gradientCardEnd]}
       start={{ x: 0.1, y: 2.5 }}
       end={{ x: 0.9, y: 0.9 }}
       style={[
         styles.container,
-        style,
         {
           borderColor: borderColor || colors.border,
           opacity: disablePressEffect ? 1 : pressed ? pressedOpacity : 1,
+          transform: [{ scale: !disablePressEffect && pressed ? 0.985 : 1 }],
         },
+        style,
       ]}
     >
       {children}
@@ -55,6 +53,7 @@ export function Card({
   );
 
   let cardContent = null as React.ReactNode;
+
   if (shouldUsePressable) {
     cardContent = (
       <Pressable onPress={onPress} className={className}>
@@ -81,19 +80,18 @@ export function Card({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    borderWidth: 0.8,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 2,
-    shadowRadius: 0.4,
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 20,
+    overflow: "visible",
 
-    borderRadius: 12,
-    gap: 8,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.08,
+        shadowRadius: 16,
+      },
+    }),
   },
 });

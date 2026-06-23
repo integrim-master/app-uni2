@@ -1,6 +1,8 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import { useVideoPlayer, VideoView } from "expo-video";
 import React from "react";
-import { Image, Modal, Pressable, Text, View } from "react-native";
+import { Image, Modal, Pressable, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BannerMedia } from "../modules/banner/types/banner.type";
 
 interface BannerProps {
@@ -10,6 +12,8 @@ interface BannerProps {
 }
 
 export const BannerModal = ({ bannerData, visible, onClose }: BannerProps) => {
+  const insets = useSafeAreaInsets();
+
   const player = useVideoPlayer(bannerData.media, (player) => {
     player.loop = true;
     player.muted = false;
@@ -20,56 +24,94 @@ export const BannerModal = ({ bannerData, visible, onClose }: BannerProps) => {
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
       statusBarTranslucent
     >
-      <Pressable
-        className="flex-1 justify-center items-center bg-black/90 px-5"
-        onPress={onClose}
-      >
-        <Pressable
-          className="w-full max-w-[400px] bg-white overflow-hidden shadow-2xl "
-          onPress={(e) => e.stopPropagation()}
-        >
-          <Pressable
-            className="absolute top-4 right-4 z-50 w-9 h-9 rounded-full bg-black/50 items-center justify-center"
-            onPress={onClose}
-            hitSlop={10}
-          >
-            <Text className="text-white text-lg font-bold">✕</Text>
+      <View style={styles.container}>
+        {bannerData.tipo === "image" ? (
+          <Image
+            source={{ uri: bannerData.media }}
+            style={StyleSheet.absoluteFillObject}
+            resizeMode="cover"
+          />
+        ) : (
+          <VideoView
+            player={player}
+            contentFit="cover" // Importante: cover asegura que no queden franjas negras
+            style={StyleSheet.absoluteFillObject}
+            nativeControls={false}
+          />
+        )}
+
+        <View style={[styles.header, { top: insets.top + 10 }]}>
+          <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={15}>
+            <MaterialIcons name="close" size={24} color="#FFF" />
           </Pressable>
-
-          <View
-            style={{
-              width: "100%",
-              height: 550,
-              maxHeight: 550,
-              backgroundColor: "#000",
-            }}
-          >
-            {bannerData.tipo === "image" ? (
-              <Image
-                source={{ uri: bannerData.media }}
-                style={{ width: "100%", height: "100%" }}
-                resizeMode="cover"
-              />
-            ) : (
-              <VideoView
-                player={player}
-                contentFit="fill"
-                style={{ width: "100%", height: "100%" }}
-                nativeControls={false}
-              />
-            )}
-          </View>
-
-          {/* Opcional: Footer si lo necesitas */}
-          {/* <View className="p-5 items-center">
-             <Text className="text-xl font-bold text-gray-900">Promoción Especial</Text>
-          </View> */}
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#000", // Fondo negro por si la imagen tarda 1 segundo en cargar
+  },
+  topGradient: {
+    position: "absolute",
+    top: 0,
+    width: "100%",
+    height: 120,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  bottomGradient: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    height: 200,
+  },
+  header: {
+    position: "absolute",
+    right: 20,
+    zIndex: 50,
+  },
+  closeBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    paddingHorizontal: 24,
+    zIndex: 50,
+  },
+  actionButton: {
+    height: 56,
+    borderRadius: 28,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  skipBtn: {
+    marginTop: 16,
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  skipText: {
+    color: "#FFF",
+    fontSize: 14,
+    fontWeight: "600",
+    opacity: 0.8,
+  },
+});

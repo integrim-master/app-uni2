@@ -3,7 +3,6 @@ import EmptySvg from "@/assets/svg/Empty.svg";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
-import { useAuth } from "@/src/context/AuthContext";
 import { Benefits } from "@/src/types/shared/Benefits.type";
 import { router, useFocusEffect } from "expo-router";
 import { AnimatePresence } from "moti";
@@ -11,6 +10,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../../context/ThemeContext";
+import { useUser } from "../../banner/hooks/userHome";
 import TabBar from "../../home/components/TabBar";
 import BenefitsList from "../components/BenefitsList";
 import BenefitsListSkeleton from "../components/BenefitsListSkeleton";
@@ -40,12 +40,11 @@ export default function BeneficiosScreen({
   const { colors } = useTheme();
   const { mutate, isPending, isError: isErrorRedeem } = useRedemed();
   const { mutate: mutateCancel, isError: isErrorCancel } = useCancel();
-  const { user } = useAuth();
+  const { data: user } = useUser();
   const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
   const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
     membership?.benefit_redeem,
   );
-
 
   useFocusEffect(
     React.useCallback(() => {

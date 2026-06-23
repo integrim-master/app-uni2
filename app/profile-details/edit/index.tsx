@@ -86,11 +86,11 @@ export default function EditProfileScreen() {
           />
 
           <SimpleMenuSection
-            title="Provincia"
+            title="Localizacion"
             subtitle={user?.provincia || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.provincia || "vacio"}?name=provincia`}
+            link={`/profile-details/edit/${user?.provincia || "vacio"}?name=localizacion`}
           />
 
           <SimpleMenuSection

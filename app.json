@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.imtegrim.unid2",
+      "package": "com.imtegrim.uni2",
       "runtimeVersion": "1.0.0",
       "googleServicesFile": "./google-services.json"
     },
@@ -40,13 +40,20 @@
       "expo-web-browser",
       "expo-notifications",
       "expo-secure-store",
-
       [
         "expo-media-library",
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
           "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
           "isAccessMediaLocationEnabled": true
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
         }
       ],
       [
@@ -58,7 +65,8 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "react-native-vision-camera"
+      "react-native-vision-camera",
+      "expo-build-properties"
     ],
     "extra": {
       "router": {},

@@ -1,27 +1,28 @@
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
-import { useAuth } from "@/src/context/AuthContext";
+import { useUser } from "@/src/modules/banner/hooks/userHome";
 import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkeleton";
 import { useDatesDetails } from "@/src/modules/dates/hooks/useDatesById";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useLocalSearchParams } from "expo-router";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Screen } from "../../../../src/components/shared/Screen";
 import { useTheme } from "../../../../src/context/ThemeContext";
 
-export default function Index() {
+export default function CitaDetailsScreen() {
   const { colors } = useTheme();
   const { date_id } = useLocalSearchParams();
-  const { user } = useAuth();
+  const { data: user } = useUser();
   const { data: dateDetails, isFetching } = useDatesDetails(date_id as string);
 
   if (isFetching) {
     return (
       <Screen>
-        <View className="p-4 flex gap-2 h-full">
+        <View style={styles.content}>
           <CitaDetailsSkeleton />
         </View>
       </Screen>
@@ -34,147 +35,131 @@ export default function Index() {
         options={{
           headerShadowVisible: false,
           headerBackVisible: true,
+          headerTitle: "Detalles de la cita",
         }}
       />
       <View>
         <LinearGradient
-          className="pb-2 flex-row items-center gap-4 "
+          className="pb-4 pt-2 flex-row items-center gap-4"
           colors={colors.gradientBackground}
           start={[0, 0]}
           end={[1, 0]}
         >
           <View
-            className="flex justify-center items-end pr-4 "
-            style={{
-              backgroundColor: colors.gradientCardStart,
-              width: 90,
-              height: 70,
-              borderEndStartRadius: 50,
-              borderEndEndRadius: 50,
-            }}
+            style={[
+              styles.headerIconWrap,
+              { backgroundColor: colors.gradientCardStart },
+            ]}
           >
             <View
-              className="p-2 rounded-full"
-              style={{ backgroundColor: colors.primaryLight }}
+              style={[
+                styles.iconCircle,
+                { backgroundColor: colors.primaryLight },
+              ]}
             >
-              <Ionicons name="calendar-outline" color={"white"} size={30} />
+              <Ionicons name="calendar-outline" color="#FFFFFF" size={28} />
             </View>
           </View>
-          <View className="flex gap-2">
-            <ThemedText>Cita agenda</ThemedText>
+          <View className="flex gap-1 justify-center">
+            <ThemedText color={colors.textPrimary} type="semiBold">
+              Cita agendada
+            </ThemedText>
             <Badge
               showIcon={false}
               text={dateDetails?.categoria || "General"}
               variant="warning"
               size="small"
+              layout="horizontal"
             />
           </View>
         </LinearGradient>
       </View>
-
-      <View className="p-4 flex gap-2 h-full">
-        <Card
-          pressable={false}
-          className=""
-          style={{
-            height: 200,
-            marginBottom: 20,
-          }}
-        >
-          <View className="flex-1 p-4 w-full h-full justify-around  items-start">
+      <View style={styles.content}>
+        <Card pressable={false} style={styles.cardContainer}>
+          <View style={styles.cardInner}>
             <ThemedText
-              type="subtitle"
-              style={{
-                color: colors.primaryLight,
-                textAlign: "center",
-                fontWeight: 800,
-              }}
+              type="titleSm"
+              style={[styles.procedureTitle, { color: colors.primaryLight }]}
             >
               {dateDetails?.Procedimiento}
             </ThemedText>
-            <View className="mt-4">
-              <ThemedText
-                color={colors.textPrimary}
-                // style={{ fontWeight: 800 }}
-                type="caption"
-              >
+
+            <View style={styles.infoBlock}>
+              <ThemedText color={colors.textSecondary} type="caption">
                 {formatDateToText(dateDetails?.fecha_cita)}
               </ThemedText>
-              <ThemedText
-                style={{ fontWeight: 700 }}
-                type="body"
-                color={colors.textPrimary}
-              >
+
+              <ThemedText type="semiBold" color={colors.textPrimary}>
                 {dateDetails?.hora_cita}
               </ThemedText>
-              <ThemedText color={colors.textSecondary}>
-                Profesional {dateDetails?.profesional}
+
+              <ThemedText
+                color={colors.textSecondary}
+                type="body"
+                style={{ marginTop: 4 }}
+              >
+                Profesional:{" "}
+                <ThemedText type="semiBold" color={colors.textPrimary}>
+                  {dateDetails?.profesional}
+                </ThemedText>
               </ThemedText>
             </View>
-            <View></View>
+
             <View
-              style={{
-                height: 1,
-                backgroundColor: colors.border || "#e0e0e0",
-                alignSelf: "stretch",
-                marginVertical: 8,
-              }}
+              style={[
+                styles.divider,
+                { backgroundColor: colors.border || "rgba(0,0,0,0.08)" },
+              ]}
             />
-            <View>
-              <ThemedText color={colors.textPrimary}>Sede</ThemedText>
-              <ThemedText className="capitalize" color={colors.textSecondary}>
+
+            <View style={styles.sedeBlock}>
+              <ThemedText color={colors.textPrimary} type="semiBold">
+                Sede
+              </ThemedText>
+              <ThemedText
+                className="capitalize"
+                color={colors.textSecondary}
+                type="body"
+              >
                 {dateDetails?.sede}
               </ThemedText>
             </View>
           </View>
         </Card>
-
-        <Card
-          pressable={false}
-          style={{
-            height: 80,
-            width: "100%",
-            justifyContent: "flex-start",
-            padding: 20,
-          }}
-          className="flex items-start justify-start w-full"
-        >
-          <View
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 22,
-              backgroundColor: colors.primaryLight,
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: 12,
-            }}
-          >
-            <Ionicons name="person-outline" size={28} color="white" />
-          </View>
-          <View>
-            <ThemedText color={colors.textPrimary}>Usuario</ThemedText>
-            <ThemedText color={colors.textSecondary}>
-              {user?.user_name}
-            </ThemedText>
+        <Card pressable={false} style={styles.cardContainer}>
+          <View style={styles.userRow}>
+            <View
+              style={[
+                styles.userIconCircle,
+                { backgroundColor: colors.primaryLight },
+              ]}
+            >
+              <Ionicons name="person-outline" size={22} color="#FFFFFF" />
+            </View>
+            <View>
+              <ThemedText color={colors.textSecondary} type="caption">
+                Paciente
+              </ThemedText>
+              <ThemedText color={colors.textPrimary} type="semiBold">
+                {user?.user_name}
+              </ThemedText>
+            </View>
           </View>
         </Card>
-
-        <View className="mt-4">
+        <View style={styles.recommendations}>
           <ThemedText
             type="subtitle"
-            style={{
-              fontWeight: "800",
-              marginBottom: 10,
-            }}
+            style={{ marginBottom: 8 }}
             color={colors.primaryLight}
           >
             Recomendaciones:
           </ThemedText>
-          <View className="mt-2">
+          <View style={{ gap: 4 }}>
             <ThemedText type="body" color={colors.textSecondary}>
-              • Llegar 10 minutos antes de la cita {"\n"}• Si no puede asistir
-              cancelar con dos horas de {"\n"} anticipacion
+              • Llegar 10 minutos antes de la cita.
+            </ThemedText>
+            <ThemedText type="body" color={colors.textSecondary}>
+              • Si no puede asistir, cancelar con dos horas de anticipación.
             </ThemedText>
           </View>
         </View>
@@ -186,134 +171,59 @@ export default function Index() {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-  },
-  headerCard: {
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-  },
-  statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    alignSelf: "flex-start",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: "rgba(0, 0, 0, 0.03)",
-    marginBottom: 12,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  procedimiento: {
-    marginBottom: 12,
-  },
-  metaInfo: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  metaItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  card: {
     padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
   },
-  cardLabel: {
-    marginBottom: 10,
+  headerIconWrap: {
+    width: 90,
+    height: 70,
+    borderEndStartRadius: 50,
+    borderEndEndRadius: 50,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    paddingRight: 16,
   },
-  simpleRow: {
+  iconCircle: {
+    padding: 8,
+    borderRadius: 100,
+  },
+
+  cardContainer: {
+    marginBottom: 16,
+    padding: 0,
+  },
+  cardInner: {
+    padding: 20,
+  },
+  procedureTitle: {
+    marginBottom: 16,
+  },
+  infoBlock: {
+    gap: 2,
+  },
+  divider: {
+    height: 1,
+    alignSelf: "stretch",
+    marginVertical: 16,
+  },
+  sedeBlock: {
+    gap: 2,
+  },
+
+  userRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
-  },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0, 0, 0, 0.05)",
+    padding: 16,
+    gap: 12,
   },
-  // Estilos comentados (no usados)
-  changeButton: {
-    flexDirection: "row",
+  userIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: "center",
     alignItems: "center",
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
   },
-  // Estilos del Bottom Sheet - Minimalista (Comentados)
-  // bottomSheetContent: {
-  //   padding: 24,
-  //   paddingBottom: 40,
-  // },
-  // sheetHeader: {
-  //   marginBottom: 24,
-  // },
-  // optionsContainer: {
-  //   gap: 12,
-  //   marginBottom: 20,
-  // },
-  // statusOptionCard: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   justifyContent: "space-between",
-  //   padding: 16,
-  //   borderRadius: 12,
-  //   borderWidth: 1.5,
-  // },
-  // optionLeft: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   gap: 14,
-  //   flex: 1,
-  // },
-  // iconCircle: {
-  //   width: 44,
-  //   height: 44,
-  //   borderRadius: 22,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  // motivoContainer: {
-  //   marginBottom: 20,
-  // },
-  // motivoInput: {
-  //   borderWidth: 1,
-  //   borderRadius: 10,
-  //   padding: 14,
-  //   fontSize: 15,
-  //   minHeight: 90,
-  //   fontFamily: "Roboto-Regular",
-  // },
-  // actionsContainer: {
-  //   flexDirection: "row",
-  //   gap: 12,
-  // },
-  // cancelButton: {
-  //   flex: 1,
-  //   paddingVertical: 14,
-  //   borderRadius: 10,
-  //   alignItems: "center",
-  //   borderWidth: 1,
-  // },
-  // confirmButton: {
-  //   flex: 2,
-  //   paddingVertical: 14,
-  //   borderRadius: 10,
-  //   alignItems: "center",
-  // },
+  recommendations: {
+    marginTop: 8,
+    paddingHorizontal: 8,
+  },
 });

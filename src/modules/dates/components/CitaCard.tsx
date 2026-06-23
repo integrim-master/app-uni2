@@ -1,8 +1,8 @@
 import Badge from "@/src/components/shared/Badge";
 import ThemedText from "@/src/components/shared/themed-text";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Card } from "../../../components/shared/card";
 import { useTheme } from "../../../context/ThemeContext";
 import { Cita } from "../types/date.api.types";
@@ -14,133 +14,146 @@ export default function CitaCard({
   cita: Cita;
   onPress?: () => void;
 }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+
   return (
     <Card
       onPress={onPress}
-      pressedOpacity={0.96}
       borderColor={colors.border}
-      className=""
-      style={[styles.card] as any}
+      style={styles.cardContainer}
     >
-      <View style={styles.content}>
+      <View style={styles.topSection}>
+        <View style={styles.titleColumn}>
+          <ThemedText
+            type="titleSm"
+            color={colors.textDark}
+            style={styles.titleSpacing}
+            numberOfLines={2}
+          >
+            {cita.Procedimiento}
+          </ThemedText>
+
+          <View style={styles.locationContainer}>
+            <Ionicons
+              name="location-sharp"
+              size={14}
+              color={colors.textSecondary}
+            />
+            <ThemedText type="label" color={colors.textSecondary}>
+              {cita.sede}
+            </ThemedText>
+          </View>
+        </View>
+
         <Badge
           text={cita.categoria}
-          variant={cita.categoria === "Estetico" ? "info" : "warning"}
+          variant={cita.categoria === "Estetico" ? "white" : "warning"}
           size="small"
-          icon="health-and-safety"
           showIcon={false}
-          style={{ marginBottom: 6 }}
+          style={styles.badge}
         />
-        <Text
-          style={[styles.procedimiento, { color: colors.text }]}
-          numberOfLines={2}
-          ellipsizeMode="tail"
-        >
-          {cita.Procedimiento}
-        </Text>
+      </View>
 
-        <View style={styles.rowSingle}>
-          <Ionicons
-            name="map-outline"
-            size={14}
-            color={colors.textLight}
-            style={{ marginRight: 8 }}
-          />
-          <ThemedText className="capitalize w-full">{cita.sede}</ThemedText>
-        </View>
+      <View style={styles.perforationWrap}>
+        <View
+          style={[
+            styles.perforationLine,
+            { borderColor: isDark ? colors.border : "#E5E7EB" },
+          ]}
+        />
+      </View>
 
-        <View style={styles.row}>
-          <View style={styles.rowItem}>
-            <Ionicons
-              name="calendar-outline"
-              size={14}
-              color={colors.text}
-              style={{ marginRight: 6 }}
-            />
-            <Text style={[styles.fecha, { color: colors.text }]}>
+      <View style={styles.bottomSection}>
+        <View style={styles.infoPills}>
+          <View
+            style={[
+              styles.pill,
+              { backgroundColor: colors.backgroundDark + "80" },
+            ]}
+          >
+            <Ionicons name="calendar" size={14} color={colors.textSecondary} />
+            <ThemedText type="semiBold" color={colors.textSecondary}>
               {cita.fecha_cita}
-            </Text>
+            </ThemedText>
           </View>
-          <View style={styles.rowItem}>
-            <Ionicons
-              name="time-outline"
-              size={14}
-              color={colors.primary}
-              style={{ marginRight: 6 }}
-            />
-            <Text style={[styles.hora, { color: colors.primary }]}>
+
+          <View
+            style={[styles.pill, { backgroundColor: colors.primary + "15" }]}
+          >
+            <Ionicons name="time" size={14} color={colors.primary} />
+            <ThemedText type="semiBold" color={colors.primary}>
               {cita.hora_cita}
-            </Text>
+            </ThemedText>
           </View>
         </View>
+
+        <MaterialIcons
+          name="chevron-right"
+          size={20}
+          color={colors.textLight}
+        />
       </View>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    minHeight: 110,
-    borderRadius: 16,
+  cardContainer: {
+    marginHorizontal: 16,
+    padding: 20,
     flexDirection: "column",
-    padding: 0,
-
-    marginVertical: 8,
-    marginHorizontal: 12,
-    overflow: "hidden",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-      },
-    }),
   },
 
-  content: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+  topSection: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  titleColumn: {
     flex: 1,
-    display: "flex",
-    width: "100%",
-    flexDirection: "column",
   },
-  procedimiento: {
-    fontSize: 15,
-    fontWeight: "700",
+  titleSpacing: {
     marginBottom: 6,
-    lineHeight: 20,
+    textTransform: "capitalize",
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    opacity: 0.8,
+  },
+  badge: {
+    alignSelf: "flex-start",
+    marginTop: 2,
   },
 
-  especialista: {
-    fontSize: 13,
-    fontWeight: "500",
-    marginBottom: 8,
+  perforationWrap: {
+    marginVertical: 18,
   },
-  row: {
-    marginTop: 8,
+  perforationLine: {
+    borderTopWidth: 1.5,
+    borderStyle: "dashed",
+    opacity: 0.5,
+  },
+
+  bottomSection: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    width: "100%",
   },
-  rowSingle: {
-    marginTop: 6,
-
+  infoPills: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  pill: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  rowItem: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  fecha: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  hora: {
-    fontSize: 13,
-    fontWeight: "700",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    gap: 6,
   },
 });

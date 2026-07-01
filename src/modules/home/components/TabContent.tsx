@@ -4,7 +4,6 @@ import { useTheme } from "../../../context/ThemeContext";
 import { AccesoDirecto } from "./Acess";
 import { Card } from "./card";
 
-
 interface TabContentProps {
   activeTab: string;
   dataButtons: any[];
@@ -40,27 +39,34 @@ export const TabContent: React.FC<TabContentProps> = ({
             {dataButtons.slice(0, 3).map((item, index) => (
               <Card
                 key={index}
-                style={{ width: '80%', marginBottom: 12 }}
-          
+                style={{ width: "80%", marginBottom: 12 }}
                 href={item.routPage ? `/(tabs)/${item.routPage}` : undefined}
               >
                 <View className="flex-row items-start justify-start p-4">
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 18, color: colors.text, fontWeight: '600', }}>{item.item}</Text>
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        color: colors.text,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {item.item}
+                    </Text>
                   </View>
                 </View>
               </Card>
             ))}
           </View>
         );
-    //   case "third":
-    //     return (
-    //       <View style={styles.emptyContainer}>
-    //         <Text style={{ color: colors.text }}>
-    //          opciones
-    //         </Text>
-    //       </View>
-    //     );
+      //   case "third":
+      //     return (
+      //       <View style={styles.emptyContainer}>
+      //         <Text style={{ color: colors.text }}>
+      //          opciones
+      //         </Text>
+      //       </View>
+      //     );
       default:
         return null;
     }
@@ -72,7 +78,7 @@ export const TabContent: React.FC<TabContentProps> = ({
 const styles = StyleSheet.create({
   contentView: {
     flex: 1,
-    marginBottom:10,
+    marginBottom: 10,
   },
   accessContainer: {
     justifyContent: "center",
@@ -93,8 +99,8 @@ const styles = StyleSheet.create({
   },
   emptyContainerTwo: {
     flex: 1,
-    justifyContent: "center",  
-    width: "100%", 
+    justifyContent: "center",
+    width: "100%",
     alignItems: "center",
     borderRadius: 16,
   },

@@ -1,7 +1,6 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
-
+import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
 
 type TabOption = {
   key: string;
@@ -14,25 +13,37 @@ type TabBarProps = {
   setActiveTab: (tab: string) => void;
 };
 
-const TabBar: React.FC<TabBarProps> = ({ options, activeTab, setActiveTab }) => {
+const TabBar: React.FC<TabBarProps> = ({
+  options,
+  activeTab,
+  setActiveTab,
+}) => {
   const { colors } = useTheme();
   return (
-    <View style={[styles.customTabBar, { backgroundColor: colors.card }]}> 
-      {options.map(option => (
+    <View style={[styles.customTabBar, { backgroundColor: colors.card }]}>
+      {options.map((option) => (
         <Pressable
           key={option.key}
           onPress={() => setActiveTab(option.key)}
           style={[
             styles.tabItem,
-            { backgroundColor: activeTab === option.key ? colors.primaryLight : colors.card, flex: 1 },
+            {
+              backgroundColor:
+                activeTab === option.key ? colors.primaryLight : colors.card,
+              flex: 1,
+            },
             options.length === 2 && { marginHorizontal: 8 },
             options.length === 3 && { marginHorizontal: 4 },
           ]}
         >
-          <Text style={[
-            styles.tabText,
-            { color: activeTab === option.key ? '#fff' : colors.text }
-          ]}>{option.label}</Text>
+          <Text
+            style={[
+              styles.tabText,
+              { color: activeTab === option.key ? "#fff" : colors.text },
+            ]}
+          >
+            {option.label}
+          </Text>
         </Pressable>
       ))}
     </View>
@@ -41,15 +52,15 @@ const TabBar: React.FC<TabBarProps> = ({ options, activeTab, setActiveTab }) => 
 
 const styles = StyleSheet.create({
   customTabBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 999,
     paddingVertical: 3,
 
-    width: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    shadowColor: '#000',
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -64,16 +75,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     borderRadius: 20,
     marginHorizontal: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minWidth: 90,
     flexGrow: 1,
     flexShrink: 1,
   },
   tabText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 

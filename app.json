@@ -14,9 +14,18 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.imtegrim.uni2",
       "supportsTablet": true,
       "runtimeVersion": {
         "policy": "appVersion"
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "Careme360 necesita acceso a la cámara para realizar diagnósticos faciales.",
+        "NSMicrophoneUsageDescription": "Careme360 necesita acceso al micrófono para grabar video.",
+        "NSPhotoLibraryUsageDescription": "Careme360 necesita acceso a tus fotos para guardar imágenes de diagnóstico.",
+        "NSPhotoLibraryAddUsageDescription": "Careme360 necesita permiso para guardar fotos en tu galería.",
+        "NSLocationWhenInUseUsageDescription": "Esta app necesita acceder a tu ubicación mientras la usas para mostrarte los servicios disponibles más cercanos.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -53,20 +62,29 @@
         {
           "android": {
             "minSdkVersion": 26
+          },
+          "ios": {
+            "deploymentTarget": "15.5"
           }
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "cameraPermission": "Careme360 necesita acceso a la cámara para realizar diagnósticos faciales.",
+          "microphonePermission": "Careme360 necesita acceso al micrófono para grabar video.",
           "recordAudioAndroid": true
         }
       ],
       "@react-native-community/datetimepicker",
-      "react-native-vision-camera",
-      "expo-build-properties"
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "Careme360 necesita acceso a la cámara para realizar diagnósticos faciales.",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "Careme360 necesita acceso al micrófono para grabar video."
+        }
+      ]
     ],
     "extra": {
       "router": {},

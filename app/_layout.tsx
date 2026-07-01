@@ -132,6 +132,9 @@ export default function RootLayout() {
                         }}
                       >
                         <Stack.Screen name="(tabs)" />
+                        <Stack.Screen name="benefits" />
+                        <Stack.Screen name="blog" />
+                        <Stack.Screen name="profile-details" />
                       </Stack>
                     </PromotionGuard>
                   </AuthProvider>

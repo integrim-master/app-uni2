@@ -17,7 +17,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import * as ImageManipulator from "expo-image-manipulator";
 import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Image,
   Pressable,
@@ -70,9 +70,19 @@ export default function CameraScreen() {
 
   const { hasPermission, requestPermission } = useCameraPermission();
   const device = useCameraDevice(facing);
-  const { detectFaces, stopListeners } = useFaceDetector({
-    performanceMode: "fast",
-  });
+
+  const faceDetectorOptions = useMemo(
+    () => ({
+      performanceMode: "fast" as const,
+      autoMode: true,
+      windowWidth: CAMERA_WIDTH,
+      windowHeight: CAMERA_HEIGHT,
+      cameraFacing: facing,
+    }),
+    [CAMERA_WIDTH, CAMERA_HEIGHT, facing],
+  );
+
+  const { detectFaces, stopListeners } = useFaceDetector(faceDetectorOptions);
 
   const { mutateAsync: uploadImage, reset: resetUpload } =
     useUploadDiagnosticImage();
@@ -80,43 +90,57 @@ export default function CameraScreen() {
     useAnalyzeImage();
   const { mutateAsync: createDiagnostic } = useCreateDiagnostic();
 
+  const statusRef = useRef(status);
+  statusRef.current = status;
+
+  const layoutRef = useRef({
+    cameraWidth: CAMERA_WIDTH,
+    cameraHeight: CAMERA_HEIGHT,
+    ovalWidth: OVAL_WIDTH,
+  });
+  layoutRef.current = {
+    cameraWidth: CAMERA_WIDTH,
+    cameraHeight: CAMERA_HEIGHT,
+    ovalWidth: OVAL_WIDTH,
+  };
+
   useEffect(() => {
     return () => stopListeners();
-  }, []);
+  }, [stopListeners]);
 
-  const handleDetectedFaces = Worklets.createRunOnJS(
-    (faces: Face[], fWidth: number, fHeight: number) => {
-      if (faces.length === 0) {
-        if (status !== "none") setStatus("none");
-        return;
-      }
-      const { bounds } = faces[0];
-      const sX = CAMERA_WIDTH / fHeight;
-      const sY = CAMERA_HEIGHT / fWidth;
-      const fCX = (bounds.x + bounds.width / 2) * sX;
-      const fCY = (bounds.y + bounds.height / 2) * sY;
+  const handleDetectedFaces = Worklets.createRunOnJS((faces: Face[]) => {
+    const { cameraWidth, cameraHeight, ovalWidth } = layoutRef.current;
 
-      const isCentered =
-        Math.sqrt(
-          Math.pow(fCX - CAMERA_WIDTH / 2, 2) +
-            Math.pow(fCY - CAMERA_HEIGHT / 2, 2),
-        ) < 60;
-      const isCloseEnough = bounds.width * sX > OVAL_WIDTH * 0.8;
+    if (faces.length === 0) {
+      if (statusRef.current !== "none") setStatus("none");
+      return;
+    }
 
-      let newStatus: typeof status = isCentered
-        ? isCloseEnough
-          ? "ok"
-          : "far"
-        : "uncentered";
-      if (status !== newStatus) setStatus(newStatus);
-    },
-  );
+    const { bounds } = faces[0];
+    const faceCenterX = bounds.x + bounds.width / 2;
+    const faceCenterY = bounds.y + bounds.height / 2;
+
+    const isCentered =
+      Math.sqrt(
+        Math.pow(faceCenterX - cameraWidth / 2, 2) +
+          Math.pow(faceCenterY - cameraHeight / 2, 2),
+      ) < 60;
+    const isCloseEnough = bounds.width > ovalWidth * 0.8;
+
+    const newStatus: typeof status = isCentered
+      ? isCloseEnough
+        ? "ok"
+        : "far"
+      : "uncentered";
+
+    if (statusRef.current !== newStatus) setStatus(newStatus);
+  });
 
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
       const faces = detectFaces(frame);
-      handleDetectedFaces(faces, frame.width, frame.height);
+      handleDetectedFaces(faces);
     },
     [detectFaces, handleDetectedFaces],
   );

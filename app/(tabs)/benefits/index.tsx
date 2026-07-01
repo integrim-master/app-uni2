@@ -16,7 +16,6 @@ function syncBenefitsWithUsed(
   benefitsUsed: BenefitUsed[],
 ): Benefits[] {
   return benefits.map((benefit) => {
-    // Contar cuántas veces aparece este beneficio en benefits_used (comparación case-insensitive)
     const usedCount = benefitsUsed.filter(
       (bu) =>
         bu.benefit.toLowerCase().trim() === benefit.title.toLowerCase().trim(),

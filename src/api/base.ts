@@ -33,11 +33,12 @@ api.interceptors.response.use(
   (res) => res,
   (error) => {
     const status = error.response?.status;
+    console.log(status);
 
     if (status === 401) {
       return Promise.reject({
         status,
-        message: "Tu sesión ha expirado. Inicia sesión nuevamente.",
+        message: "Tu sesión ha expirado. Inicia sesión nuevamentes.",
       });
     }
 

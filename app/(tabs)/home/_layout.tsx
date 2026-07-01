@@ -16,8 +16,9 @@ export default function HomeLayout() {
         headerTitleAlign: "left",
         headerTintColor: "white",
         headerShadowVisible: false,
-        headerTransparent: false,
         header: ({ navigation, options, back }) => <HomeHeader />,
+        headerBlurEffect: "regular",
+        headerTransparent: true,
       }}
     >
       <Stack.Screen

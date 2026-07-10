@@ -48,7 +48,7 @@ export default function DatesScreen({
               <Text style={{ color: colors.text, marginBottom: 8 }}>
                 Error cargando citas
               </Text>
-              <Text style={{ color: colors.textLight }}>
+              <Text style={{ color: colors.textMuted }}>
                 {String(error?.message ?? error ?? "")}
               </Text>
             </View>

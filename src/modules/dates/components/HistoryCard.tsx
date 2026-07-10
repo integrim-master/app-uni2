@@ -27,7 +27,7 @@ export default function HistoryCard({ cita }: HistoryCardProps) {
               >
                 {cita.Procedimiento}
               </Text>
-              <Text style={[styles.procMeta, { color: colors.textLight }]}>
+              <Text style={[styles.procMeta, { color: colors.textMuted }]}>
                 {cita.profesional} · {formatDate(cita.fecha_cita)} ·{" "}
                 {cita.hora_cita}
               </Text>

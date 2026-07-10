@@ -24,7 +24,7 @@ export default function ItemUniqueUsed({ data, onPress }: ItemUniqueUsedProps) {
       onPress={onPress}
     >
       <LinearGradient
-        colors={[colors.gradientCardStart, colors.gradientCardEnd]}
+        colors={[colors.gradientCard[0], colors.gradientCard[1]]}
         start={{ x: 0.1, y: 2.5 }}
         end={{ x: 0.9, y: 0.9 }}
         style={[
@@ -32,7 +32,7 @@ export default function ItemUniqueUsed({ data, onPress }: ItemUniqueUsedProps) {
           {
             backgroundColor: colors.card,
             shadowColor: colors.shadow || "#000",
-            borderColor: colors.gradientCardStart || "#ddd",
+            borderColor: colors.gradientCard[0] || "#ddd",
             borderWidth: 1,
           },
         ]}

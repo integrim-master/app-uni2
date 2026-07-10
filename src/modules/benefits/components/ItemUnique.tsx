@@ -3,7 +3,7 @@ import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
 import { BENEFIT_STATUS_LABELS } from "@/src/constants/benefitStatus";
-import { Colors } from "@/src/themes/colors";
+import { AppColors as Colors } from "@/src/themes/colors";
 import { ui } from "@/src/themes/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
@@ -39,7 +39,7 @@ export default function ItemUnique({
         <View style={styles.titleColumn}>
           <ThemedText
             type="titleSm"
-            color={colors.textDark}
+            color={colors.textStrong}
             style={styles.titleSpacing}
             numberOfLines={2}
           >
@@ -106,7 +106,7 @@ export default function ItemUnique({
                 <MaterialIcons
                   name="visibility"
                   size={16}
-                  color={colors.cardTextDark}
+                  color={colors.cardText}
                 />
               }
             />
@@ -126,7 +126,7 @@ export default function ItemUnique({
                 <MaterialIcons
                   name={isActive ? "cancel" : "check-circle"}
                   size={16}
-                  color={colors.cardTextDark}
+                  color={colors.cardText}
                 />
               }
             />
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   applyText: {
-    color: Colors.cardTextDark,
+    color: Colors.cardText,
     fontSize: 14,
     fontWeight: "800",
   },

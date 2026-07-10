@@ -26,7 +26,7 @@ export default function CitaCard({
         <View style={styles.titleColumn}>
           <ThemedText
             type="titleSm"
-            color={colors.textDark}
+            color={colors.textStrong}
             style={styles.titleSpacing}
             numberOfLines={2}
           >
@@ -68,7 +68,7 @@ export default function CitaCard({
           <View
             style={[
               styles.pill,
-              { backgroundColor: colors.backgroundDark + "80" },
+              { backgroundColor: colors.backgroundSurface + "80" },
             ]}
           >
             <Ionicons name="calendar" size={14} color={colors.textSecondary} />
@@ -90,7 +90,7 @@ export default function CitaCard({
         <MaterialIcons
           name="chevron-right"
           size={20}
-          color={colors.textLight}
+          color={colors.textMuted}
         />
       </View>
     </Card>

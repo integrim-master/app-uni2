@@ -63,20 +63,20 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
 
   const usedBenefits = benefits.reduce((acc, benefit) => acc + benefit.used, 0);
 
-  let gradient: string[];
+  let gradient: readonly string[];
   let titleColor: string;
   let bodyColor: string;
   let glowColor: string;
   let cardBg: string;
 
   if (isBlack) {
-    gradient = colors.membershipBlackGradient;
+    gradient = colors.membershipBlack;
     titleColor = colors.primary;
     bodyColor = colors.membershipBlackText || "#FFF";
-    glowColor = colors.textDark ?? colors.primary;
+    glowColor = colors.textStrong ?? colors.primary;
     cardBg = colors.membershipBlackCard || colors.primaryLight;
   } else if (isSilver) {
-    gradient = colors.membershipSilverGradient || [
+    gradient = colors.membershipSilver || [
       "#E3E3E3",
       "#BEBEBE",
       "#A7A7A7",
@@ -86,8 +86,8 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
     glowColor = titleColor;
     cardBg = colors.membershipSilverCard || "#F5F5F5";
   } else {
-    gradient = colors.membershipGoldGradient;
-    titleColor = colors.cardTextDark;
+    gradient = colors.membershipGold;
+    titleColor = colors.cardText;
     bodyColor = colors.text;
     glowColor = colors.primaryLight ?? colors.primary;
     cardBg = colors.primaryLight;

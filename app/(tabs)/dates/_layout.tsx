@@ -1,9 +1,9 @@
 import { useTheme } from "@/src/context/ThemeContext";
-import HeaderGradient from "@/src/ui/HeaderGradient";
 import { Stack } from "expo-router";
 import React from "react";
+import { Platform } from "react-native";
 
-export default function HomeLayout() {
+export default function DatesLayout() {
   const { colors } = useTheme();
 
   return (
@@ -11,28 +11,28 @@ export default function HomeLayout() {
       screenOptions={{
         headerShown: true,
         headerTitleAlign: "center",
-        headerTintColor: "white",
-        header: ({ navigation, options, back }) => (
-          <HeaderGradient
-            title={options.title as string}
-            back={options.headerBackVisible === true}
-          />
-        ),
+        headerTintColor: colors.primary,
+        headerShadowVisible: false,
+        headerBlurEffect: "systemChromeMaterial",
+        headerTransparent: Platform.OS === "ios",
+        headerBackButtonDisplayMode: "minimal",
+        headerStyle: {
+          backgroundColor:
+            Platform.OS === "android" ? colors.background : undefined,
+        },
       }}
     >
       <Stack.Screen
         name="index"
         options={{
           title: "Mis citas",
-          headerShadowVisible: false,
+          headerShown: false,
         }}
       />
-
       <Stack.Screen
         name="[date_id]/index"
         options={{
           title: "Detalle de la cita",
-          headerShadowVisible: false,
         }}
       />
     </Stack>

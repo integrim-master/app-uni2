@@ -48,7 +48,7 @@ export default function CitaDetailsScreen() {
           <View
             style={[
               styles.headerIconWrap,
-              { backgroundColor: colors.gradientCardStart },
+              { backgroundColor: colors.gradientCard[0] },
             ]}
           >
             <View
@@ -61,7 +61,7 @@ export default function CitaDetailsScreen() {
             </View>
           </View>
           <View className="flex gap-1 justify-center">
-            <ThemedText color={colors.textPrimary} type="semiBold">
+            <ThemedText color={colors.textAccent} type="semiBold">
               Cita agendada
             </ThemedText>
             <Badge
@@ -89,7 +89,7 @@ export default function CitaDetailsScreen() {
                 {formatDateToText(dateDetails?.fecha_cita)}
               </ThemedText>
 
-              <ThemedText type="semiBold" color={colors.textPrimary}>
+              <ThemedText type="semiBold" color={colors.textAccent}>
                 {dateDetails?.hora_cita}
               </ThemedText>
 
@@ -99,7 +99,7 @@ export default function CitaDetailsScreen() {
                 style={{ marginTop: 4 }}
               >
                 Profesional:{" "}
-                <ThemedText type="semiBold" color={colors.textPrimary}>
+                <ThemedText type="semiBold" color={colors.textAccent}>
                   {dateDetails?.profesional}
                 </ThemedText>
               </ThemedText>
@@ -113,7 +113,7 @@ export default function CitaDetailsScreen() {
             />
 
             <View style={styles.sedeBlock}>
-              <ThemedText color={colors.textPrimary} type="semiBold">
+              <ThemedText color={colors.textAccent} type="semiBold">
                 Sede
               </ThemedText>
               <ThemedText
@@ -140,7 +140,7 @@ export default function CitaDetailsScreen() {
               <ThemedText color={colors.textSecondary} type="caption">
                 Paciente
               </ThemedText>
-              <ThemedText color={colors.textPrimary} type="semiBold">
+              <ThemedText color={colors.textAccent} type="semiBold">
                 {user?.user_name}
               </ThemedText>
             </View>

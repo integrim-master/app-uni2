@@ -101,7 +101,6 @@ export function ProfileScreen() {
         onConfirm={async () => {
           setShowLogoutConfirm(false);
           await logout();
-          router.replace("/login");
         }}
       />
 

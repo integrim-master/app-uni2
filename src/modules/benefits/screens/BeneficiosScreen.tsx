@@ -27,6 +27,15 @@ export default function BeneficiosScreen({
   loading,
   error,
 }: BeneficiosScreenProps & { error?: any }) {
+  const { colors } = useTheme();
+  const { mutate, isPending, isError: isErrorRedeem } = useRedemed();
+  const { mutate: mutateCancel, isError: isErrorCancel } = useCancel();
+  const { data: user } = useUser();
+  const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
+  const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
+    membership?.benefit_redeem,
+  );
+
   if (error) {
     return (
       <ErrorScreen
@@ -37,14 +46,6 @@ export default function BeneficiosScreen({
       />
     );
   }
-  const { colors } = useTheme();
-  const { mutate, isPending, isError: isErrorRedeem } = useRedemed();
-  const { mutate: mutateCancel, isError: isErrorCancel } = useCancel();
-  const { data: user } = useUser();
-  const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
-  const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
-    membership?.benefit_redeem,
-  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -132,9 +133,9 @@ export default function BeneficiosScreen({
   }
 
   return (
-    <Screen>
+    <Screen safeArea>
       <View style={styles.container}>
-        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+        <View style={{ paddingHorizontal: 16, paddingVertical: 10 }}>
           <TabBar
             options={[
               { key: "disponibles", label: "Disponibles" },

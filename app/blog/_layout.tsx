@@ -1,7 +1,7 @@
 import { useTheme } from "@/src/context/ThemeContext";
-import HeaderGradient from "@/src/ui/HeaderGradient";
 import { Stack } from "expo-router";
 import React from "react";
+import { Platform } from "react-native";
 
 export default function BlogLayout() {
   const { colors } = useTheme();
@@ -11,29 +11,27 @@ export default function BlogLayout() {
       screenOptions={{
         headerShown: true,
         headerTitleAlign: "center",
-        headerTintColor: "white",
+        headerTintColor: colors.primary,
         headerShadowVisible: false,
-        headerTransparent: false,
-        header: ({ navigation, options, back }) => (
-          <HeaderGradient title={options.title as string} back={!!back} />
-        ),
+        headerBlurEffect: "systemChromeMaterial",
+        headerTransparent: Platform.OS === "ios",
+        headerBackButtonDisplayMode: "minimal",
+        headerStyle: {
+          backgroundColor:
+            Platform.OS === "android" ? colors.background : undefined,
+        },
       }}
     >
       <Stack.Screen
-        name="[details]/index"
+        name="index"
         options={{
-          title: "Perfil",
-          headerShadowVisible: true,
           headerShown: false,
         }}
       />
       <Stack.Screen
-        name="index"
+        name="[details]/index"
         options={{
-          // title: "Tus solicitudes",
-          // headerShadowVisible: false,
-          headerShown: false,
-          animation: "ios_from_left",
+          title: "Artículo",
         }}
       />
     </Stack>

@@ -35,7 +35,7 @@ export function MenuSection({
           { backgroundColor: colors.card, borderColor: resolvedBorderColor },
         ]}
       >
-        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textAccent }]}>
           {title}
         </Text>
         {items.map((item, index) =>

@@ -58,7 +58,7 @@ export default function BenefitsPreview({
         <View className="flex-row w-full items-center justify-between">
           <ThemedText
             type="subtitle"
-            color={colors.textDark}
+            color={colors.textStrong}
             className="font-bold mb-4"
           >
             Tus beneficios

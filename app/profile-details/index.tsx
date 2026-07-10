@@ -21,6 +21,7 @@ export default function ProfileDetailScreen() {
       safeArea={true}
       leftButton={<BackButton iconName="close-outline" />}
     >
+      s
       <ScrollView>
         {isInfoPending ? (
           <ProfileSkeleton />
@@ -36,7 +37,7 @@ export default function ProfileDetailScreen() {
                 ]}
               >
                 <Text
-                  style={[styles.avatarInitial, { color: colors.cardTextDark }]}
+                  style={[styles.avatarInitial, { color: colors.cardText }]}
                 >
                   {user?.nombre?.charAt(0).toUpperCase()}
                 </Text>

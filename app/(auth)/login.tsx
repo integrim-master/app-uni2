@@ -8,7 +8,7 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { useLogin } from "@/src/modules/login/hooks/useLogin";
 import { useSendNotifications } from "@/src/modules/login/hooks/useNotifications";
 import { useTerms } from "@/src/modules/login/hooks/useTerms";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
@@ -26,17 +26,19 @@ const Login = () => {
   const { colors } = useTheme();
   const { mutate, isPending } = useLogin();
   const { mutate: acceptTerms, isPending: isLoadinPrivacy } = useTerms();
-  const { login, logout } = useAuth();
+  const { login, logout, token } = useAuth();
   const { pushToken } = useNotifications();
-
   const { mutate: sendTokenNotifications } = useSendNotifications();
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
-
   const [dataUser, setDataUser] = useState({
     username: "",
     password: "",
   });
+
+  if (token) {
+    return <Redirect href="/home" />;
+  }
 
   const handleAcceptPrivacy = () => {
     acceptTerms(undefined, {
@@ -201,7 +203,7 @@ const Login = () => {
                   style={[
                     styles.input,
                     {
-                      backgroundColor: colors.backgroundLight,
+                      backgroundColor: colors.backgroundElevated,
                       borderColor: colors.border,
                       color: colors.text,
                     },
@@ -223,7 +225,7 @@ const Login = () => {
                   style={[
                     styles.input,
                     {
-                      backgroundColor: colors.backgroundLight,
+                      backgroundColor: colors.backgroundElevated,
                       borderColor: colors.border,
                       color: colors.text,
                     },

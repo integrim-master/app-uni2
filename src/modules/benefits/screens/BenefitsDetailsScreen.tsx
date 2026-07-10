@@ -3,7 +3,7 @@
 import Badge from "@/src/components/shared/Badge";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
-import { Colors } from "@/src/themes/colors";
+import { AppColors as Colors } from "@/src/themes/colors";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Skeleton } from "moti/skeleton";
@@ -110,7 +110,7 @@ export default function BenefitsDetailsScreen({
             variant="primary"
             title="Redimir beneficio"
             textStyle={{
-              color: Colors.cardTextDark,
+              color: Colors.cardText,
             }}
             onPress={() => onRedeem?.(benefit.id, benefit.title)}
             disabled={isLoadingRedeem || sucessRedeem}
@@ -205,6 +205,6 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: "800",
-    color: Colors.cardTextDark,
+    color: Colors.cardText,
   },
 });

@@ -16,7 +16,7 @@ export default function CitaDetailsSkeleton() {
       style={styles.container}
     >
       <LinearGradient
-        colors={[colors.gradientCardStart, colors.gradientCardEnd]}
+        colors={[colors.gradientCard[0], colors.gradientCard[1]]}
         start={{ x: 0.1, y: 2.5 }}
         end={{ x: 0.9, y: 0.9 }}
         style={[styles.card, { borderColor: colors.border || "#e5e5e5" }]}

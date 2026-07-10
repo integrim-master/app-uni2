@@ -59,7 +59,7 @@ export default function BlogDetail() {
           style={{
             borderTopLeftRadius: 32,
             borderTopRightRadius: 32,
-            backgroundColor: colors.gradientCardStart,
+            backgroundColor: colors.gradientCard[0],
             paddingTop: 32,
           }}
         >

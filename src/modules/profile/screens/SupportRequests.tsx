@@ -11,7 +11,7 @@ const SupportRequests: React.FC = () => {
     <View style={styles.emptyContainer}>
       <EmptySvg width={280} height={280} style={styles.emptyImage} />
       <ThemedText type="title" style={[styles.emptyTitle, { color: colors.primaryLight }]}>¡Sin solicitudes!</ThemedText>
-      <ThemedText type="subtitle" style={[styles.emptySubtitle, { color: colors.textLight }]}>Aquí aparecerán tus solicitudes de soporte</ThemedText>
+      <ThemedText type="subtitle" style={[styles.emptySubtitle, { color: colors.textMuted }]}>Aquí aparecerán tus solicitudes de soporte</ThemedText>
     </View>
   );
 };

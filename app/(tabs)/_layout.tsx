@@ -1,14 +1,13 @@
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Redirect } from "expo-router";
-import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
-import { ActivityIndicator, Platform, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 export default function TabsLayout() {
   const { token, loading } = useAuth();
   const { colors } = useTheme();
-  const platform = Platform.OS;
 
   if (loading) {
     return (
@@ -29,68 +28,34 @@ export default function TabsLayout() {
     return <Redirect href="/login" />;
   }
 
-  const inactiveTabColor = colors.textSecondary;
-  const activeTabColor = colors.textStrong;
-
   return (
     <NativeTabs
-      indicatorColor={colors.primary}
-      tintColor={platform === "android" ? activeTabColor : colors.secondary}
+      tintColor={colors.primary}
       backgroundColor={colors.card}
     >
       <NativeTabs.Trigger name="home">
-        <Label>Inicio</Label>
-        <Icon
-          sf="house.fill"
-          selectedColor={
-            platform === "android" ? activeTabColor : colors.secondary
-          }
-          drawable="home_24px"
-        />
+        <NativeTabs.Trigger.Label>Inicio</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="house.fill" md="home" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="dates">
-        <Label>Citas</Label>
-        <Icon
-          sf="calendar"
-          selectedColor={
-            platform === "android" ? activeTabColor : colors.secondary
-          }
-          drawable="ic_calendar_month"
-        />
+        <NativeTabs.Trigger.Label>Citas</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="calendar" md="calendar_month" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="diagnostics">
-        <Label>Análisis</Label>
-        <Icon
-          sf="camera.fill"
-          selectedColor={
-            platform === "android" ? activeTabColor : colors.secondary
-          }
-          drawable="ic_photo_camera"
-        />
+        <NativeTabs.Trigger.Label>Análisis</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="camera.fill" md="photo_camera" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="benefits">
-        <Label>Beneficios</Label>
-        <Icon
-          sf="gift.fill"
-          selectedColor={
-            platform === "android" ? activeTabColor : colors.secondary
-          }
-          drawable="ic_gift"
-        />
+        <NativeTabs.Trigger.Label>Beneficios</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="gift.fill" md="redeem" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile">
-        <Label>Perfil</Label>
-        <Icon
-          sf="person.fill"
-          selectedColor={
-            platform === "android" ? activeTabColor : colors.secondary
-          }
-          drawable="ic_account_circle"
-        />
+        <NativeTabs.Trigger.Label>Perfil</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="person.fill" md="account_circle" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );

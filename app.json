@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon-careme.png",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
     "scheme": "careme",
     "splash": {
       "image": "./assets/images/icon-careme.png",
@@ -33,7 +32,6 @@
         "foregroundImage": "./assets/images/icon-careme.png",
         "backgroundColor": "#302D34"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.imtegrim.uni2",
       "runtimeVersion": "1.0.0",
       "googleServicesFile": "./google-services.json"
@@ -84,7 +82,8 @@
           "enableMicrophonePermission": true,
           "microphonePermissionText": "Careme360 necesita acceso al micrófono para grabar video."
         }
-      ]
+      ],
+      "expo-image"
     ],
     "extra": {
       "router": {},

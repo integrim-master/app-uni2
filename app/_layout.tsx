@@ -41,8 +41,8 @@ function NotificationListener() {
   useEffect(() => {
     const register = async () => {
       try {
-        const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== "granted") return;
+        const permissions = await Notifications.requestPermissionsAsync();
+        if (!(permissions as any).granted) return;
         const token = (await Notifications.getExpoPushTokenAsync()).data;
         setPushToken(token);
       } catch (error) {

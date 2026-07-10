@@ -15,7 +15,7 @@ export default function VideoScreen() {
 
   return (
     <View style={styles.contentContainer}>
-      <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
+      <VideoView style={styles.video} player={player} />
  
     </View>
   );

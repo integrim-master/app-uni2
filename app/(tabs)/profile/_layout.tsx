@@ -1,9 +1,9 @@
 import { useTheme } from "@/src/context/ThemeContext";
-import HeaderGradient from "@/src/ui/HeaderGradient";
 import { Stack } from "expo-router";
 import React from "react";
+import { Platform } from "react-native";
 
-export default function ProfiLayout() {
+export default function ProfileLayout() {
   const { colors } = useTheme();
 
   return (
@@ -11,43 +11,30 @@ export default function ProfiLayout() {
       screenOptions={{
         headerShown: true,
         headerTitleAlign: "center",
-        headerTintColor: "white",
+        headerTintColor: colors.primary,
         headerShadowVisible: false,
-        headerTransparent: false,
-        header: ({ navigation, options, back }) => (
-          <HeaderGradient title={options.title as string} back={!!back} />
-        ),
+        headerBlurEffect: "systemChromeMaterial",
+        headerTransparent: Platform.OS === "ios",
+        headerBackButtonDisplayMode: "minimal",
+        headerStyle: {
+          backgroundColor:
+            Platform.OS === "android" ? colors.background : undefined,
+        },
       }}
     >
       <Stack.Screen
         name="index"
         options={{
           title: "Perfil",
-          headerShadowVisible: true,
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        name="support"
-        options={{
-          title: "Tus solicitudes",
-          headerShadowVisible: false,
-        }}
-      />
+      <Stack.Screen name="support" options={{ title: "Tus solicitudes" }} />
       <Stack.Screen
         name="privacy"
-        options={{
-          title: "Política de privacidad",
-          headerShadowVisible: false,
-        }}
+        options={{ title: "Política de privacidad" }}
       />
-      <Stack.Screen
-        name="favorites"
-        options={{
-          title: "Favoritos",
-          headerShadowVisible: false,
-        }}
-      />
+      <Stack.Screen name="favorites" options={{ title: "Favoritos" }} />
     </Stack>
   );
 }

@@ -9,7 +9,7 @@ export default function CitasList({ citas }: { citas: Cita[] }) {
 
   if (citas.length === 0) {
     return (
-      <Text style={[styles.noCitasText, { color: colors.textLight }]}>No tienes citas</Text>
+      <Text style={[styles.noCitasText, { color: colors.textMuted }]}>No tienes citas</Text>
     );
   }
 

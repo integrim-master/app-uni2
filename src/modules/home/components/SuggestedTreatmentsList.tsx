@@ -42,7 +42,7 @@ const ItemBenefit = memo(({ treatment }: { treatment: TratamientoCareme }) => {
             <Ionicons name="chevron-forward" size={22} color={colors.primary} />
           </View>
           <Text
-            style={[styles.desc, { color: colors.textLight }]}
+            style={[styles.desc, { color: colors.textMuted }]}
             numberOfLines={2}
           >
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,

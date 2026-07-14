@@ -31,7 +31,7 @@ export default function FeaturedItem({ item, onPress, style }: Props) {
         <View
           style={[
             styles.overlay,
-            { backgroundColor: colors.backgroundDark + "80" },
+            { backgroundColor: colors.backgroundSurface + "80" },
           ]}
         >
           <Badge

@@ -35,7 +35,7 @@ export default function TreatmentCard({
           style={[
             StyleSheet.absoluteFillObject,
             styles.placeholder,
-            { backgroundColor: colors.backgroundDark },
+            { backgroundColor: colors.backgroundSurface },
           ]}
         >
           <MaterialIcons name="spa" size={36} color={colors.primary + "60"} />

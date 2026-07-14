@@ -17,7 +17,7 @@ export const TreatmentsSection: React.FC<SuggestedTreatmentsProps> = ({
     <View style={styles.benefitsContent}>
       <View style={styles.sectionHeader}>
         <ThemedText
-          color={colors.textPrimary}
+          color={colors.textAccent}
           className="font-bold"
           type="subtitle"
         >

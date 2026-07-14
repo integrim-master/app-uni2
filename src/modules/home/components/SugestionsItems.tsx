@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import ThemedText from "@/src/components/shared/themed-text";
-import { Colors } from "@/src/themes/colors";
+import { AppColors as Colors } from "@/src/themes/colors";
 import { Link } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 

@@ -1,4 +1,6 @@
-import { setMemoryToken } from "@/src/api/base";
+import { setMemoryToken, setOnUnauthorized } from "@/src/api/base";
+import { AuthService } from "@/src/modules/login/services/auth.service";
+import { router } from "expo-router";
 import {
   AuthContextType,
   AuthProviderProps,
@@ -12,7 +14,13 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQueryClient } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Promotion } from "../modules/home/types/home.promotions.types";
 import { useLoading } from "./LoadingContext";
 
@@ -24,6 +32,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const queryClient = useQueryClient();
   const { showLoading, hideLoading } = useLoading();
 
+  const clearSession = useCallback(async () => {
+    setToken(null);
+    setMemoryToken(null);
+    queryClient.clear();
+    await SecureStore.deleteItemAsync("TOKEN");
+    await AsyncStorage.clear();
+  }, [queryClient]);
+
+  useEffect(() => {
+    setOnUnauthorized(() => {
+      void clearSession().then(() => router.replace("/login"));
+    });
+    return () => setOnUnauthorized(null);
+  }, [clearSession]);
+
   useEffect(() => {
     restoreSession();
   }, []);
@@ -32,11 +55,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const saved = await SecureStore.getItemAsync("TOKEN");
       if (!saved) return;
+
       const parsed = JSON.parse(saved);
-      setToken(parsed.token);
       setMemoryToken(parsed.token);
+
+      await AuthService.getMeUser();
+      setToken(parsed.token);
     } catch (error) {
       console.error("Error restoring session:", error);
+      await clearSession();
     } finally {
       setLoading(false);
     }
@@ -72,11 +99,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = async () => {
     showLoading("Cerrando sesión...");
     try {
-      setToken(null);
-      setMemoryToken(null);
-      queryClient.clear();
-      await SecureStore.deleteItemAsync("TOKEN");
-      await AsyncStorage.clear();
+      await clearSession();
+      router.replace("/login");
     } finally {
       hideLoading();
     }

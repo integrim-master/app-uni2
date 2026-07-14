@@ -50,7 +50,7 @@ export const PromotionsCarousel = ({
       <View style={styles.sectionHeader}>
         <ThemedText
           type="subtitle"
-          color={colors.textPrimary}
+          color={colors.textAccent}
           className="font-bold"
         >
           Promociones exclusivas
@@ -90,7 +90,7 @@ export const PromotionsCarousel = ({
               <View
                 style={[
                   styles.overlayContrast,
-                  { backgroundColor: colors.backgroundDark, opacity: 0.45 },
+                  { backgroundColor: colors.backgroundSurface, opacity: 0.45 },
                 ]}
               />
 

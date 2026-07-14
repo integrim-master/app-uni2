@@ -1,39 +1,39 @@
 import { useTheme } from "@/src/context/ThemeContext";
-import HeaderGradient from "@/src/ui/HeaderGradient";
 import { Stack } from "expo-router";
 import React from "react";
+import { Platform } from "react-native";
 
-export default function ProfiLayout() {
+export default function ProfileDetailsLayout() {
   const { colors } = useTheme();
 
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
-        headerTitleAlign: "center",
-        headerTintColor: "white",
+        headerShown: false,
+        presentation: Platform.OS === "ios" ? "modal" : undefined,
+        headerBlurEffect: "systemChromeMaterial",
+        headerTransparent: Platform.OS === "ios",
         headerShadowVisible: false,
-        headerTransparent: false,
-        header: ({ navigation, options, back }) => (
-          <HeaderGradient title={options.title as string} back={!!back} />
-        ),
+        headerTintColor: colors.textStrong,
+        headerBackButtonDisplayMode: "minimal",
+        headerStyle: {
+          backgroundColor:
+            Platform.OS === "android" ? "transparent" : undefined,
+        },
       }}
     >
       <Stack.Screen
-        name="edit/[slug]/index"
+        name="edit/index"
         options={{
-          title: "Perfil",
-          headerShadowVisible: true,
           headerShown: false,
+          headerTitle: "",
+          presentation: Platform.OS === "ios" ? "pageSheet" : undefined,
         }}
       />
       <Stack.Screen
-        name="index"
+        name="edit/[slug]/index"
         options={{
-          // title: "Tus solicitudes",
-          // headerShadowVisible: false,
           headerShown: false,
-          animation: "ios_from_left",
         }}
       />
     </Stack>

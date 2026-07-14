@@ -1,3 +1,4 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useTheme } from "@/src/context/ThemeContext";
@@ -21,7 +22,7 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <Screen safeArea={true}>
+    <Screen safeArea={true} leftButton={<BackButton />}>
       <ScrollView>
         <View>
           <SimpleMenuSection

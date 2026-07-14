@@ -27,14 +27,14 @@ export default function BenefitsListSkeleton() {
           }}
         >
           <LinearGradient
-            colors={[colors.gradientCardStart, colors.gradientCardEnd]}
+            colors={[colors.gradientCard[0], colors.gradientCard[1]]}
             start={{ x: 0.1, y: 2.5 }}
             end={{ x: 0.9, y: 0.9 }}
             style={[
               styles.card,
               {
                 shadowColor: colors.shadow || '#000',
-                borderColor: colors.gradientCardStart || '#ddd',
+                borderColor: colors.gradientCard[0] || '#ddd',
               },
             ]}
           >

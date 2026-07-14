@@ -20,7 +20,7 @@ export default function EmptyDates({
 
   return (
     <View style={styles.container}>
-      <Ionicons name="time-outline" size={56} color={colors.textLight} />
+      <Ionicons name="time-outline" size={56} color={colors.textMuted} />
       <Text style={[styles.title, { color: colors.primaryLight }]}>
         {title}
       </Text>

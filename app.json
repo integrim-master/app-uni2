@@ -5,13 +5,13 @@
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon-careme.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "scheme": "careme",
     "splash": {
       "image": "./assets/images/icon-careme.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#302D34"
     },
     "ios": {
       "bundleIdentifier": "com.imtegrim.uni2",
@@ -31,7 +31,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon-careme.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#302D34"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.imtegrim.uni2",

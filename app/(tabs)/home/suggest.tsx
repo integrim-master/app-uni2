@@ -37,7 +37,7 @@ export default function Suggest() {
         </View>
 
         <View
-          style={[styles.card, { backgroundColor: colors.gradientCardStart }]}
+          style={[styles.card, { backgroundColor: colors.gradientCard[0] }]}
         >
           <View>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>

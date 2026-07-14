@@ -99,7 +99,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     queryClient.setQueryData(queryKey, []);
   };
 
-  // const unreadCount = notifications.filter((n) => !n.read_at).length;
+  const unreadCount = notifications.filter((n: any) => !n.read_at).length;
 
   return (
     <NotificationsContext.Provider
@@ -109,7 +109,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
         markAsRead,
         markAllAsRead,
         clearNotifications,
-        // unreadCount,
+        unreadCount,
         pushToken,
         setPushToken,
         refetch,

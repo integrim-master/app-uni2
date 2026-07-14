@@ -71,7 +71,7 @@ export default function BenefitsList({
             ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={[styles.emptyText, { color: colors.textLight }]}>
+                <Text style={[styles.emptyText, { color: colors.textMuted }]}>
                   {emptyMessage}
                 </Text>
               </View>
@@ -96,7 +96,7 @@ export default function BenefitsList({
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyText, { color: colors.textLight }]}>
+              <Text style={[styles.emptyText, { color: colors.textMuted }]}>
                 {emptyMessage}
               </Text>
             </View>

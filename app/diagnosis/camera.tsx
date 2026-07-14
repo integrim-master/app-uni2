@@ -329,7 +329,7 @@ export default function CameraScreen() {
                     <View
                       style={[
                         styles.glassLabel,
-                        { backgroundColor: colors.backgroundDark + "99" },
+                        { backgroundColor: colors.backgroundSurface + "99" },
                       ]}
                     >
                       <MaterialIcons
@@ -358,7 +358,7 @@ export default function CameraScreen() {
               }
               style={[
                 styles.iconBtn,
-                { backgroundColor: colors.backgroundDark },
+                { backgroundColor: colors.backgroundSurface },
               ]}
             >
               <MaterialIcons

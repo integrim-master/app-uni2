@@ -1,6 +1,6 @@
 import React from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ThemeColors } from "../../../themes/colors";
+import { AppThemeColors as ThemeColors } from "../../../themes/colors";
 
 interface FiltersBottomSheetProps {
   procedimientos: string[];
@@ -28,7 +28,7 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
               onPress={() => setSelectedProcedimiento(selected ? null : item)}
               style={[
                 styles.filterButton,
-                { backgroundColor: selected ? colors.primary : colors.gradientCardEnd }
+                { backgroundColor: selected ? colors.primary : colors.gradientCard[1] }
               ]}
             >
               <Text style={[styles.filterButtonText, selected && { color: '#fff', fontWeight: '600' }]}>
@@ -51,7 +51,7 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
               onPress={() => setSelectedEstado(selected ? null : item)}
               style={[
                 styles.filterButton,
-                { backgroundColor: selected ? colors.success : colors.gradientCardEnd }
+                { backgroundColor: selected ? colors.success : colors.gradientCard[1] }
               ]}
             >
               <Text style={[styles.filterButtonText, selected && { color: '#fff', fontWeight: '600' }]}>

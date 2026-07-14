@@ -30,7 +30,7 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
           </Text>
         </View>
         <View style={styles.profileTextContainer}>
-          <Text style={[styles.profileName, { color: colors.textPrimary }]}>
+          <Text style={[styles.profileName, { color: colors.textAccent }]}>
             {userName}
           </Text>
           <Text

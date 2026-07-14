@@ -1,4 +1,4 @@
-import { Colors } from '@/themes/colors';
+import { AppColors as Colors } from '@/src/themes/colors';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { CalendarIcon, TimeIcon } from '../../../components/Icons';

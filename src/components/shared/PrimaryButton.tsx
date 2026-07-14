@@ -63,9 +63,9 @@ const PrimaryButton = ({
       text: "#fff",
     },
     secondary: {
-      background: colors.backgroundLight,
+      background: colors.backgroundElevated,
       pressed: "rgba(0,0,0,0.08)",
-      text: colors.textPrimary,
+      text: colors.textAccent,
     },
     danger: {
       background: colors.danger,

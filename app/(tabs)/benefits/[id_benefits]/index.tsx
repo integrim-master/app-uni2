@@ -1,7 +1,7 @@
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useUser } from "@/src/modules/banner/hooks/userHome";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 import { useBenefit } from "@/src/modules/benefits/hooks/useBenefits";
 import { useRedemed } from "@/src/modules/benefits/hooks/useRedem";
 import BenefitScreen from "@/src/modules/benefits/screens/BenefitsDetailsScreen";

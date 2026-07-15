@@ -17,7 +17,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { useTreatments } from "../../banner/hooks/userHome";
+import { useTreatments } from "@/src/modules/user/hooks/useTreatments";
 import { ResultViewProps } from "../types/diagnostics.types";
 import DiagnosticCard from "./DiagnosticCard";
 import ResultHeader from "./ResultHeader";

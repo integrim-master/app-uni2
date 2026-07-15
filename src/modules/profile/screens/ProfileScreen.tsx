@@ -1,4 +1,4 @@
-import ConfirmActionModal from "@/src/components/shared/Modal";
+import ConfirmActionModal from "@/src/components/shared/ConfirmActionModal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import ThemedText from "@/src/components/shared/themed-text";

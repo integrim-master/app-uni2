@@ -1,5 +1,5 @@
 import { Screen } from '@/src/components/shared/Screen';
-import TabBar from "@/src/modules/home/components/TabBar";
+import TabBar from "@/src/components/shared/TabBar";
 import SupportHistory from "@/src/modules/profile/screens/SupportHistory";
 import SupportRequests from "@/src/modules/profile/screens/SupportRequests";
 import React, { useState } from "react";

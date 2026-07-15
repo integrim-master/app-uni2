@@ -3,7 +3,7 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { FavoriteCard } from "@/src/modules/favorites/components/FavoriteCard";
 import { CategoryType, FavoriteItem } from "@/src/modules/favorites/types/favorites.types";
-import TabBar from "@/src/modules/home/components/TabBar";
+import TabBar from "@/src/components/shared/TabBar";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";

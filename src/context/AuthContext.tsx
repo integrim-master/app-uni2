@@ -1,18 +1,12 @@
 import { setMemoryToken, setOnUnauthorized } from "@/src/api/base";
 import { AuthService } from "@/src/modules/login/services/auth.service";
-import { router } from "expo-router";
 import {
   AuthContextType,
   AuthProviderProps,
 } from "@/src/modules/auth/types/auth.types";
-import { UltimasCitas } from "@/src/modules/home/types/home.dates.types";
-import { UserData } from "@/src/types/shared/Auth.types";
-import {
-  MembershipData,
-  TratamientoCareme,
-} from "@/src/types/shared/Benefits.type";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, {
   createContext,
@@ -21,7 +15,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Promotion } from "../modules/home/types/home.promotions.types";
 import { useLoading } from "./LoadingContext";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -69,28 +62,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const login = async (
-    token: string,
-    userData: UserData,
-    membershipData: MembershipData,
-    treatments: TratamientoCareme[],
-    treatments_suggest: TratamientoCareme[],
-    promotions: Promotion[],
-    datesArg?: UltimasCitas,
-  ) => {
+  const login = async (tokenValue: string) => {
     showLoading("Iniciando sesión...");
     try {
-      setToken(token);
-      setMemoryToken(token);
-      await SecureStore.setItemAsync("TOKEN", JSON.stringify({ token }));
-      queryClient.setQueryData(["full-profile"], {
-        user_data: userData,
-        membership_data: membershipData,
-        treatments_suggest: treatments_suggest,
-        treatments_careme: treatments,
-        promotions: promotions,
-        ultimas_citas: datesArg,
-      });
+      setToken(tokenValue);
+      setMemoryToken(tokenValue);
+      await SecureStore.setItemAsync(
+        "TOKEN",
+        JSON.stringify({ token: tokenValue }),
+      );
     } finally {
       hideLoading();
     }

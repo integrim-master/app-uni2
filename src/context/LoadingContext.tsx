@@ -1,20 +1,20 @@
+import BrandSpinner from "@/src/components/shared/BrandSpinner";
 import React, {
-    createContext,
-    ReactNode,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 import {
-    Animated,
-    Easing,
-    Image,
-    ImageSourcePropType,
-    Modal,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  Image,
+  ImageSourcePropType,
+  Modal,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 interface LoadingContextType {
@@ -29,58 +29,6 @@ interface LoadingContextType {
 
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
-/* ── Animated spinner ── */
-function GoldSpinner() {
-  const rotation = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.timing(rotation, {
-        toValue: 1,
-        duration: 1100,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [rotation]);
-
-  const spin = rotation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
-
-  return (
-    <Animated.View
-      style={[spinnerStyles.ring, { transform: [{ rotate: spin }] }]}
-    >
-      <View style={spinnerStyles.dot} />
-    </Animated.View>
-  );
-}
-
-const spinnerStyles = StyleSheet.create({
-  ring: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 3,
-    borderColor: "rgba(226,177,85,0.15)",
-    borderTopColor: "#E2B155",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#E2B155",
-    marginTop: -5,
-  },
-});
-
-/* ── Provider ── */
 export const LoadingProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -163,7 +111,7 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
             ) : null}
 
             <View style={styles.content}>
-              <GoldSpinner />
+              <BrandSpinner />
               <Text style={styles.message}>{message}</Text>
               <View style={styles.progressBar}>
                 <View style={styles.progressFill} />

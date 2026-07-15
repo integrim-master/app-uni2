@@ -1,5 +1,10 @@
-"use client";
-
+/**
+ * Convención de modales:
+ * - Confirmaciones / decisiones → ConfirmActionModal
+ * - Promos full-screen → BannerModal
+ * - Loading global → useLoading()
+ * - Sheets de lista/filtros → @gorhom/bottom-sheet
+ */
 import { useTheme } from "@/src/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
@@ -143,7 +148,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
-
   card: {
     borderRadius: 28,
     paddingHorizontal: 24,
@@ -157,7 +161,6 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
   iconWrap: {
     width: 52,
     height: 52,
@@ -166,17 +169,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 18,
   },
-
   title: {
     textAlign: "center",
     marginBottom: 6,
   },
-
   description: {
     textAlign: "center",
     marginBottom: 28,
   },
-
   actionsRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -184,11 +184,9 @@ const styles = StyleSheet.create({
     gap: 12,
     width: "100%",
   },
-
   cancelBtn: {
     flex: 1,
   },
-
   confirmBtn: {
     flex: 1,
   },

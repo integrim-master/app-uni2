@@ -35,7 +35,9 @@ const HomeScreen: React.FC<Props> = ({
   const router = useRouter();
 
   if (isError) {
-    return <ErrorScreen message={error?.message} />;
+    return (
+      <ErrorScreen message={error?.message} onRetry={onRefresh} />
+    );
   }
 
   return (

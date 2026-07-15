@@ -1,5 +1,5 @@
 import api from "@/src/api/base";
-import { MeApiResponse } from "@/src/modules/auth/types/auth.types";
+import { MeApiResponse } from "@/src/modules/user/types/me.types";
 import { AcceptTermsResponse, LoginResponse } from "../types/login.types";
 
 export const AuthService = {

@@ -3,7 +3,7 @@ import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useUser } from "@/src/modules/banner/hooks/userHome";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 
 import { ProfileSkeleton } from "@/src/modules/profile/components/ProfileSkeleton";
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";

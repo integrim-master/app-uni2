@@ -1,13 +1,12 @@
+import BrandSpinner from "@/src/components/shared/BrandSpinner";
 import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 type Props = {
-  size?: "small" | "large" | number;
   message?: string;
 };
 
 export default function LoadingComponent({
-  size = "large",
   message = "Cargando...",
 }: Props) {
   return (
@@ -19,8 +18,10 @@ export default function LoadingComponent({
         padding: 16,
       }}
     >
-      <ActivityIndicator size={size as any} color="#0ea5e9" />
-      <Text style={{ marginTop: 12, color: "#6b7280" }}>{message}</Text>
+      <BrandSpinner />
+      <Text style={{ marginTop: 12, color: "#9CA3AF", fontWeight: "600" }}>
+        {message}
+      </Text>
     </View>
   );
 }

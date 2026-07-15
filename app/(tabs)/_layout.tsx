@@ -1,9 +1,10 @@
+import BrandSpinner from "@/src/components/shared/BrandSpinner";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Redirect } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
-import { ActivityIndicator, Platform, View } from "react-native";
+import { Platform, View } from "react-native";
 
 export default function TabsLayout() {
   const { token, loading } = useAuth();
@@ -19,7 +20,7 @@ export default function TabsLayout() {
           backgroundColor: colors.background,
         }}
       >
-        <ActivityIndicator size="large" color={colors.primary} />
+        <BrandSpinner />
       </View>
     );
   }

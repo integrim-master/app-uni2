@@ -1,8 +1,10 @@
 import EmptySvg from "@/assets/svg/Empty.svg";
 
 import { Screen } from "@/src/components/shared/Screen";
+import TabBar from "@/src/components/shared/TabBar";
 import ThemedText from "@/src/components/shared/themed-text";
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 import { Benefits } from "@/src/types/shared/Benefits.type";
 import { router, useFocusEffect } from "expo-router";
 import { AnimatePresence } from "moti";
@@ -10,8 +12,6 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../../context/ThemeContext";
-import { useUser } from "../../banner/hooks/userHome";
-import TabBar from "../../home/components/TabBar";
 import BenefitsList from "../components/BenefitsList";
 import BenefitsListSkeleton from "../components/BenefitsListSkeleton";
 import { useCancel } from "../hooks/useCancelBenefits";
@@ -28,8 +28,8 @@ export default function BeneficiosScreen({
   error,
 }: BeneficiosScreenProps & { error?: any }) {
   const { colors } = useTheme();
-  const { mutate, isPending, isError: isErrorRedeem } = useRedemed();
-  const { mutate: mutateCancel, isError: isErrorCancel } = useCancel();
+  const { mutate, isPending } = useRedemed();
+  const { mutate: mutateCancel } = useCancel();
   const { data: user } = useUser();
   const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
   const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
@@ -49,6 +49,7 @@ export default function BeneficiosScreen({
           error?.message ||
           "Ocurrió un error al cargar los beneficios. Intenta nuevamente."
         }
+        onRetry={onRefresh}
       />
     );
   }
@@ -147,16 +148,6 @@ export default function BeneficiosScreen({
             }
           />
         </View>
-
-        {(isErrorRedeem || isErrorCancel) && (
-          <ErrorScreen
-            message={
-              isErrorRedeem
-                ? "Ocurrió un error al canjear el beneficio. Intenta de nuevo."
-                : "Ocurrió un error al cancelar el canje. Intenta de nuevo."
-            }
-          />
-        )}
 
         <View style={{ flex: 1, position: "relative" }}>
           <AnimatePresence exitBeforeEnter>

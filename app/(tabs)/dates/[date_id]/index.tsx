@@ -1,7 +1,7 @@
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
-import { useUser } from "@/src/modules/banner/hooks/userHome";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkeleton";
 import { useDatesDetails } from "@/src/modules/dates/hooks/useDatesById";
 import { formatDateToText } from "@/src/utils/stringUtils";

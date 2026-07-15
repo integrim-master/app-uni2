@@ -1,7 +1,7 @@
 import { Screen } from "@/src/components/shared/Screen";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useUser } from "@/src/modules/banner/hooks/userHome";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 import ResultView from "@/src/modules/diagnostics/components/ResultView";
 import StepOne from "@/src/modules/diagnostics/components/StepOne";
 import {

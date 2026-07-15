@@ -1,8 +1,8 @@
 import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
+import { SymbolView } from "expo-symbols";
 import React from "react";
 import {
   Image,
@@ -52,17 +52,9 @@ const HomeHeader: React.FC = () => {
           style={{ position: "relative" }}
         >
           {Platform.OS === "ios" ? (
-            <SymbolView
-              name="bell.fill"
-              size={26}
-              tintColor={colors.primary}
-            />
+            <SymbolView name="bell.fill" size={26} tintColor={colors.primary} />
           ) : (
-            <Ionicons
-              name="notifications"
-              size={26}
-              color={colors.primary}
-            />
+            <Ionicons name="notifications" size={26} color={colors.primary} />
           )}
           {unreadCount > 0 && (
             <View

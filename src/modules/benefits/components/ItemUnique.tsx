@@ -61,7 +61,7 @@ export default function ItemUnique({
               : `Usado${data.used > 1 ? "s" : ""}: ${data.used}`
           }
           icon={"circle"}
-          variant={"default"}
+          variant={data.remaining > 0 ? "success" : "default"}
           style={styles.estadoBadge}
         />
       </View>
@@ -95,64 +95,60 @@ export default function ItemUnique({
       </View>
 
       <View style={styles.bottomSection}>
-        <View style={styles.actionsColumn}>
-          <View style={styles.ctaWrap}>
-            <PrimaryButton
-              title="Ver"
-              style={styles.fullWidthBtn}
-              variant="secondary"
-              onPress={onPressViewDetails}
-              icon={
-                <MaterialIcons
-                  name="visibility"
-                  size={16}
-                  color={colors.cardText}
-                />
-              }
-            />
+        <View style={styles.ctaRow}>
+          <PrimaryButton
+            title="Ver"
+            style={styles.verBtn}
+            variant="secondary"
+            onPress={onPressViewDetails}
+            icon={
+              <MaterialIcons
+                name="visibility"
+                size={16}
+                color={colors.cardText}
+              />
+            }
+          />
 
-            <View style={{ height: 10 }} />
-
-            <PrimaryButton
-              title={isActive ? "Cancelar" : "Aplicar"}
-              textStyle={styles.applyText}
-              onPress={() =>
-                onPressRedeem?.(data, isActive ? "cancelar" : "aplicar")
-              }
-              disabled={isAnyBenefitActive && !isThisBenefitActive}
-              loading={isPendingRedeem && isThisBenefitActive}
-              style={styles.fullWidthBtn}
-              icon={
-                <MaterialIcons
-                  name={isActive ? "cancel" : "check-circle"}
-                  size={16}
-                  color={colors.cardText}
-                />
-              }
-            />
-          </View>
-
-          {isActive && benefitRedemed?.estado && (
-            <Badge
-              text={
-                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                  ? BENEFIT_STATUS_LABELS.EN_ESPERA
-                  : BENEFIT_STATUS_LABELS.CANJEADO
-              }
-              icon={
-                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                  ? "hourglass-empty"
-                  : "check-circle"
-              }
-              variant={
-                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                  ? "warning"
-                  : "success"
-              }
-              style={styles.pendingBadge}
-            />
-          )}
+          <PrimaryButton
+            title={isActive ? "Cancelar" : "Aplicar"}
+            textStyle={styles.applyText}
+            onPress={() =>
+              onPressRedeem?.(data, isActive ? "cancelar" : "aplicar")
+            }
+            disabled={isAnyBenefitActive && !isThisBenefitActive}
+            loading={isPendingRedeem && isThisBenefitActive}
+            style={styles.aplicarBtn}
+            icon={
+              <MaterialIcons
+                name={isActive ? "cancel" : "check-circle"}
+                size={16}
+                color={colors.cardText}
+              />
+            }
+          />
         </View>
+
+        {isActive && benefitRedemed?.estado && (
+          <Badge
+            text={
+              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                ? BENEFIT_STATUS_LABELS.EN_ESPERA
+                : BENEFIT_STATUS_LABELS.CANJEADO
+            }
+            icon={
+              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                ? "hourglass-empty"
+                : "check-circle"
+            }
+            variant={
+              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                ? "warning"
+                : "success"
+            }
+            style={styles.pendingBadge}
+          />
+        )}
       </View>
     </Card>
   );
@@ -198,19 +194,22 @@ const styles = StyleSheet.create({
   },
 
   bottomSection: {
-    flexDirection: "row",
+    flexDirection: "column",
     width: "100%",
   },
-  actionsColumn: {
+  // Antes era una columna con los botones apilados full-width.
+  // En Android sobre todo, dos CTAs lado a lado se leen más nativas
+  // que dos botones full-width uno encima del otro.
+  ctaRow: {
+    flexDirection: "row",
+    gap: 10,
+    width: "100%",
+  },
+  verBtn: {
     flex: 1,
   },
-  ctaWrap: {
-    flexDirection: "column",
-    alignItems: "stretch",
-    width: "100%",
-  },
-  fullWidthBtn: {
-    width: "100%",
+  aplicarBtn: {
+    flex: 1.4,
   },
   applyText: {
     color: Colors.cardText,

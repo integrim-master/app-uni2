@@ -85,7 +85,7 @@ export function ProfileScreen() {
             title="Cerrar sesión"
             variant="secondary"
             onPress={() => setShowLogoutConfirm(true)}
-            size="lg"
+            size="sm"
           />
         </View>
       </ScrollView>

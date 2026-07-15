@@ -36,6 +36,12 @@ export default function BeneficiosScreen({
     membership?.benefit_redeem,
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setBenefitsRedemed(membership?.benefit_redeem);
+    }, [membership]),
+  );
+
   if (error) {
     return (
       <ErrorScreen
@@ -46,12 +52,6 @@ export default function BeneficiosScreen({
       />
     );
   }
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setBenefitsRedemed(membership?.benefit_redeem);
-    }, [membership]),
-  );
 
   const benefits = membership?.benefits;
   const benefitsUsed = membership?.benefits_used || [];

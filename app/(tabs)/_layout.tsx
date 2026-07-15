@@ -3,7 +3,7 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { Redirect } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 
 export default function TabsLayout() {
   const { token, loading } = useAuth();
@@ -30,8 +30,10 @@ export default function TabsLayout() {
 
   return (
     <NativeTabs
-      tintColor={colors.primary}
-      backgroundColor={colors.card}
+      labelVisibilityMode="labeled"
+      tintColor={Platform.OS === "ios" ? colors.primary : colors.primaryDark}
+      backgroundColor={Platform.OS === "ios" ? colors.card : colors.card}
+      indicatorColor={colors.primaryLight}
     >
       <NativeTabs.Trigger name="home">
         <NativeTabs.Trigger.Label>Inicio</NativeTabs.Trigger.Label>

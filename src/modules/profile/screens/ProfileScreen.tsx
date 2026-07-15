@@ -3,9 +3,17 @@ import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
+import { Alert, Button, Text as ExpoText, Host } from "@expo/ui/swift-ui";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Linking,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { Screen } from "../../../components/shared/Screen";
 import { useTheme } from "../../../context/ThemeContext";
 import { ProfileHeader } from "../components/ProfileHeader";
@@ -21,25 +29,7 @@ export function ProfileScreen() {
 
   const userName = user?.nombre || "Usuario";
 
-  // const generalItems = [
-  //   {
-  //     icon: "home-outline",
-  //     label: "Inicio",
-  //     onPress: () => router.push("/home"),
-  //   },
-  //   // {
-  //   //   icon: "star-outline",
-  //   //   label: "Favoritos",
-  //   //   onPress: () => router.push("profile/favorites"),
-  //   // },
-  // ];
-
   const supportItems = [
-    // {
-    //   icon: "help-circle-outline",
-    //   label: "Obtener ayuda",
-    //   onPress: () => router.push("profile/support"),
-    // },
     {
       icon: "chatbubble-outline",
       label: "Contactar asesor",
@@ -52,6 +42,11 @@ export function ProfileScreen() {
     },
   ];
 
+  const handleLogout = async () => {
+    setShowLogoutConfirm(false);
+    await logout();
+  };
+
   return (
     <Screen safeArea={true}>
       <ScrollView
@@ -59,7 +54,7 @@ export function ProfileScreen() {
         contentContainerStyle={{ height: "100%" }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.safeArea} className="h-full justify-between py-4  ">
+        <View style={styles.safeArea} className="h-full justify-between py-4">
           <View>
             <ProfileHeader
               userName={userName}
@@ -81,28 +76,54 @@ export function ProfileScreen() {
             ))}
           </View>
 
-          <PrimaryButton
-            title="Cerrar sesión"
-            variant="secondary"
-            onPress={() => setShowLogoutConfirm(true)}
-            size="sm"
-          />
+          {Platform.OS === "ios" ? (
+            <Host matchContents style={styles.logoutHost}>
+              <Alert
+                title="Cerrar sesión"
+                isPresented={showLogoutConfirm}
+                onIsPresentedChange={setShowLogoutConfirm}
+              >
+                <Alert.Trigger>
+                  <PrimaryButton
+                    title="Cerrar sesión"
+                    variant="danger"
+                    onPress={() => setShowLogoutConfirm(true)}
+                  />
+                </Alert.Trigger>
+                <Alert.Message>
+                  <ExpoText>¿Estás seguro que deseas cerrar sesión?</ExpoText>
+                </Alert.Message>
+                <Alert.Actions>
+                  <Button
+                    label="Sí, cerrar sesión"
+                    role="destructive"
+                    onPress={handleLogout}
+                  />
+                  <Button label="Cancelar" role="cancel" />
+                </Alert.Actions>
+              </Alert>
+            </Host>
+          ) : (
+            <PrimaryButton
+              title="Cerrar sesión"
+              onPress={() => setShowLogoutConfirm(true)}
+            />
+          )}
         </View>
       </ScrollView>
 
-      <ConfirmActionModal
-        visible={showLogoutConfirm}
-        title="Cerrar sesión"
-        description="¿Estás seguro que deseas cerrar sesión?"
-        confirmText="Sí, cerrar sesión"
-        cancelText="Cancelar"
-        variant="danger"
-        onCancel={() => setShowLogoutConfirm(false)}
-        onConfirm={async () => {
-          setShowLogoutConfirm(false);
-          await logout();
-        }}
-      />
+      {Platform.OS !== "ios" && (
+        <ConfirmActionModal
+          visible={showLogoutConfirm}
+          title="Cerrar sesión"
+          description="¿Estás seguro que deseas cerrar sesión?"
+          confirmText="Cerrar sesión"
+          cancelText="Cancelar"
+          variant="danger"
+          onCancel={() => setShowLogoutConfirm(false)}
+          onConfirm={handleLogout}
+        />
+      )}
 
       <ConfirmActionModal
         visible={showDataModal}
@@ -160,11 +181,18 @@ const styles = StyleSheet.create({
   safeArea: {
     paddingHorizontal: 20,
   },
-  logoutButton: {
+  logoutHost: {
+    alignSelf: "stretch",
+  },
+  androidLogoutBtn: {
+    height: 52,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     justifyContent: "center",
-    padding: 16,
-    borderRadius: 14,
-    marginBottom: 100,
+  },
+  androidLogoutLabel: {
+    fontSize: 16,
+    fontWeight: "700",
   },
 });

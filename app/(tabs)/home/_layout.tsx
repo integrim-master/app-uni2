@@ -1,8 +1,8 @@
 import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { SymbolView } from "expo-symbols";
 import { Stack, useRouter } from "expo-router";
+import { SymbolView } from "expo-symbols";
 import React from "react";
 import { Image, Platform, Pressable, Text, View } from "react-native";
 

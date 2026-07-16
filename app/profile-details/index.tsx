@@ -21,7 +21,6 @@ export default function ProfileDetailScreen() {
       safeArea={true}
       leftButton={<BackButton iconName="close-outline" />}
     >
-      s
       <ScrollView>
         {isInfoPending ? (
           <ProfileSkeleton />

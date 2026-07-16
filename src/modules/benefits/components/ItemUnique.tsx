@@ -55,6 +55,7 @@ export default function ItemUnique({
         </View>
 
         <Badge
+        sharp
           text={
             data.remaining > 0
               ? `Restantes: ${data.remaining ?? 0}`
@@ -73,7 +74,6 @@ export default function ItemUnique({
             icon="attach-money"
             variant="neutral"
             size="small"
-            sharp={false}
           />
 
           <Badge
@@ -81,7 +81,6 @@ export default function ItemUnique({
             icon="schedule"
             variant="default"
             size="small"
-            sharp={false}
           />
         </View>
       ) : null}

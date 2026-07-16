@@ -1,7 +1,7 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Stack } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
 
 export default function BlogLayout() {
   const { colors } = useTheme();
@@ -9,17 +9,11 @@ export default function BlogLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         headerTitleAlign: "center",
         headerTintColor: colors.primary,
         headerShadowVisible: false,
-        headerBlurEffect: "systemChromeMaterial",
-        headerTransparent: Platform.OS === "ios",
         headerBackButtonDisplayMode: "minimal",
-        headerStyle: {
-          backgroundColor:
-            Platform.OS === "android" ? colors.background : undefined,
-        },
       }}
     >
       <Stack.Screen
@@ -31,7 +25,14 @@ export default function BlogLayout() {
       <Stack.Screen
         name="[details]/index"
         options={{
-          title: "Artículo",
+          headerShown: true,
+          title: "",
+          headerTransparent: true,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
+          headerLeft: () => <BackButton  />,
         }}
       />
     </Stack>

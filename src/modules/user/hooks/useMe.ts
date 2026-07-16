@@ -1,19 +1,15 @@
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import { AuthService } from "@/src/modules/login/services/auth.service";
-import { useQuery } from "@tanstack/react-query";
 import {
   FULL_PROFILE_KEY,
   MeApiResponse,
   PROFILE_STALE_TIME,
 } from "../types/me.types";
 
-/** Query completa de full-profile (requiere token). */
 export const useMe = () => {
-  const { token } = useAuth();
-  return useQuery<MeApiResponse>({
+  return useAuthQuery<MeApiResponse>({
     queryKey: FULL_PROFILE_KEY,
     queryFn: AuthService.getMeUser,
-    enabled: !!token,
     staleTime: PROFILE_STALE_TIME,
   });
 };

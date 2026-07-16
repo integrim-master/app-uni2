@@ -1,13 +1,21 @@
-import { setMemoryToken, setOnUnauthorized } from "@/src/api/base";
-import { AuthService } from "@/src/modules/login/services/auth.service";
+import {
+  setMemoryToken,
+  setOnUnauthorized,
+  setSessionRestoring,
+} from "@/src/api/base";
 import {
   AuthContextType,
   AuthProviderProps,
 } from "@/src/modules/auth/types/auth.types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { isUnauthorizedError } from "@/src/modules/auth/utils/apiError";
+import {
+  getStoredToken,
+  removeStoredToken,
+  saveStoredToken,
+} from "@/src/modules/auth/utils/tokenStorage";
+import { AuthService } from "@/src/modules/login/services/auth.service";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import React, {
   createContext,
   useCallback,
@@ -29,9 +37,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setToken(null);
     setMemoryToken(null);
     queryClient.clear();
-    await SecureStore.deleteItemAsync("TOKEN");
-    await AsyncStorage.clear();
+    await removeStoredToken();
   }, [queryClient]);
+
+  useEffect(() => {
+    setMemoryToken(token);
+  }, [token]);
 
   useEffect(() => {
     setOnUnauthorized(() => {
@@ -40,37 +51,42 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => setOnUnauthorized(null);
   }, [clearSession]);
 
-  useEffect(() => {
-    restoreSession();
-  }, []);
+  const restoreSession = useCallback(async () => {
+    setSessionRestoring(true);
 
-  const restoreSession = async () => {
     try {
-      const saved = await SecureStore.getItemAsync("TOKEN");
-      if (!saved) return;
+      const stored = await getStoredToken();
+      if (!stored) return;
 
-      const parsed = JSON.parse(saved);
-      setMemoryToken(parsed.token);
+      setMemoryToken(stored);
 
-      await AuthService.getMeUser();
-      setToken(parsed.token);
-    } catch (error) {
-      console.error("Error restoring session:", error);
-      await clearSession();
+      try {
+        await AuthService.getMeUser();
+      } catch (error) {
+        setMemoryToken(null);
+
+        if (isUnauthorizedError(error)) {
+          await removeStoredToken();
+          return;
+        }
+      }
+
+      setToken(stored);
     } finally {
+      setSessionRestoring(false);
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void restoreSession();
+  }, [restoreSession]);
 
   const login = async (tokenValue: string) => {
     showLoading("Iniciando sesión...");
     try {
+      await saveStoredToken(tokenValue);
       setToken(tokenValue);
-      setMemoryToken(tokenValue);
-      await SecureStore.setItemAsync(
-        "TOKEN",
-        JSON.stringify({ token: tokenValue }),
-      );
     } finally {
       hideLoading();
     }
@@ -87,8 +103,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const value: AuthContextType = {
-    token: token || undefined,
+    token: token ?? undefined,
     loading,
+    isAuthenticated: !!token && !loading,
     login,
     logout,
   };

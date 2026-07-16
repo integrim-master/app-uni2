@@ -24,7 +24,6 @@ interface BadgeProps {
   size?: BadgeSize;
   icon?: IconName;
   fullWidth?: boolean;
-  sharp?: boolean;
   showIcon?: boolean;
   layout?: BadgeLayout;
   style?: ViewStyle;
@@ -36,7 +35,6 @@ export default function Badge({
   size = "medium",
   icon,
   fullWidth = false,
-  sharp = false,
   layout = "horizontal",
   showIcon = true,
   style,
@@ -87,7 +85,6 @@ export default function Badge({
           fontSize: 10,
           iconSize: 12,
           gap: 4,
-          borderRadius: sharp ? 4 : 6,
         };
       case "large":
         return {
@@ -96,7 +93,6 @@ export default function Badge({
           fontSize: 13,
           iconSize: 16,
           gap: 8,
-          borderRadius: sharp ? 8 : 12,
         };
       default:
         return {
@@ -105,7 +101,6 @@ export default function Badge({
           fontSize: 11,
           iconSize: 14,
           gap: 6,
-          borderRadius: sharp ? 6 : 9,
         };
     }
   };
@@ -141,7 +136,6 @@ export default function Badge({
         {
           backgroundColor: variantColors.background,
           borderColor: variantColors.border,
-          borderRadius: sizeStyles.borderRadius,
           paddingHorizontal: sizeStyles.paddingHorizontal,
           paddingVertical: sizeStyles.paddingVertical,
           alignSelf: fullWidth ? "stretch" : "flex-start",
@@ -177,6 +171,7 @@ export default function Badge({
 const styles = StyleSheet.create({
   badge: {
     borderWidth: 0.8,
+    borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
   },

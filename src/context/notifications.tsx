@@ -53,6 +53,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   
   const { data: notifications = [], refetch, isFetching } = useNotificationsApi();
   const { mutate: markAsReadApi } = useMarkerReadNotifications();
+  console.log("notifications", notifications);
 
   const queryKey = ["notifications"]; 
 
@@ -100,6 +101,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const unreadCount = notifications.filter((n: any) => !n.read_at).length;
+ 
 
   return (
     <NotificationsContext.Provider

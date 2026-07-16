@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.55)",
   },
-  card: {
   sheet: {
     borderRadius: 28,
     borderWidth: StyleSheet.hairlineWidth,

@@ -86,7 +86,7 @@ export function ProfileScreen() {
                 <Alert.Trigger>
                   <PrimaryButton
                     title="Cerrar sesión"
-                    variant="danger"
+                    variant="warning"
                     onPress={() => setShowLogoutConfirm(true)}
                   />
                 </Alert.Trigger>
@@ -119,7 +119,7 @@ export function ProfileScreen() {
           description="¿Estás seguro que deseas cerrar sesión?"
           confirmText="Cerrar sesión"
           cancelText="Cancelar"
-          variant="danger"
+          variant="warning"
           onCancel={() => setShowLogoutConfirm(false)}
           onConfirm={handleLogout}
         />

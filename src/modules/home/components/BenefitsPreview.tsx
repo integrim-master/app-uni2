@@ -1,4 +1,3 @@
-import { Card } from "@/src/components/shared/card";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
@@ -45,17 +44,8 @@ export default function BenefitsPreview({
       transition={{ type: "timing", duration: 600 }}
       className="w-full mt-10 mb-4 rounded-2xl overflow-hidden"
     >
-      <Card
-        pressable={false}
-        style={{
-          padding: 16,
-          gap: 10,
-          borderColor: colors.border,
-          borderWidth: 0.8,
-          flexDirection: "column",
-        }}
-      >
-        <View className="flex-row w-full items-center justify-between">
+      
+        {/* <View className="flex-row w-full items-center justify-between">
           <ThemedText
             type="subtitle"
             color={colors.textStrong}
@@ -66,7 +56,7 @@ export default function BenefitsPreview({
           <ThemedText type="caption" color={colors.textSecondary}>
             {totalRemaining} disponibles
           </ThemedText>
-        </View>
+        </View> */}
 
         {isEmpty ? (
           <View
@@ -88,9 +78,8 @@ export default function BenefitsPreview({
                 key={String(b.id)}
                 className="rounded-xl p-3"
                 style={{
-                  backgroundColor: colors.backgroundSecondary,
-                  borderWidth: 1,
-                  borderColor: "rgba(226, 177, 85, 0.18)",
+                  backgroundColor: colors.backgroundSurface,
+                 
                 }}
               >
                 <ThemedText
@@ -115,7 +104,7 @@ export default function BenefitsPreview({
           size="sm"
           style={{ marginTop: 6 }}
         />
-      </Card>
+     
     </MotiView>
   );
 }

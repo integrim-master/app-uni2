@@ -53,7 +53,6 @@ export default function HomeLayout() {
       screenOptions={{
         headerShown: true,
         headerShadowVisible: false,
-        headerBlurEffect: "systemChromeMaterialDark",
         headerTransparent: Platform.OS === "ios",
         headerBackButtonDisplayMode: "minimal",
         headerTintColor: colors.primary,
@@ -67,6 +66,7 @@ export default function HomeLayout() {
         name="index"
         options={{
           title: "",
+          headerTransparent: true,
           headerLeft: () => (
             <Image
               source={require("../../../assets/images/logo-careme-white.png")}

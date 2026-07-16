@@ -1,11 +1,11 @@
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useUser } from "@/src/modules/user/hooks/useUser";
 import { useBenefit } from "@/src/modules/benefits/hooks/useBenefits";
 import { useRedemed } from "@/src/modules/benefits/hooks/useRedem";
 import BenefitScreen from "@/src/modules/benefits/screens/BenefitsDetailsScreen";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useUser } from "@/src/modules/user/hooks/useUser";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 
@@ -45,13 +45,8 @@ export default function Index() {
 
   return (
     <Screen>
-      <Stack.Screen
-        options={{
-          title: benefit?.title ?? "Beneficio",
-          headerShadowVisible: false,
-          headerBackVisible: true,
-        }}
-      />
+    
+     
 
       {isError ? (
         <View className="flex-1 justify-center items-center px-6">

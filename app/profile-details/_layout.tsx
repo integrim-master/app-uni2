@@ -10,7 +10,6 @@ export default function ProfileDetailsLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        presentation: Platform.OS === "ios" ? "modal" : undefined,
         headerBlurEffect: "systemChromeMaterial",
         headerTransparent: Platform.OS === "ios",
         headerShadowVisible: false,
@@ -27,13 +26,14 @@ export default function ProfileDetailsLayout() {
         options={{
           headerShown: false,
           headerTitle: "",
-          presentation: Platform.OS === "ios" ? "pageSheet" : undefined,
+          
         }}
       />
       <Stack.Screen
         name="edit/[slug]/index"
         options={{
           headerShown: false,
+        
         }}
       />
     </Stack>

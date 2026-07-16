@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import { BenefitService } from "../services/benefits.service";
 import { BenefitApiResponse } from "../types/benefits.types";
 
 export const useBenefit = (uid?: string) => {
-  return useQuery<BenefitApiResponse, { status: number; message: string }>({
+  return useAuthQuery<BenefitApiResponse, { status: number; message: string }>({
     queryKey: ["benefit", uid],
     queryFn: () => BenefitService.getDetailsByBenefit({ uid: uid! }),
     enabled: !!uid,

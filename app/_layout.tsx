@@ -118,12 +118,12 @@ export default function RootLayout() {
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: BG_COLOR }}>
         <QueryClientProvider client={queryClient}>
-          <NotificationsProvider>
-            <NotificationListener />
-            <BottomSheetModalProvider>
-              <ThemeProvider>
-                <LoadingProvider>
-                  <AuthProvider>
+          <BottomSheetModalProvider>
+            <ThemeProvider>
+              <LoadingProvider>
+                <AuthProvider>
+                  <NotificationsProvider>
+                    <NotificationListener />
                     <PromotionGuard>
                       <Stack
                         screenOptions={{
@@ -136,11 +136,11 @@ export default function RootLayout() {
                         <Stack.Screen name="profile-details" />
                       </Stack>
                     </PromotionGuard>
-                  </AuthProvider>
-                </LoadingProvider>
-              </ThemeProvider>
-            </BottomSheetModalProvider>
-          </NotificationsProvider>
+                  </NotificationsProvider>
+                </AuthProvider>
+              </LoadingProvider>
+            </ThemeProvider>
+          </BottomSheetModalProvider>
         </QueryClientProvider>
 
         <Toast config={toastConfig} />

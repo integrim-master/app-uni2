@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import { MeService } from "../services/profile.service";
 import { UserProfile } from "../types/profile.types";
 
 export const useInfoProfile = () => {
-  return useQuery<UserProfile>({
+  return useAuthQuery<UserProfile>({
     queryKey: ["profile-info"],
     queryFn: () => MeService.getProfile(),
     staleTime: Infinity,

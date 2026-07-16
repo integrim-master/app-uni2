@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import { DatesService } from "../services/dates.service";
 import { CitasApiResponse } from "../types/date.api.types";
 
 export const useDates = () => {
-  return useQuery<CitasApiResponse>({
+  return useAuthQuery<CitasApiResponse>({
     queryKey: ["dates"],
     queryFn: () => DatesService.getDates(),
     staleTime: Infinity,

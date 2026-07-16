@@ -1,4 +1,3 @@
-import { BackButton } from "@/src/components/shared/BackButton";
 import Badge from "@/src/components/shared/Badge";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
@@ -26,7 +25,7 @@ export default function BlogDetail() {
   const { colors } = useTheme();
 
   return (
-    <Screen safeArea={true} leftButton={<BackButton iconName="chevron-back" />}>
+    <Screen>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{

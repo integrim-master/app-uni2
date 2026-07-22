@@ -27,7 +27,7 @@ const HomeHeader: React.FC = () => {
   return (
     <View
       style={{
-        backgroundColor: colors.backgroundHeader,
+        backgroundColor: colors.background,
         paddingTop: topPadding,
         paddingBottom: 8,
       }}
@@ -38,14 +38,21 @@ const HomeHeader: React.FC = () => {
           alignItems: "center",
           justifyContent: "space-between",
           width: "100%",
-          paddingHorizontal: 16,
-          height: 48,
+          paddingHorizontal: 10,
+          height: 45,
         }}
       >
-        <Image
-          source={require("../../../../assets/images/logo-careme-white.png")}
-          style={{ width: 120, height: 40, resizeMode: "contain" }}
-        />
+        <View
+          style={{
+            borderRadius: 900,
+          }}
+        >
+          <Image
+            source={require("../../../../assets/images/icon-careme.png")}
+            style={{ width: 40, height: 40, resizeMode: "contain" }}
+          />
+        </View>
+
         <Pressable
           onPress={() => router.push("/notifications")}
           style={{ position: "relative" }}

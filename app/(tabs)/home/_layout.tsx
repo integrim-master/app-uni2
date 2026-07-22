@@ -8,24 +8,12 @@ export default function HomeLayout() {
   const { colors } = useTheme();
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: true,
-        headerShadowVisible: false,
-        headerBlurEffect: "regular",
-        headerTransparent: Platform.OS === "ios",
-        headerBackButtonDisplayMode: "minimal",
-        headerTintColor: colors.primary,
-        headerStyle: {
-          backgroundColor:
-            Platform.OS === "android" ? colors.background : undefined,
-        },
-      }}
-    >
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="index"
         options={{
           title: "",
+          headerShown: true,
           header: () => <HomeHeader />,
         }}
       />

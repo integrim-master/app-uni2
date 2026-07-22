@@ -1,5 +1,4 @@
 import { ui } from "@/src/themes/ui";
-import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,13 +29,11 @@ export function Screen({
   );
 
   return (
-    <LinearGradient
-      colors={colors.gradientBackground}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+    <View
       style={[
         styles.container,
         { paddingHorizontal: fullWidth ? 0 : ui.spacing.xl },
+        { backgroundColor: colors.background },
       ]}
     >
       {safeArea ? (
@@ -44,7 +41,7 @@ export function Screen({
       ) : (
         Content
       )}
-    </LinearGradient>
+    </View>
   );
 }
 

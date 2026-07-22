@@ -34,7 +34,7 @@ export default function BenefitsLayout() {
           headerTransparent: true,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: "transparent",
+            backgroundColor: colors.background,
           },
           headerLeft: () => <BackButton />,
         }}

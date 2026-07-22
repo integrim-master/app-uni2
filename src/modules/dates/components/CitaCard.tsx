@@ -1,6 +1,6 @@
 import Badge from "@/src/components/shared/Badge";
 import ThemedText from "@/src/components/shared/themed-text";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Card } from "../../../components/shared/card";
@@ -48,7 +48,7 @@ export default function CitaCard({
         <Badge
           text={cita.categoria}
           variant={cita.categoria === "Estetico" ? "white" : "warning"}
-          size="small"
+          size="xs"
           showIcon={false}
           style={styles.badge}
         />
@@ -77,21 +77,20 @@ export default function CitaCard({
             </ThemedText>
           </View>
 
-          <View
-            style={[styles.pill, { backgroundColor: colors.primary + "15" }]}
-          >
-            <Ionicons name="time" size={14} color={colors.primary} />
-            <ThemedText type="semiBold" color={colors.primary}>
-              {cita.hora_cita}
-            </ThemedText>
-          </View>
+          <Badge
+            icon="timer"
+            text={cita.hora_cita}
+            variant="info"
+            size="xs"
+            showIcon={false}
+          />
         </View>
 
-        <MaterialIcons
+        {/* <MaterialIcons
           name="chevron-right"
           size={20}
           color={colors.textMuted}
-        />
+        /> */}
       </View>
     </Card>
   );
@@ -141,18 +140,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
   },
   infoPills: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
   },
   pill: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
     borderRadius: 12,
     gap: 6,
   },

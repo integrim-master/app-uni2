@@ -25,7 +25,7 @@ export default function BlogDetail() {
   const { colors } = useTheme();
 
   return (
-    <Screen>
+    <Screen fullWidth>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{

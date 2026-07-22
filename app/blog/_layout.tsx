@@ -19,7 +19,14 @@ export default function BlogLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerShown: false,
+          headerShown: true,
+          title: "",
+
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
+          headerLeft: () => <BackButton />,
         }}
       />
       <Stack.Screen
@@ -32,7 +39,7 @@ export default function BlogLayout() {
           headerStyle: {
             backgroundColor: "transparent",
           },
-          headerLeft: () => <BackButton  />,
+          headerLeft: () => <BackButton />,
         }}
       />
     </Stack>

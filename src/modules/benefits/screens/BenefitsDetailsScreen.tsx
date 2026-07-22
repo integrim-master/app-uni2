@@ -30,8 +30,8 @@ export default function BenefitsDetailsScreen({
   const { colors } = useTheme();
 
   return (
-    <Screen style={{ backgroundColor: colors.background }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <Screen fullWidth={true}>
+      <ScrollView showsVerticalScrollIndicator={false} className="">
         <View style={styles.heroWrap}>
           <Image
             source={{
@@ -72,7 +72,7 @@ export default function BenefitsDetailsScreen({
           <Badge
             text="BENEFICIO PREMIUM"
             variant="premium"
-            size="medium"
+            size="small"
             icon="star"
             style={{ marginBottom: 24 }}
           />
@@ -97,13 +97,13 @@ export default function BenefitsDetailsScreen({
               text="Diciembre"
               variant="info"
               icon="schedule"
-              size="medium"
+              size="small"
             />
             <Badge
               text="Disponible"
               variant="success"
               icon="check-circle"
-              size="medium"
+              size="small"
             />
           </View>
           {/* <PrimaryButton

@@ -134,99 +134,87 @@ export default function BeneficiosScreen({
   }
 
   return (
-    <Screen safeArea>
-      <View style={styles.container}>
-        <View style={{ paddingHorizontal: 16, paddingVertical: 10 }}>
-          <TabBar
-            options={[
-              { key: "disponibles", label: "Disponibles" },
-              { key: "canjeados", label: "Canjeados" },
-            ]}
-            activeTab={activeTab}
-            setActiveTab={(tab: string) =>
-              setActiveTab(tab as "disponibles" | "canjeados")
-            }
-          />
-        </View>
+    <Screen>
+      <View style={{ paddingVertical: 10 }}>
+        <TabBar
+          options={[
+            { key: "disponibles", label: "Disponibles" },
+            { key: "canjeados", label: "Canjeados" },
+          ]}
+          activeTab={activeTab}
+          setActiveTab={(tab: string) =>
+            setActiveTab(tab as "disponibles" | "canjeados")
+          }
+        />
+      </View>
 
-        <View style={{ flex: 1, position: "relative" }}>
-          <AnimatePresence exitBeforeEnter>
-            {activeTab === "disponibles" && (
-              <BenefitsList
-                benefits={benefits}
-                benefitsUsed={benefitsUsed}
-                benefitsRedemed={benefitsRedemed}
-                loading={loading}
-                activeBenefitId={activeBenefitId}
-                isPendingRedeem={isPending}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                onBenefitRedemed={handleApplyBenefit}
-                onBenefitViewDetails={handleBenefitPress}
-                emptyMessage="No cuentas con beneficios disponibles"
-                filterUsed="available"
-                animationKey="disponibles"
-              />
-            )}
+      <View style={{ flex: 1, position: "relative" }}>
+        <AnimatePresence exitBeforeEnter>
+          {activeTab === "disponibles" && (
+            <BenefitsList
+              benefits={benefits}
+              benefitsUsed={benefitsUsed}
+              benefitsRedemed={benefitsRedemed}
+              loading={loading}
+              activeBenefitId={activeBenefitId}
+              isPendingRedeem={isPending}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              onBenefitRedemed={handleApplyBenefit}
+              onBenefitViewDetails={handleBenefitPress}
+              emptyMessage="No cuentas con beneficios disponibles"
+              filterUsed="available"
+              animationKey="disponibles"
+            />
+          )}
 
-            {activeTab === "canjeados" && (
-              <>
-                {!anyCanjeados ? (
-                  <View style={styles.emptyContainer}>
-                    <EmptySvg
-                      width={240}
-                      height={240}
-                      style={styles.emptyImage}
-                    />
-                    <ThemedText
-                      type="title"
-                      style={[
-                        styles.emptyTitle,
-                        { color: colors.primaryLight },
-                      ]}
-                    >
-                      No hay beneficios canjeados
-                    </ThemedText>
-
-                    <ThemedText
-                      style={[
-                        styles.emptyBody,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      Cuando canjees un beneficio, aparecerá aquí para que lo
-                      revises y lo uses.
-                    </ThemedText>
-                  </View>
-                ) : (
-                  <BenefitsList
-                    activeBenefitId={activeBenefitId}
-                    benefits={benefits}
-                    benefitsUsed={benefitsUsed}
-                    loading={loading}
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                    onBenefitRedemed={handleApplyBenefit}
-                    onBenefitViewDetails={handleBenefitPress}
-                    emptyMessage="No cuentas con beneficios canjeados"
-                    filterUsed="used"
-                    animationKey="canjeados-list"
+          {activeTab === "canjeados" && (
+            <>
+              {!anyCanjeados ? (
+                <View style={styles.emptyContainer}>
+                  <EmptySvg
+                    width={240}
+                    height={240}
+                    style={styles.emptyImage}
                   />
-                )}
-              </>
-            )}
-          </AnimatePresence>
-        </View>
+                  <ThemedText
+                    type="title"
+                    style={[styles.emptyTitle, { color: colors.primaryLight }]}
+                  >
+                    No hay beneficios canjeados
+                  </ThemedText>
+
+                  <ThemedText
+                    style={[styles.emptyBody, { color: colors.textSecondary }]}
+                  >
+                    Cuando canjees un beneficio, aparecerá aquí para que lo
+                    revises y lo uses.
+                  </ThemedText>
+                </View>
+              ) : (
+                <BenefitsList
+                  activeBenefitId={activeBenefitId}
+                  benefits={benefits}
+                  benefitsUsed={benefitsUsed}
+                  loading={loading}
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  onBenefitRedemed={handleApplyBenefit}
+                  onBenefitViewDetails={handleBenefitPress}
+                  emptyMessage="No cuentas con beneficios canjeados"
+                  filterUsed="used"
+                  animationKey="canjeados-list"
+                />
+              )}
+            </>
+          )}
+        </AnimatePresence>
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 10,
-  },
   headerContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,

@@ -1,4 +1,3 @@
-import { BackButton } from "@/src/components/shared/BackButton";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
@@ -17,21 +16,23 @@ export default function ProfileDetailScreen() {
   const { data: user, isPending: isInfoPending } = useInfoProfile();
   const { data: email } = useUser();
   return (
-    <Screen
-      safeArea={true}
-      leftButton={<BackButton iconName="close-outline" />}
-    >
-      <ScrollView>
+    <Screen fullWidth>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {isInfoPending ? (
           <ProfileSkeleton />
         ) : (
           <>
-            <View style={[styles.headerContainer]}>
+            <View
+              style={[
+                styles.headerContainer,
+                { backgroundColor: colors.primaryLight },
+              ]}
+            >
               <View
                 style={[
                   styles.avatarCircle,
                   {
-                    backgroundColor: colors.primaryLight,
+                    backgroundColor: colors.primary,
                   },
                 ]}
               >
@@ -141,7 +142,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     paddingBottom: 40,
     alignItems: "center",
-    borderBottomRightRadius: ui.radii.xl,
   },
 
   avatarCircle: {

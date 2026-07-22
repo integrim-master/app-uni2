@@ -43,12 +43,9 @@ export default function Index() {
     }
   };
 
-  return (
-    <Screen>
-    
-     
-
-      {isError ? (
+  if (isError) {
+    return (
+      <Screen>
         <View className="flex-1 justify-center items-center px-6">
           <ThemedText type="title" className="mb-4 text-center">
             Error al cargar el beneficio
@@ -57,15 +54,17 @@ export default function Index() {
             {error?.message || "Ha ocurrido un error inesperado"}
           </ThemedText>
         </View>
-      ) : (
-        <BenefitScreen
-          onRedeem={sendRedeem}
-          benefit={benefit as any}
-          isPending={isLoading}
-          isLoadingRedeem={isPending}
-          sucessRedeem={sucessRedeem}
-        />
-      )}
-    </Screen>
+      </Screen>
+    );
+  }
+
+  return (
+    <BenefitScreen
+      onRedeem={sendRedeem}
+      benefit={benefit as any}
+      isPending={isLoading}
+      isLoadingRedeem={isPending}
+      sucessRedeem={sucessRedeem}
+    />
   );
 }

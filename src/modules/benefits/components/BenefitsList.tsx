@@ -48,7 +48,7 @@ export default function BenefitsList({
                 text="Tienes un beneficio por confirmación"
                 fullWidth
                 variant="info"
-                size="medium"
+                size="small"
                 layout="horizontal"
               />
             </View>

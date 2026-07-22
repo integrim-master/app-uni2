@@ -15,6 +15,7 @@ interface CardProps {
   pressedOpacity?: number;
   pressable?: boolean;
   disablePressEffect?: boolean;
+  accessibilityLabel?: string;
 }
 
 export function Card({
@@ -28,6 +29,7 @@ export function Card({
   pressedOpacity = 0.9,
   pressable = true,
   disablePressEffect = false,
+  accessibilityLabel,
 }: CardProps) {
   const { colors } = useTheme();
 
@@ -56,13 +58,17 @@ export function Card({
 
   if (shouldUsePressable) {
     cardContent = (
-      <Pressable onPress={onPress} className={className}>
+      <Pressable
+        onPress={onPress}
+        className={className}
+        accessibilityLabel={accessibilityLabel}
+      >
         {({ pressed }) => <CardInner pressed={pressed} />}
       </Pressable>
     );
   } else {
     cardContent = (
-      <View className={className}>
+      <View className={className} accessibilityLabel={accessibilityLabel}>
         <CardInner />
       </View>
     );

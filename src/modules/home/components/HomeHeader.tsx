@@ -2,7 +2,6 @@ import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { SymbolView } from "expo-symbols";
 import React from "react";
 import {
   Image,
@@ -51,11 +50,11 @@ const HomeHeader: React.FC = () => {
           onPress={() => router.push("/notifications")}
           style={{ position: "relative" }}
         >
-          {Platform.OS === "ios" ? (
-            <SymbolView name="bell.fill" size={26} tintColor={colors.primary} />
-          ) : (
-            <Ionicons name="notifications" size={26} color={colors.primary} />
-          )}
+          <Ionicons
+            name="notifications-outline"
+            size={28}
+            color={colors.primary}
+          />
           {unreadCount > 0 && (
             <View
               style={{
@@ -64,17 +63,17 @@ const HomeHeader: React.FC = () => {
                 right: -4,
                 backgroundColor: "#FF3B30",
                 borderRadius: 10,
-                minWidth: 18,
-                height: 18,
+                minWidth: 20,
+                height: 20,
                 justifyContent: "center",
                 alignItems: "center",
-                paddingHorizontal: 3,
+                paddingHorizontal: 4,
               }}
             >
               <Text
                 style={{
                   color: "white",
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: "bold",
                 }}
               >

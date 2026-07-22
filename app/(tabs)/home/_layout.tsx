@@ -1,49 +1,8 @@
-import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Stack, useRouter } from "expo-router";
-import { SymbolView } from "expo-symbols";
+import HomeHeader from "@/src/modules/home/components/HomeHeader";
+import { Stack } from "expo-router";
 import React from "react";
-import { Image, Platform, Pressable, Text, View } from "react-native";
-
-function NotificationButton() {
-  const router = useRouter();
-  const { colors } = useTheme();
-  const { unreadCount } = useNotifications();
-
-  return (
-    <Pressable
-      onPress={() => router.push("/notifications")}
-      style={{ position: "relative", padding: 4 }}
-    >
-      {Platform.OS === "ios" ? (
-        <SymbolView name="bell.fill" size={24} tintColor={colors.primary} />
-      ) : (
-        <Ionicons name="notifications" size={24} color={colors.primary} />
-      )}
-      {unreadCount > 0 && (
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            backgroundColor: "#FF3B30",
-            borderRadius: 9,
-            minWidth: 18,
-            height: 18,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 3,
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 10, fontWeight: "bold" }}>
-            {unreadCount > 99 ? "99+" : unreadCount}
-          </Text>
-        </View>
-      )}
-    </Pressable>
-  );
-}
+import { Platform } from "react-native";
 
 export default function HomeLayout() {
   const { colors } = useTheme();
@@ -53,12 +12,13 @@ export default function HomeLayout() {
       screenOptions={{
         headerShown: true,
         headerShadowVisible: false,
+        headerBlurEffect: "regular",
         headerTransparent: Platform.OS === "ios",
         headerBackButtonDisplayMode: "minimal",
         headerTintColor: colors.primary,
         headerStyle: {
           backgroundColor:
-            Platform.OS === "android" ? colors.backgroundHeader : undefined,
+            Platform.OS === "android" ? colors.background : undefined,
         },
       }}
     >
@@ -66,14 +26,7 @@ export default function HomeLayout() {
         name="index"
         options={{
           title: "",
-          headerTransparent: true,
-          headerLeft: () => (
-            <Image
-              source={require("../../../assets/images/logo-careme-white.png")}
-              style={{ width: 110, height: 36, resizeMode: "contain" }}
-            />
-          ),
-          headerRight: () => <NotificationButton />,
+          header: () => <HomeHeader />,
         }}
       />
       <Stack.Screen

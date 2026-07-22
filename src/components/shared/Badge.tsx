@@ -14,7 +14,7 @@ type BadgeVariant =
   | "neutral"
   | "white";
 
-type BadgeSize = "small" | "medium" | "large";
+type BadgeSize = "xs" | "small" | "medium" | "large";
 type BadgeLayout = "horizontal" | "vertical";
 type IconName = keyof typeof MaterialIcons.glyphMap;
 
@@ -78,6 +78,14 @@ export default function Badge({
 
   const getSizeStyles = () => {
     switch (size) {
+      case "xs":
+        return {
+          paddingHorizontal: 6,
+          paddingVertical: 2,
+          fontSize: 9,
+          iconSize: 10,
+          gap: 3,
+        };
       case "small":
         return {
           paddingHorizontal: 8,
@@ -171,7 +179,7 @@ export default function Badge({
 const styles = StyleSheet.create({
   badge: {
     borderWidth: 0.8,
-    borderRadius: 999,
+    borderRadius: 9,
     alignItems: "center",
     justifyContent: "center",
   },

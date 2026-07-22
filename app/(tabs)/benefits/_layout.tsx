@@ -11,18 +11,23 @@ export default function BenefitsLayout() {
       screenOptions={{
         headerShown: false,
       }}
-       
     >
       <Stack.Screen
         name="index"
-        
         options={{
           title: "Beneficios",
-          headerShown: false,
+          headerTintColor: colors.textStrong,
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: colors.backgroundHeader,
+          },
         }}
       />
+
       <Stack.Screen
-        name="[id_benefits]/index"  
+        name="[id_benefits]/index"
         options={{
           headerShown: true,
           title: "",
@@ -31,9 +36,8 @@ export default function BenefitsLayout() {
           headerStyle: {
             backgroundColor: "transparent",
           },
-          headerLeft: () => <BackButton  />,
+          headerLeft: () => <BackButton />,
         }}
-
       />
     </Stack>
   );

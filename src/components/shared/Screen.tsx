@@ -1,3 +1,4 @@
+import { ui } from "@/src/themes/ui";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
@@ -9,10 +10,12 @@ interface ScreenProps {
   style?: StyleProp<ViewStyle>;
   safeArea?: boolean;
   leftButton?: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 export function Screen({
   children,
+  fullWidth = false,
   style,
   safeArea = false,
   leftButton,
@@ -31,7 +34,10 @@ export function Screen({
       colors={colors.gradientBackground}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container}
+      style={[
+        styles.container,
+        { paddingHorizontal: fullWidth ? 0 : ui.spacing.xl },
+      ]}
     >
       {safeArea ? (
         <SafeAreaView style={styles.container}>{Content}</SafeAreaView>
@@ -47,8 +53,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 1,
-    paddingTop: 10,
     zIndex: 1,
   },
   content: {

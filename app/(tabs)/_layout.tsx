@@ -32,9 +32,9 @@ export default function TabsLayout() {
   return (
     <NativeTabs
       labelVisibilityMode="labeled"
-      tintColor={Platform.OS === "ios" ? colors.primary : colors.primaryDark}
+      tintColor={Platform.OS === "ios" ? colors.primary : "white"}
       backgroundColor={Platform.OS === "ios" ? colors.card : colors.card}
-      indicatorColor={colors.primaryLight}
+      indicatorColor={colors.primary}
     >
       <NativeTabs.Trigger name="home">
         <NativeTabs.Trigger.Label>Inicio</NativeTabs.Trigger.Label>

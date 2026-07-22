@@ -71,16 +71,12 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
 
   if (isBlack) {
     gradient = colors.membershipBlack;
-    titleColor = colors.primary;
+    titleColor = colors.primaryLight;
     bodyColor = colors.membershipBlackText || "#FFF";
     glowColor = colors.textStrong ?? colors.primary;
     cardBg = colors.membershipBlackCard || colors.primaryLight;
   } else if (isSilver) {
-    gradient = colors.membershipSilver || [
-      "#E3E3E3",
-      "#BEBEBE",
-      "#A7A7A7",
-    ];
+    gradient = colors.membershipSilver || ["#E3E3E3", "#BEBEBE", "#A7A7A7"];
     titleColor = colors.membershipSilverText || "#A7A7A7";
     bodyColor = colors.membershipSilverText || "#A7A7A7";
     glowColor = titleColor;
@@ -185,9 +181,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.4,
         shadowRadius: 26,
         shadowOffset: { width: 0, height: 1 },
-      },
-      android: {
-        elevation: 28,
       },
     }),
   },

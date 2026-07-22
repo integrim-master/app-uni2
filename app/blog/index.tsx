@@ -1,4 +1,3 @@
-import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
@@ -93,7 +92,7 @@ export default function HybridBlogList() {
   };
 
   return (
-    <Screen safeArea={true} leftButton={<BackButton iconName="chevron-back" />}>
+    <Screen fullWidth>
       <FlatList
         data={blogPosts}
         keyExtractor={(item) => item.id.toString()}

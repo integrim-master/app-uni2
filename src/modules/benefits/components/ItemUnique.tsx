@@ -30,11 +30,7 @@ export default function ItemUnique({
   const borderColor = isActive ? colors.primary : colors.border;
 
   return (
-    <Card
-      borderColor={borderColor}
-      style={[styles.cardContainer]}
-      pressable={false}
-    >
+    <Card borderColor={borderColor} pressable={false}>
       <View style={styles.topSection}>
         <View style={styles.titleColumn}>
           <ThemedText
@@ -54,8 +50,7 @@ export default function ItemUnique({
           </ThemedText>
         </View>
 
-        <Badge
-        sharp
+        {/* <Badge
           text={
             data.remaining > 0
               ? `Restantes: ${data.remaining ?? 0}`
@@ -64,7 +59,7 @@ export default function ItemUnique({
           icon={"circle"}
           variant={data.remaining > 0 ? "success" : "default"}
           style={styles.estadoBadge}
-        />
+        /> */}
       </View>
 
       {data ? (
@@ -75,13 +70,26 @@ export default function ItemUnique({
             variant="neutral"
             size="small"
           />
-
-          <Badge
-            text="Diciembre"
-            icon="schedule"
-            variant="default"
-            size="small"
-          />
+          {isActive && benefitRedemed?.estado && (
+            <Badge
+              size="small"
+              text={
+                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                  ? BENEFIT_STATUS_LABELS.EN_ESPERA
+                  : BENEFIT_STATUS_LABELS.CANJEADO
+              }
+              icon={
+                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                  ? "hourglass-empty"
+                  : "check-circle"
+              }
+              variant={
+                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                  ? "warning"
+                  : "success"
+              }
+            />
+          )}
         </View>
       ) : null}
       <View style={styles.perforationWrap}>
@@ -97,14 +105,13 @@ export default function ItemUnique({
         <View style={styles.ctaRow}>
           <PrimaryButton
             title="Ver"
-            style={styles.verBtn}
             variant="secondary"
             onPress={onPressViewDetails}
             icon={
               <MaterialIcons
                 name="visibility"
                 size={16}
-                color={colors.cardText}
+                color={colors.primaryLight}
               />
             }
           />
@@ -128,7 +135,7 @@ export default function ItemUnique({
           />
         </View>
 
-        {isActive && benefitRedemed?.estado && (
+        {/* {isActive && benefitRedemed?.estado && (
           <Badge
             text={
               benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
@@ -147,19 +154,13 @@ export default function ItemUnique({
             }
             style={styles.pendingBadge}
           />
-        )}
+        )} */}
       </View>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    marginHorizontal: 16,
-    padding: ui.spacing.xl,
-    flexDirection: "column",
-  },
-
   topSection: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -196,11 +197,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
   },
-  // Antes era una columna con los botones apilados full-width.
-  // En Android sobre todo, dos CTAs lado a lado se leen más nativas
-  // que dos botones full-width uno encima del otro.
+
   ctaRow: {
-    flexDirection: "row",
+    flexDirection: "column",
     gap: 10,
     width: "100%",
   },
@@ -214,10 +213,5 @@ const styles = StyleSheet.create({
     color: Colors.cardText,
     fontSize: 14,
     fontWeight: "800",
-  },
-
-  pendingBadge: {
-    marginTop: ui.spacing.md,
-    alignSelf: "center",
   },
 });

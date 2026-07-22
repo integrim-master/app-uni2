@@ -37,18 +37,12 @@ const HomeScreen: React.FC<Props> = ({
   const headerHeight = useHeaderHeight();
 
   if (isError) {
-    return (
-      <ErrorScreen message={error?.message} onRetry={onRefresh} />
-    );
+    return <ErrorScreen message={error?.message} onRetry={onRefresh} />;
   }
 
   return (
     <ScrollView
       style={styles.scroll}
-      contentContainerStyle={[
-        styles.content,
-        { paddingTop: headerHeight },
-      ]}
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -78,11 +72,6 @@ const HomeScreen: React.FC<Props> = ({
 const styles = StyleSheet.create({
   scroll: {
     flex: 1,
-    paddingHorizontal: 8,
-  },
-  content: {
-    paddingHorizontal: 8,
-    paddingBottom: 24,
   },
 
   errorContainer: {

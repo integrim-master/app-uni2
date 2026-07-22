@@ -3,6 +3,7 @@ import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { useTreatments } from "@/src/modules/user/hooks/useTreatments";
 import { normalizeString } from "@/src/utils/stringUtils";
 import React, { useMemo } from "react";
 import {
@@ -17,7 +18,6 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { useTreatments } from "@/src/modules/user/hooks/useTreatments";
 import { ResultViewProps } from "../types/diagnostics.types";
 import DiagnosticCard from "./DiagnosticCard";
 import ResultHeader from "./ResultHeader";
@@ -93,7 +93,7 @@ export default function ResultView({
   }
 
   return (
-    <Screen>
+    <Screen fullWidth>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}

@@ -1,14 +1,16 @@
 import BrandSpinner from "@/src/components/shared/BrandSpinner";
 import { useAuth } from "@/src/context/AuthContext";
+import { TabBarContext } from "@/src/context/TabBarContext";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Redirect } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import React from "react";
+import React, { useState } from "react";
 import { Platform, View } from "react-native";
 
 export default function TabsLayout() {
   const { token, loading } = useAuth();
   const { colors } = useTheme();
+  const [showTabBar, setShowTabBar] = useState(false);
 
   if (loading) {
     return (
@@ -30,7 +32,9 @@ export default function TabsLayout() {
   }
 
   return (
+    <TabBarContext.Provider value={{ setShowTabBar }}>
     <NativeTabs
+    hidden={showTabBar}
       labelVisibilityMode="labeled"
       tintColor={Platform.OS === "ios" ? colors.primary : "white"}
       backgroundColor={
@@ -58,10 +62,11 @@ export default function TabsLayout() {
         <NativeTabs.Trigger.Icon sf="gift.fill" md="redeem" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="profile">
+      <NativeTabs.Trigger name="profile" >
         <NativeTabs.Trigger.Label>Perfil</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="person.fill" md="account_circle" />
       </NativeTabs.Trigger>
     </NativeTabs>
+    </TabBarContext.Provider>
   );
 }

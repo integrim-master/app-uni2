@@ -108,6 +108,7 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
           colors={gradient as any}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFillObject}
         />
 
         {!isBlack && !isSilver && (

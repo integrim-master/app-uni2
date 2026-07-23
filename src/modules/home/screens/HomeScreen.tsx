@@ -1,6 +1,5 @@
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import { ui } from "@/src/themes/ui";
-import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import React from "react";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
@@ -34,7 +33,6 @@ const HomeScreen: React.FC<Props> = ({
   isLoading,
 }) => {
   const router = useRouter();
-  const headerHeight = useHeaderHeight();
 
   if (isError) {
     return <ErrorScreen message={error?.message} onRetry={onRefresh} />;
@@ -44,6 +42,8 @@ const HomeScreen: React.FC<Props> = ({
     <ScrollView
       style={styles.scroll}
       showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{ paddingBottom: ui.spacing.lg }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
   scroll: {
     flex: 1,
   },
+
 
   errorContainer: {
     flex: 1,

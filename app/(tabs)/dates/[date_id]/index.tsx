@@ -1,36 +1,93 @@
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
-import { useUser } from "@/src/modules/user/hooks/useUser";
+import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkeleton";
-import { useDatesDetails } from "@/src/modules/dates/hooks/useDatesById";
+import { useDatesDetailsSuspense } from "@/src/modules/dates/hooks/useDatesById";
+import {
+  getMockCitaById,
+  type MockCita,
+  USE_MOCK_CITAS,
+} from "@/src/modules/dates/mocks/mockCitas";
+import type { Cita } from "@/src/modules/dates/types/date.api.types";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Stack, useLocalSearchParams } from "expo-router";
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import {
+  Stack,
+  useLocalSearchParams,
+  type ErrorBoundaryProps,
+} from "expo-router";
+import React, { Suspense, useMemo } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Screen } from "../../../../src/components/shared/Screen";
 import { useTheme } from "../../../../src/context/ThemeContext";
 
-export default function CitaDetailsScreen() {
-  const { colors } = useTheme();
-  const { date_id } = useLocalSearchParams();
-  const { data: user } = useUser();
-  const { data: dateDetails, isFetching } = useDatesDetails(date_id as string);
+/** Estándar Expo Router: se exporta, no se usa como wrapper. */
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  return (
+    <ErrorScreen
+      message={error.message || "Error al cargar los detalles de la cita"}
+      onRetry={retry}
+    />
+  );
+}
 
-  if (isFetching) {
-    return (
-      <Screen>
-        <View style={styles.content}>
-          <CitaDetailsSkeleton />
-        </View>
-      </Screen>
-    );
-  }
-
+function DetailsLoading() {
   return (
     <Screen>
+      <View style={styles.content}>
+        <CitaDetailsSkeleton />
+      </View>
+    </Screen>
+  );
+}
+
+export default function CitaDetailsScreen() {
+  return (
+    <Suspense fallback={<DetailsLoading />}>
+      {USE_MOCK_CITAS ? <MockCitaDetails /> : <ApiCitaDetails />}
+    </Suspense>
+  );
+}
+
+function MockCitaDetails() {
+  const { date_id } = useLocalSearchParams<{ date_id: string }>();
+  const dateDetails = useMemo(
+    () => getMockCitaById(String(date_id)),
+    [date_id],
+  );
+
+  return <CitaDetailsView dateDetails={dateDetails} />;
+}
+
+function ApiCitaDetails() {
+  const { date_id } = useLocalSearchParams<{ date_id: string }>();
+  const { data: dateDetails } = useDatesDetailsSuspense(String(date_id));
+
+  return <CitaDetailsView dateDetails={dateDetails} />;
+}
+
+function CitaDetailsView({
+  dateDetails,
+}: {
+  dateDetails?: Cita | MockCita | null;
+}) {
+  const { colors } = useTheme();
+  const { data: user } = useUser();
+
+  const recomendaciones =
+    (dateDetails &&
+      "recomendaciones" in dateDetails &&
+      dateDetails.recomendaciones) ||
+    [
+      "Llega 10 minutos antes de tu cita.",
+      "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
+    ];
+
+  return (
+    <Screen fullWidth>
       <Stack.Screen
         options={{
           headerShadowVisible: false,
@@ -38,32 +95,21 @@ export default function CitaDetailsScreen() {
           headerTitle: "Detalles de la cita",
         }}
       />
-      <View>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         <LinearGradient
-          className="pb-4 pt-2 flex-row items-center gap-4"
           colors={colors.gradientBackground}
           start={[0, 0]}
-          end={[1, 0]}
+          end={[1, 1]}
+          style={[styles.hero, { backgroundColor: colors.background }]}
         >
-          <View
-            style={[
-              styles.headerIconWrap,
-              { backgroundColor: colors.gradientCard[0] },
-            ]}
-          >
-            <View
-              style={[
-                styles.iconCircle,
-                { backgroundColor: colors.primaryLight },
-              ]}
-            >
-              <Ionicons name="calendar-outline" color="#FFFFFF" size={28} />
+          <View style={styles.heroTopRow}>
+            <View style={styles.heroIcon}>
+              <Ionicons name="calendar" color="#FFFFFF" size={26} />
             </View>
-          </View>
-          <View className="flex gap-1 justify-center">
-            <ThemedText color={colors.textAccent} type="semiBold">
-              Cita agendada
-            </ThemedText>
             <Badge
               showIcon={false}
               text={dateDetails?.categoria || "General"}
@@ -72,158 +118,274 @@ export default function CitaDetailsScreen() {
               layout="horizontal"
             />
           </View>
-        </LinearGradient>
-      </View>
-      <View style={styles.content}>
-        <Card pressable={false} style={styles.cardContainer}>
-          <View style={styles.cardInner}>
-            <ThemedText
-              type="titleSm"
-              style={[styles.procedureTitle, { color: colors.primaryLight }]}
-            >
+
+          <View style={styles.heroTextBlock}>
+            <ThemedText type="caption" style={styles.heroLabel}>
+              CITA AGENDADA
+            </ThemedText>
+            <ThemedText type="title" style={styles.heroTitle}>
               {dateDetails?.Procedimiento}
             </ThemedText>
+          </View>
 
-            <View style={styles.infoBlock}>
-              <ThemedText color={colors.textSecondary} type="caption">
+          <View style={styles.heroDatePill}>
+            <View style={styles.heroDateItem}>
+              <Ionicons name="calendar-outline" size={16} color="#FFFFFF" />
+              <ThemedText type="semiBold" style={styles.heroDateText}>
                 {formatDateToText(dateDetails?.fecha_cita)}
               </ThemedText>
-
-              <ThemedText type="semiBold" color={colors.textAccent}>
+            </View>
+            <View style={styles.heroDateDivider} />
+            <View style={styles.heroDateItem}>
+              <Ionicons name="time-outline" size={16} color="#FFFFFF" />
+              <ThemedText type="semiBold" style={styles.heroDateText}>
                 {dateDetails?.hora_cita}
               </ThemedText>
-
-              <ThemedText
-                color={colors.textSecondary}
-                type="body"
-                style={{ marginTop: 4 }}
-              >
-                Profesional:{" "}
-                <ThemedText type="semiBold" color={colors.textAccent}>
-                  {dateDetails?.profesional}
-                </ThemedText>
-              </ThemedText>
             </View>
+          </View>
+        </LinearGradient>
 
+        <View style={styles.content}>
+          <Card pressable={false} style={styles.card}>
+            <InfoRow
+              colors={colors}
+              icon="medkit-outline"
+              label="Profesional"
+              value={dateDetails?.profesional}
+            />
             <View
               style={[
-                styles.divider,
-                { backgroundColor: colors.border || "rgba(0,0,0,0.08)" },
+                styles.rowDivider,
+                { backgroundColor: colors.border || "rgba(0,0,0,0.06)" },
               ]}
             />
-
-            <View style={styles.sedeBlock}>
-              <ThemedText color={colors.textAccent} type="semiBold">
-                Sede
-              </ThemedText>
-              <ThemedText
-                className="capitalize"
-                color={colors.textSecondary}
-                type="body"
-              >
-                {dateDetails?.sede}
-              </ThemedText>
-            </View>
-          </View>
-        </Card>
-        <Card pressable={false} style={styles.cardContainer}>
-          <View style={styles.userRow}>
+            <InfoRow
+              colors={colors}
+              icon="location-outline"
+              label="Sede"
+              value={dateDetails?.sede}
+              capitalize
+            />
             <View
               style={[
-                styles.userIconCircle,
-                { backgroundColor: colors.primaryLight },
+                styles.rowDivider,
+                { backgroundColor: colors.border || "rgba(0,0,0,0.06)" },
               ]}
-            >
-              <Ionicons name="person-outline" size={22} color="#FFFFFF" />
-            </View>
-            <View>
-              <ThemedText color={colors.textSecondary} type="caption">
-                Paciente
-              </ThemedText>
-              <ThemedText color={colors.textAccent} type="semiBold">
-                {user?.user_name}
-              </ThemedText>
-            </View>
-          </View>
-        </Card>
-        <View style={styles.recommendations}>
-          <ThemedText
-            type="subtitle"
-            style={{ marginBottom: 8 }}
-            color={colors.primaryLight}
-          >
-            Recomendaciones:
-          </ThemedText>
-          <View style={{ gap: 4 }}>
-            <ThemedText type="body" color={colors.textSecondary}>
-              • Llegar 10 minutos antes de la cita.
-            </ThemedText>
-            <ThemedText type="body" color={colors.textSecondary}>
-              • Si no puede asistir, cancelar con dos horas de anticipación.
+            />
+            <InfoRow
+              colors={colors}
+              icon="person-outline"
+              label="Paciente"
+              value={user?.user_name}
+            />
+          </Card>
+
+          <View style={styles.sectionHeader}>
+            <Ionicons
+              name="bulb-outline"
+              size={18}
+              color={colors.primaryLight}
+            />
+            <ThemedText type="semiBold" color={colors.primaryLight}>
+              Recomendaciones
             </ThemedText>
           </View>
+
+          <Card pressable={false} style={styles.card}>
+            {recomendaciones.map((text, index) => (
+              <React.Fragment key={text}>
+                {index > 0 && (
+                  <View
+                    style={[
+                      styles.rowDivider,
+                      {
+                        backgroundColor: colors.border || "rgba(0,0,0,0.06)",
+                      },
+                    ]}
+                  />
+                )}
+                <RecoItem colors={colors} text={text} />
+              </React.Fragment>
+            ))}
+          </Card>
         </View>
-      </View>
+      </ScrollView>
     </Screen>
   );
 }
 
+function InfoRow({
+  colors,
+  icon,
+  label,
+  value,
+  capitalize,
+}: {
+  colors: any;
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  value?: string;
+  capitalize?: boolean;
+}) {
+  return (
+    <View style={styles.infoRow}>
+      <View
+        style={[styles.infoIcon, { backgroundColor: colors.primaryLight + "1A" }]}
+      >
+        <Ionicons name={icon} size={20} color={colors.primaryLight} />
+      </View>
+      <View style={styles.infoTextWrap}>
+        <ThemedText type="caption" color={colors.textSecondary}>
+          {label}
+        </ThemedText>
+        <ThemedText
+          type="semiBold"
+          color={colors.textAccent}
+          style={capitalize ? styles.capitalize : undefined}
+        >
+          {value || "—"}
+        </ThemedText>
+      </View>
+    </View>
+  );
+}
+
+function RecoItem({ colors, text }: { colors: any; text: string }) {
+  return (
+    <View style={styles.recoRow}>
+      <View style={[styles.recoDot, { backgroundColor: colors.primaryLight }]}>
+        <Ionicons name="checkmark" size={13} color="#FFFFFF" />
+      </View>
+      <ThemedText type="body" color={colors.textSecondary} style={styles.recoText}>
+        {text}
+      </ThemedText>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  hero: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 28,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    gap: 20,
+  },
+  heroTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  heroIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  heroTextBlock: {
+    gap: 4,
+  },
+  heroLabel: {
+    color: "rgba(255,255,255,0.8)",
+    letterSpacing: 1.5,
+    fontWeight: "600",
+  },
+  heroTitle: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "700",
+    lineHeight: 30,
+    letterSpacing: -0.3,
+  },
+  heroDatePill: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  heroDateItem: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  heroDateDivider: {
+    width: StyleSheet.hairlineWidth,
+    height: 20,
+    backgroundColor: "rgba(255,255,255,0.35)",
+    marginHorizontal: 12,
+  },
+  heroDateText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+  },
+
   content: {
     flex: 1,
     padding: 16,
+    gap: 8,
   },
-  headerIconWrap: {
-    width: 90,
-    height: 70,
-    borderEndStartRadius: 50,
-    borderEndEndRadius: 50,
-    justifyContent: "center",
-    alignItems: "flex-end",
-    paddingRight: 16,
-  },
-  iconCircle: {
+  card: {
     padding: 8,
-    borderRadius: 100,
+    marginBottom: 8,
   },
 
-  cardContainer: {
-    marginBottom: 16,
-    padding: 0,
-  },
-  cardInner: {
-    padding: 20,
-  },
-  procedureTitle: {
-    marginBottom: 16,
-  },
-  infoBlock: {
-    gap: 2,
-  },
-  divider: {
-    height: 1,
-    alignSelf: "stretch",
-    marginVertical: 16,
-  },
-  sedeBlock: {
-    gap: 2,
-  },
-
-  userRow: {
+  infoRow: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    gap: 12,
+    gap: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
   },
-  userIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  infoIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
   },
-  recommendations: {
-    marginTop: 8,
-    paddingHorizontal: 8,
+  infoTextWrap: {
+    flex: 1,
+    gap: 2,
+  },
+  capitalize: {
+    textTransform: "capitalize",
+  },
+  rowDivider: {
+    height: StyleSheet.hairlineWidth,
+    marginHorizontal: 10,
+  },
+
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 12,
+    marginBottom: 8,
+    paddingHorizontal: 6,
+  },
+  recoRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
+  recoDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 1,
+  },
+  recoText: {
+    flex: 1,
+    lineHeight: 21,
   },
 });

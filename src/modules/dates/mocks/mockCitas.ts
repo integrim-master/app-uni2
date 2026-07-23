@@ -1,7 +1,18 @@
 import type { Cita } from "../types/date.api.types";
 
-/** Mock temporal para UI cuando la API no trae citas. Quitar al conectar datos reales. */
-export const MOCK_CITAS: (Cita & { id: string })[] = [
+/** Activa/desactiva toda la data quemada de citas (lista + detalle). */
+export const USE_MOCK_CITAS = true;
+
+export type MockCita = Cita & {
+  id: string;
+  recomendaciones: string[];
+};
+
+/**
+ * Única fuente de mocks de citas.
+ * Quitar o poner USE_MOCK_CITAS = false al conectar la API real.
+ */
+export const MOCK_CITAS: MockCita[] = [
   {
     id: "mock-1",
     Procedimiento: "Limpieza facial profunda",
@@ -11,6 +22,11 @@ export const MOCK_CITAS: (Cita & { id: string })[] = [
     hora_cita: "10:30 a.m.",
     duracion: "60 min",
     profesional: "Dra. Laura Méndez",
+    recomendaciones: [
+      "Llega 10 minutos antes de tu cita.",
+      "Evita maquillaje el día del procedimiento.",
+      "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
+    ],
   },
   {
     id: "mock-2",
@@ -21,6 +37,11 @@ export const MOCK_CITAS: (Cita & { id: string })[] = [
     hora_cita: "3:00 p.m.",
     duracion: "45 min",
     profesional: "Dr. Andrés Ruiz",
+    recomendaciones: [
+      "Trae tu historial de tratamientos previos si los tienes.",
+      "Llega 10 minutos antes de tu cita.",
+      "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
+    ],
   },
   {
     id: "mock-3",
@@ -31,6 +52,11 @@ export const MOCK_CITAS: (Cita & { id: string })[] = [
     hora_cita: "11:15 a.m.",
     duracion: "30 min",
     profesional: "Dra. Camila Torres",
+    recomendaciones: [
+      "No consumas alcohol 24 horas antes.",
+      "Evita antiinflamatorios el día previo, salvo indicación médica.",
+      "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
+    ],
   },
   {
     id: "mock-4",
@@ -41,5 +67,14 @@ export const MOCK_CITAS: (Cita & { id: string })[] = [
     hora_cita: "9:00 a.m.",
     duracion: "20 min",
     profesional: "Dr. Andrés Ruiz",
+    recomendaciones: [
+      "Llega 10 minutos antes de tu cita.",
+      "Comenta cualquier molestia post-tratamiento al profesional.",
+      "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
+    ],
   },
 ];
+
+export function getMockCitaById(id: string): MockCita {
+  return MOCK_CITAS.find((cita) => cita.id === id) ?? MOCK_CITAS[0];
+}

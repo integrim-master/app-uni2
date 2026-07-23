@@ -8,9 +8,7 @@ import { useTheme } from "../../../context/ThemeContext";
 import CitaCard from "../components/CitaCard";
 import CitaCardSkeleton from "../components/CitaCardSkeleton";
 import EmptyDates from "../components/EmptyDates";
-import { MOCK_CITAS } from "../mocks/mockCitas";
-
-const USE_MOCK_CITAS = true;
+import { MOCK_CITAS, USE_MOCK_CITAS } from "../mocks/mockCitas";
 
 interface DatesScreenProps {
   dates?: any[];

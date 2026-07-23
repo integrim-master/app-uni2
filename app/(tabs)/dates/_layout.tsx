@@ -6,7 +6,7 @@ export default function DatesLayout() {
   const { colors } = useTheme();
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: true }}>
       <Stack.Screen
         name="index"
         options={{
@@ -25,6 +25,14 @@ export default function DatesLayout() {
         name="[date_id]/index"
         options={{
           title: "Detalle de la cita",
+          headerShown: true,
+          headerTitle: "Detalle de la cita",
+          headerTintColor: colors.textStrong,
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: "minimal",
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
         }}
       />
     </Stack>

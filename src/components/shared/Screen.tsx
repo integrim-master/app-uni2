@@ -24,12 +24,15 @@ export function Screen({
   const Content = (
     <>
       {leftButton && <View style={styles.header}>{leftButton}</View>}
-      <View style={[styles.content, style]}>{children}</View>
+      <View collapsable={false} style={[styles.content, style]}>
+        {children}
+      </View>
     </>
   );
 
   return (
     <View
+      collapsable={false}
       style={[
         styles.container,
         { paddingHorizontal: fullWidth ? 0 : ui.spacing.xl },

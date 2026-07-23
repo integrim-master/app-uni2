@@ -85,6 +85,7 @@ export function ProfileScreen() {
                   role="destructive"
                   label="Cerrar sesión"
                   modifiers={[buttonStyle("plain")]}
+                  onPress={() => setShowLogoutConfirm(true)}
                 />
               </Alert.Trigger>
               <Alert.Message>

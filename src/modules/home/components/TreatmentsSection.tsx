@@ -4,6 +4,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import { SuggestedTreatmentsList } from "./SuggestedTreatmentsList";
+
 interface SuggestedTreatmentsProps {
   SuggestedTreatments: TratamientoCareme[];
 }
@@ -14,15 +15,20 @@ export const TreatmentsSection: React.FC<SuggestedTreatmentsProps> = ({
   const { colors } = useTheme();
 
   return (
-    <View style={styles.benefitsContent}>
+    <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText
-          color={colors.textAccent}
-          className="font-bold"
-          type="subtitle"
-        >
-          Tratamientos sugeridos
-        </ThemedText>
+        <View style={styles.titles}>
+          <ThemedText
+            color={colors.textAccent}
+            type="subtitle"
+            style={styles.title}
+          >
+            Tratamientos sugeridos
+          </ThemedText>
+          <ThemedText type="caption" color={colors.textSecondary}>
+            Pensados para ti
+          </ThemedText>
+        </View>
       </View>
       <SuggestedTreatmentsList SuggestedTreatments={SuggestedTreatments} />
     </View>
@@ -30,13 +36,20 @@ export const TreatmentsSection: React.FC<SuggestedTreatmentsProps> = ({
 };
 
 const styles = StyleSheet.create({
-  benefitsContent: {
-    marginBottom: 24,
+  section: {
+    marginBottom: 28,
   },
   sectionHeader: {
-    justifyContent: "space-between",
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    marginBottom: 14,
+    paddingHorizontal: 2,
+  },
+  titles: {
+    gap: 2,
+  },
+  title: {
+    fontWeight: "700",
   },
 });

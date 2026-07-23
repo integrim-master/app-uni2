@@ -74,11 +74,11 @@ export const AppColors: AppThemeColors = {
   warningDark: "#D97706",
 
   // --- Backgrounds ---
-  background: "#0F0F0F",
+  background: "#302D34", // antes backgroundHeader
   backgroundElevated: "#1A1A1A",
-  backgroundSurface: "#302D34",
+  backgroundSurface: "#3A3640",
   backgroundSecondary: "#262626",
-  backgroundHeader: "#302D34",
+  backgroundHeader: "#262328", // ligeramente distinto al background
 
   // --- Gradients ---
   gradientBackground: ["#302D34", "#272526", "#1E1E1C"],

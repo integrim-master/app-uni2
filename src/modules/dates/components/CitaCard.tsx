@@ -14,32 +14,29 @@ export default function CitaCard({
   cita: Cita;
   onPress?: () => void;
 }) {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
 
   return (
-    <Card
-      onPress={onPress}
-      borderColor={colors.border}
-      style={styles.cardContainer}
-    >
-      <View style={styles.topSection}>
+    <Card onPress={onPress} borderColor="transparent" style={styles.card}>
+      {/* Encabezado */}
+      <View style={styles.header}>
         <View style={styles.titleColumn}>
           <ThemedText
             type="titleSm"
             color={colors.textStrong}
-            style={styles.titleSpacing}
+            style={styles.title}
             numberOfLines={2}
           >
             {cita.Procedimiento}
           </ThemedText>
 
-          <View style={styles.locationContainer}>
+          <View style={styles.location}>
             <Ionicons
-              name="location-sharp"
+              name="location-outline"
               size={14}
-              color={colors.textSecondary}
+              color={colors.textMuted}
             />
-            <ThemedText type="label" color={colors.textSecondary}>
+            <ThemedText type="label" color={colors.textMuted}>
               {cita.sede}
             </ThemedText>
           </View>
@@ -50,60 +47,52 @@ export default function CitaCard({
           variant={cita.categoria === "Estetico" ? "white" : "warning"}
           size="xs"
           showIcon={false}
-          style={styles.badge}
         />
       </View>
 
-      <View style={styles.perforationWrap}>
-        <View
-          style={[
-            styles.perforationLine,
-            { borderColor: isDark ? colors.border : "#E5E7EB" },
-          ]}
-        />
-      </View>
-
-      <View style={styles.bottomSection}>
-        <View style={styles.infoPills}>
-          <View
-            style={[
-              styles.pill,
-              { backgroundColor: colors.backgroundSurface + "80" },
-            ]}
-          >
-            <Ionicons name="calendar" size={14} color={colors.textSecondary} />
-            <ThemedText type="semiBold" color={colors.textSecondary}>
-              {cita.fecha_cita}
-            </ThemedText>
-          </View>
-
-          <Badge
-            icon="timer"
-            text={cita.hora_cita}
-            variant="info"
-            size="xs"
-            showIcon={false}
+      {/* Pie: fecha y hora */}
+      <View style={styles.footer}>
+        <View style={styles.metaItem}>
+          <Ionicons
+            name="calendar-outline"
+            size={15}
+            color={colors.textSecondary}
           />
+          <ThemedText type="semiBold" color={colors.textSecondary}>
+            {cita.fecha_cita}
+          </ThemedText>
         </View>
 
-        {/* <MaterialIcons
-          name="chevron-right"
-          size={20}
-          color={colors.textMuted}
-        /> */}
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+        <View style={styles.metaItem}>
+          <Ionicons
+            name="time-outline"
+            size={15}
+            color={colors.textSecondary}
+          />
+          <ThemedText type="semiBold" color={colors.textSecondary}>
+            {cita.hora_cita}
+          </ThemedText>
+        </View>
+
+        <View style={styles.spacer} />
+
+        <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
       </View>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {
+  card: {
     marginHorizontal: 16,
-    padding: 20,
+    padding: 18,
     flexDirection: "column",
+    gap: 16,
+    borderRadius: 18,
   },
-
-  topSection: {
+  header: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
@@ -111,46 +100,32 @@ const styles = StyleSheet.create({
   },
   titleColumn: {
     flex: 1,
+    gap: 6,
   },
-  titleSpacing: {
-    marginBottom: 6,
+  title: {
     textTransform: "capitalize",
   },
-  locationContainer: {
+  location: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    opacity: 0.8,
   },
-  badge: {
-    alignSelf: "flex-start",
-    marginTop: 2,
-  },
-
-  perforationWrap: {
-    marginVertical: 18,
-  },
-  perforationLine: {
-    borderTopWidth: 1.5,
-    borderStyle: "dashed",
-    opacity: 0.5,
-  },
-
-  bottomSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  infoPills: {
+  footer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
+    gap: 10,
   },
-  pill: {
+  metaItem: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 12,
     gap: 6,
+  },
+  divider: {
+    width: 1,
+    height: 14,
+    opacity: 0.6,
+  },
+  spacer: {
+    flex: 1,
   },
 });

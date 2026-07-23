@@ -124,8 +124,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 6,
+    paddingTop: 16,
+    paddingBottom: 24,
   },
   center: {
     flex: 1,

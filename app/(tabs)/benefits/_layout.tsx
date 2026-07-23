@@ -19,9 +19,9 @@ export default function BenefitsLayout() {
           headerTintColor: colors.textStrong,
           headerShown: true,
           headerShadowVisible: false,
-          headerTitleAlign: "center",
+
           headerStyle: {
-            backgroundColor: colors.backgroundHeader,
+            backgroundColor: colors.background,
           },
         }}
       />

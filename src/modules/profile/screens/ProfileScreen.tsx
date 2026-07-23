@@ -41,6 +41,7 @@ export function ProfileScreen() {
               rightIcon="chevron-forward"
               onPress={goToPrivacy}
             />
+            sss
           </View>
 
           <PrimaryButton

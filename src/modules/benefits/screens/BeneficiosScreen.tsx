@@ -1,8 +1,10 @@
 import EmptySvg from "@/assets/svg/Empty.svg";
 
 import { Screen } from "@/src/components/shared/Screen";
+import TabBar from "@/src/components/shared/TabBar";
 import ThemedText from "@/src/components/shared/themed-text";
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 import { Benefits } from "@/src/types/shared/Benefits.type";
 import { router, useFocusEffect } from "expo-router";
 import { AnimatePresence } from "moti";
@@ -10,8 +12,6 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../../context/ThemeContext";
-import { useUser } from "../../banner/hooks/userHome";
-import TabBar from "../../home/components/TabBar";
 import BenefitsList from "../components/BenefitsList";
 import BenefitsListSkeleton from "../components/BenefitsListSkeleton";
 import { useCancel } from "../hooks/useCancelBenefits";
@@ -28,12 +28,18 @@ export default function BeneficiosScreen({
   error,
 }: BeneficiosScreenProps & { error?: any }) {
   const { colors } = useTheme();
-  const { mutate, isPending, isError: isErrorRedeem } = useRedemed();
-  const { mutate: mutateCancel, isError: isErrorCancel } = useCancel();
+  const { mutate, isPending } = useRedemed();
+  const { mutate: mutateCancel } = useCancel();
   const { data: user } = useUser();
   const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
   const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
     membership?.benefit_redeem,
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setBenefitsRedemed(membership?.benefit_redeem);
+    }, [membership]),
   );
 
   if (error) {
@@ -43,15 +49,10 @@ export default function BeneficiosScreen({
           error?.message ||
           "Ocurrió un error al cargar los beneficios. Intenta nuevamente."
         }
+        onRetry={onRefresh}
       />
     );
   }
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setBenefitsRedemed(membership?.benefit_redeem);
-    }, [membership]),
-  );
 
   const benefits = membership?.benefits;
   const benefitsUsed = membership?.benefits_used || [];
@@ -133,109 +134,87 @@ export default function BeneficiosScreen({
   }
 
   return (
-    <Screen safeArea>
-      <View style={styles.container}>
-        <View style={{ paddingHorizontal: 16, paddingVertical: 10 }}>
-          <TabBar
-            options={[
-              { key: "disponibles", label: "Disponibles" },
-              { key: "canjeados", label: "Canjeados" },
-            ]}
-            activeTab={activeTab}
-            setActiveTab={(tab: string) =>
-              setActiveTab(tab as "disponibles" | "canjeados")
-            }
-          />
-        </View>
+    <Screen>
+      <View style={{ paddingVertical: 10 }}>
+        <TabBar
+          options={[
+            { key: "disponibles", label: "Disponibles" },
+            { key: "canjeados", label: "Canjeados" },
+          ]}
+          activeTab={activeTab}
+          setActiveTab={(tab: string) =>
+            setActiveTab(tab as "disponibles" | "canjeados")
+          }
+        />
+      </View>
 
-        {(isErrorRedeem || isErrorCancel) && (
-          <ErrorScreen
-            message={
-              isErrorRedeem
-                ? "Ocurrió un error al canjear el beneficio. Intenta de nuevo."
-                : "Ocurrió un error al cancelar el canje. Intenta de nuevo."
-            }
-          />
-        )}
+      <View style={{ flex: 1, position: "relative" }}>
+        <AnimatePresence exitBeforeEnter>
+          {activeTab === "disponibles" && (
+            <BenefitsList
+              benefits={benefits}
+              benefitsUsed={benefitsUsed}
+              benefitsRedemed={benefitsRedemed}
+              loading={loading}
+              activeBenefitId={activeBenefitId}
+              isPendingRedeem={isPending}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              onBenefitRedemed={handleApplyBenefit}
+              onBenefitViewDetails={handleBenefitPress}
+              emptyMessage="No cuentas con beneficios disponibles"
+              filterUsed="available"
+              animationKey="disponibles"
+            />
+          )}
 
-        <View style={{ flex: 1, position: "relative" }}>
-          <AnimatePresence exitBeforeEnter>
-            {activeTab === "disponibles" && (
-              <BenefitsList
-                benefits={benefits}
-                benefitsUsed={benefitsUsed}
-                benefitsRedemed={benefitsRedemed}
-                loading={loading}
-                activeBenefitId={activeBenefitId}
-                isPendingRedeem={isPending}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                onBenefitRedemed={handleApplyBenefit}
-                onBenefitViewDetails={handleBenefitPress}
-                emptyMessage="No cuentas con beneficios disponibles"
-                filterUsed="available"
-                animationKey="disponibles"
-              />
-            )}
-
-            {activeTab === "canjeados" && (
-              <>
-                {!anyCanjeados ? (
-                  <View style={styles.emptyContainer}>
-                    <EmptySvg
-                      width={240}
-                      height={240}
-                      style={styles.emptyImage}
-                    />
-                    <ThemedText
-                      type="title"
-                      style={[
-                        styles.emptyTitle,
-                        { color: colors.primaryLight },
-                      ]}
-                    >
-                      No hay beneficios canjeados
-                    </ThemedText>
-
-                    <ThemedText
-                      style={[
-                        styles.emptyBody,
-                        { color: colors.textSecondary },
-                      ]}
-                    >
-                      Cuando canjees un beneficio, aparecerá aquí para que lo
-                      revises y lo uses.
-                    </ThemedText>
-                  </View>
-                ) : (
-                  <BenefitsList
-                    activeBenefitId={activeBenefitId}
-                    benefits={benefits}
-                    benefitsUsed={benefitsUsed}
-                    loading={loading}
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                    onBenefitRedemed={handleApplyBenefit}
-                    onBenefitViewDetails={handleBenefitPress}
-                    emptyMessage="No cuentas con beneficios canjeados"
-                    filterUsed="used"
-                    animationKey="canjeados-list"
+          {activeTab === "canjeados" && (
+            <>
+              {!anyCanjeados ? (
+                <View style={styles.emptyContainer}>
+                  <EmptySvg
+                    width={240}
+                    height={240}
+                    style={styles.emptyImage}
                   />
-                )}
-              </>
-            )}
-          </AnimatePresence>
-        </View>
+                  <ThemedText
+                    type="title"
+                    style={[styles.emptyTitle, { color: colors.primaryLight }]}
+                  >
+                    No hay beneficios canjeados
+                  </ThemedText>
+
+                  <ThemedText
+                    style={[styles.emptyBody, { color: colors.textSecondary }]}
+                  >
+                    Cuando canjees un beneficio, aparecerá aquí para que lo
+                    revises y lo uses.
+                  </ThemedText>
+                </View>
+              ) : (
+                <BenefitsList
+                  activeBenefitId={activeBenefitId}
+                  benefits={benefits}
+                  benefitsUsed={benefitsUsed}
+                  loading={loading}
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  onBenefitRedemed={handleApplyBenefit}
+                  onBenefitViewDetails={handleBenefitPress}
+                  emptyMessage="No cuentas con beneficios canjeados"
+                  filterUsed="used"
+                  animationKey="canjeados-list"
+                />
+              )}
+            </>
+          )}
+        </AnimatePresence>
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 10,
-  },
   headerContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,

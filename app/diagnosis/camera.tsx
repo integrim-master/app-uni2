@@ -4,20 +4,14 @@ import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useUser } from "@/src/modules/banner/hooks/userHome";
 import SendPhoto from "@/src/modules/diagnostics/components/loadingPhoto";
-import {
-  useCreateDiagnostic,
-  useUploadDiagnosticImage,
-} from "@/src/modules/diagnostics/hooks/useDiagnostic";
-import { useSetDiagnosticSession } from "@/src/modules/diagnostics/hooks/useDiagnosticSession";
+import { useCaptureAndCrop } from "@/src/modules/diagnostics/hooks/useCaptureAndCrop";
+import { useFaceAlignment } from "@/src/modules/diagnostics/hooks/useFaceAlignment";
+import { useSendDiagnosticPhoto } from "@/src/modules/diagnostics/hooks/useSendDiagnosticPhoto";
 import ErrorScreen from "@/src/modules/diagnostics/screens/ErrorScreen";
-import { useAnalyzeImage } from "@/src/n8n/hooks/useAnalizeImage";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useQueryClient } from "@tanstack/react-query";
-import * as ImageManipulator from "expo-image-manipulator";
-import { router } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   Pressable,
@@ -26,28 +20,15 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import {
-  Camera,
-  useCameraDevice,
-  useCameraPermission,
-  useFrameProcessor,
-} from "react-native-vision-camera";
-import {
-  Face,
-  useFaceDetector,
-} from "react-native-vision-camera-face-detector";
-import { Worklets } from "react-native-worklets-core";
+import { Camera, useCameraPermission } from "react-native-vision-camera";
 
 export default function CameraScreen() {
   const { colors } = useTheme();
   const { token } = useAuth();
   const { data: userInfo } = useUser();
   const userId = userInfo?.user_id;
-  const queryClient = useQueryClient();
-  const setDiagnosticSession = useSetDiagnosticSession();
 
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
-
   const CAMERA_WIDTH = SCREEN_WIDTH * 0.92;
   const CAMERA_HEIGHT = SCREEN_HEIGHT * 0.58;
   const OVAL_WIDTH = CAMERA_WIDTH * 0.62;
@@ -55,170 +36,34 @@ export default function CameraScreen() {
 
   const cameraRef = useRef<Camera>(null);
   const [facing, setFacing] = useState<"front" | "back">("front");
-  const [capturing, setCapturing] = useState(false);
-  const [status, setStatus] = useState<"none" | "far" | "uncentered" | "ok">(
-    "none",
-  );
-  const isFaceAligned = status === "ok";
-
-  const [photoUri, setPhotoUri] = useState<{ uri: string } | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [validationError, setValidationError] = useState<{
-    message: string;
-    reason?: string;
-  } | null>(null);
 
   const { hasPermission, requestPermission } = useCameraPermission();
-  const device = useCameraDevice(facing);
-
-  const faceDetectorOptions = useMemo(
-    () => ({
-      performanceMode: "fast" as const,
-      autoMode: true,
-      windowWidth: CAMERA_WIDTH,
-      windowHeight: CAMERA_HEIGHT,
-      cameraFacing: facing,
-    }),
-    [CAMERA_WIDTH, CAMERA_HEIGHT, facing],
-  );
-
-  const { detectFaces, stopListeners } = useFaceDetector(faceDetectorOptions);
-
-  const { mutateAsync: uploadImage, reset: resetUpload } =
-    useUploadDiagnosticImage();
-  const { mutateAsync: analyzeImage, isPending: isAnalyzing } =
-    useAnalyzeImage();
-  const { mutateAsync: createDiagnostic } = useCreateDiagnostic();
-
-  const statusRef = useRef(status);
-  statusRef.current = status;
-
-  const layoutRef = useRef({
-    cameraWidth: CAMERA_WIDTH,
-    cameraHeight: CAMERA_HEIGHT,
-    ovalWidth: OVAL_WIDTH,
-  });
-  layoutRef.current = {
-    cameraWidth: CAMERA_WIDTH,
-    cameraHeight: CAMERA_HEIGHT,
-    ovalWidth: OVAL_WIDTH,
-  };
-
-  useEffect(() => {
-    return () => stopListeners();
-  }, [stopListeners]);
-
-  const handleDetectedFaces = Worklets.createRunOnJS((faces: Face[]) => {
-    const { cameraWidth, cameraHeight, ovalWidth } = layoutRef.current;
-
-    if (faces.length === 0) {
-      if (statusRef.current !== "none") setStatus("none");
-      return;
-    }
-
-    const { bounds } = faces[0];
-    const faceCenterX = bounds.x + bounds.width / 2;
-    const faceCenterY = bounds.y + bounds.height / 2;
-
-    const isCentered =
-      Math.sqrt(
-        Math.pow(faceCenterX - cameraWidth / 2, 2) +
-          Math.pow(faceCenterY - cameraHeight / 2, 2),
-      ) < 60;
-    const isCloseEnough = bounds.width > ovalWidth * 0.8;
-
-    const newStatus: typeof status = isCentered
-      ? isCloseEnough
-        ? "ok"
-        : "far"
-      : "uncentered";
-
-    if (statusRef.current !== newStatus) setStatus(newStatus);
-  });
-
-  const frameProcessor = useFrameProcessor(
-    (frame) => {
-      "worklet";
-      const faces = detectFaces(frame);
-      handleDetectedFaces(faces);
+  const { device, status, isFaceAligned, frameProcessor } = useFaceAlignment(
+    facing,
+    {
+      cameraWidth: CAMERA_WIDTH,
+      cameraHeight: CAMERA_HEIGHT,
+      ovalWidth: OVAL_WIDTH,
     },
-    [detectFaces, handleDetectedFaces],
   );
+  const { capturing, photoUri, setPhotoUri, takePicture } = useCaptureAndCrop(
+    cameraRef,
+    {
+      cameraHeight: CAMERA_HEIGHT,
+      ovalWidth: OVAL_WIDTH,
+      ovalHeight: OVAL_HEIGHT,
+    },
+    isFaceAligned,
+  );
+  const {
+    sendPhoto,
+    isProcessing,
+    isAnalyzing,
+    validationError,
+    clearValidationError,
+  } = useSendDiagnosticPhoto(userId, token);
 
-  const takePicture = async () => {
-    if (capturing || !cameraRef.current || !isFaceAligned) return;
-    try {
-      setCapturing(true);
-      const photo = await cameraRef.current.takePhoto({ flash: "off" });
-      const scale = photo.height / CAMERA_HEIGHT;
-      const cropped = await ImageManipulator.manipulateAsync(
-        `file://${photo.path}`,
-        [
-          {
-            crop: {
-              originX: (photo.width - OVAL_WIDTH * scale) / 2,
-              originY: (photo.height - OVAL_HEIGHT * scale) / 2,
-              width: OVAL_WIDTH * scale,
-              height: OVAL_HEIGHT * scale,
-            },
-          },
-        ],
-        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
-      );
-      setPhotoUri({ uri: cropped.uri });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setCapturing(false);
-    }
-  };
-
-  const handleSendPhoto = async () => {
-    if (!photoUri || !userId) return;
-    setIsProcessing(true);
-    try {
-      const res = await analyzeImage(photoUri as any);
-      const data = Array.isArray(res) ? res[0] : res;
-      if (data.valido === false || data.valido === "false") {
-        setValidationError({ message: data.error, reason: data.motivo });
-        return;
-      }
-      const upload = await uploadImage({
-        photo: photoUri as any,
-        userId: String(userId),
-        token,
-      });
-      await createDiagnostic({
-        diagnostico: data.diagnostico,
-        procedimientos: data.procedimientos || [],
-        imageId: upload.id,
-        userId: String(userId),
-      });
-      try {
-        const session = {
-          analysis: {
-            diagnostico: data.diagnostico,
-            procedimientos: data.procedimientos || [],
-          },
-          photoUri: photoUri,
-          mediaId: upload.id,
-        } as any;
-        setDiagnosticSession(session);
-      } catch (e) {
-        console.warn("setDiagnosticSession failed", e);
-      }
-      queryClient.invalidateQueries({
-        queryKey: ["last-diagnostic", String(userId)],
-      });
-      router.replace("/(tabs)/diagnostics");
-    } catch (error: any) {
-      setValidationError({ message: error.message || "Error de red" });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  if (!hasPermission)
+  if (!hasPermission) {
     return (
       <Screen
         safeArea
@@ -233,32 +78,24 @@ export default function CameraScreen() {
         <View className="h-full flex justify-center w-full p-2">
           <PrimaryButton title="Permitir Cámara" onPress={requestPermission} />
         </View>
-        {/* <Pressable
-          onPress={requestPermission}
-          style={[
-            styles.primaryBtn,
-            { backgroundColor: colors.primary, paddingHorizontal: 20 },
-          ]}
-        >
-          <Text style={{ color: colors.background }}>Permitir Cámara</Text>
-        </Pressable> */}
       </Screen>
     );
+  }
 
   if (isAnalyzing || isProcessing) return <SendPhoto />;
 
-  if (validationError)
+  if (validationError) {
     return (
       <ErrorScreen
         photoUri={photoUri?.uri}
         message={validationError.message}
         onRetry={() => {
-          setValidationError(null);
+          clearValidationError();
           setPhotoUri(null);
-          resetUpload();
         }}
       />
     );
+  }
 
   return (
     <Screen
@@ -397,8 +234,10 @@ export default function CameraScreen() {
               title="Repetir"
               onPress={() => setPhotoUri(null)}
             />
-
-            <PrimaryButton title="Analizar ahora" onPress={handleSendPhoto} />
+            <PrimaryButton
+              title="Analizar ahora"
+              onPress={() => sendPhoto(photoUri)}
+            />
           </View>
         )}
       </View>
@@ -407,9 +246,7 @@ export default function CameraScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: { alignItems: "center", marginVertical: 20 },
-  statusText: { fontSize: 22, fontWeight: "800", textAlign: "center" },
   subText: {
     fontSize: 13,
     marginTop: 4,
@@ -471,22 +308,5 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
-  },
-
-  secondaryBtn: {
-    flex: 1,
-    height: 56,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  primaryBtn: {
-    flex: 2,
-    height: 56,
-    borderRadius: 18,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
   },
 });

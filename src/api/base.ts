@@ -5,6 +5,7 @@ export const API_BASE_URL =
 
 let _memoryToken: string | null = null;
 let _onUnauthorized: (() => void) | null = null;
+let _sessionRestoring = false;
 let _handling401 = false;
 
 export function setMemoryToken(token: string | null) {
@@ -13,6 +14,10 @@ export function setMemoryToken(token: string | null) {
 
 export function setOnUnauthorized(handler: (() => void) | null) {
   _onUnauthorized = handler;
+}
+
+export function setSessionRestoring(restore: boolean) {
+  _sessionRestoring = restore;
 }
 
 export function getMemoryToken(): string | null {
@@ -24,7 +29,7 @@ const api = axios.create({
   timeout: 10000,
 });
 
-api.interceptors.request.use(async (config) => {
+api.interceptors.request.use((config) => {
   if (_memoryToken) {
     config.headers.Authorization = `Bearer ${_memoryToken}`;
   }
@@ -40,10 +45,10 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
     const requestUrl = error.config?.url ?? "";
+    const isLoginRequest = requestUrl.includes("jwt-auth/v1/token");
 
-    if (status === 401) {
-      const isLoginRequest = requestUrl.includes("jwt-auth/v1/token");
-      if (!isLoginRequest && _memoryToken && !_handling401) {
+    if (status === 401 && !isLoginRequest && _memoryToken && !_sessionRestoring) {
+      if (!_handling401) {
         _handling401 = true;
         _onUnauthorized?.();
         setTimeout(() => {
@@ -71,11 +76,18 @@ api.interceptors.response.use(
       });
     }
 
+    if (!error.response) {
+      return Promise.reject({
+        status: undefined,
+        message: "Sin conexión. Revisa tu internet e intenta de nuevo.",
+      });
+    }
+
     return Promise.reject({
       status,
       message:
-        error?.response?.data?.message ||
-        error?.message ||
+        error.response?.data?.message ||
+        error.message ||
         "Ha ocurrido un error inesperado.",
     });
   },

@@ -1,19 +1,14 @@
+import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import {
-    DiagnosticsServices,
-    LastDiagnosticResult,
+  DiagnosticsServices,
+  LastDiagnosticResult,
 } from "@/src/modules/diagnostics/services/diagnostic.service";
-import { useQuery } from "@tanstack/react-query";
 
-export const useLastDiagnostic = ({
-  userId,
-  token,
-}: {
-  userId: string;
-  token: string;
-}) => {
-  return useQuery<LastDiagnosticResult>({
+export const useLastDiagnostic = (userId?: string) => {
+  return useAuthQuery<LastDiagnosticResult>({
     queryKey: ["last-diagnostic", userId],
-    queryFn: () => DiagnosticsServices.getLastDiagnostic({ userId, token }),
+    queryFn: () => DiagnosticsServices.getLastDiagnostic({ userId: userId! }),
+    enabled: !!userId,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,

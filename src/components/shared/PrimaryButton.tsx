@@ -64,6 +64,8 @@ const PrimaryButton = ({
     },
     secondary: {
       background: colors.backgroundElevated,
+      borderColor: colors.border,
+      borderWidth: 1,
       pressed: "rgba(0,0,0,0.08)",
       text: colors.textAccent,
     },

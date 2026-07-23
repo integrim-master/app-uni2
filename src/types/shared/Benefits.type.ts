@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 interface TratamientoCareme {
   id: number;
   title: string;
@@ -49,6 +51,9 @@ interface BenefitsListProps {
   onBenefitRedemed: (benefit: Benefits, action: "aplicar" | "cancelar") => void;
   onBenefitViewDetails?: (benefit: Benefits) => void;
   emptyMessage?: string;
+  emptyTitle?: string;
+  emptyBody?: string;
+  emptyIcon?: ReactNode;
   filterUsed?: "available" | "used";
   animationKey?: string;
   isPendingRedeem?: boolean;

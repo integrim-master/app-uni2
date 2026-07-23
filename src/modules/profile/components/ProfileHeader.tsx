@@ -1,5 +1,7 @@
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../../context/ThemeContext";
 
 interface ProfileHeaderProps {
@@ -9,33 +11,38 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const userInitial = userName.charAt(0).toUpperCase();
 
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.profileSection, { borderColor: colors.border }]}
+      style={[
+        styles.profileSection,
+        {
+          backgroundColor: colors.primaryLight,
+          paddingTop: insets.top + 20,
+        },
+      ]}
     >
       <View style={styles.profileContent}>
         <View
           style={[
             styles.profileImage,
             {
-              backgroundColor: colors.primaryLight,
+              backgroundColor: colors.primary,
             },
           ]}
         >
-          <Text style={[styles.profileInitial, { color: colors.text }]}>
+          <Text style={[styles.profileInitial, { color: colors.cardText }]}>
             {userInitial}
           </Text>
         </View>
         <View style={styles.profileTextContainer}>
-          <Text style={[styles.profileName, { color: colors.textAccent }]}>
+          <Text style={[styles.profileName, { color: colors.cardText }]}>
             {userName}
           </Text>
-          <Text
-            style={[styles.profileSubtext, { color: colors.textSecondary }]}
-          >
+          <Text style={[styles.profileSubtext, { color: colors.cardText }]}>
             Ver perfil
           </Text>
         </View>
@@ -50,9 +57,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 18,
-    borderBottomWidth: 1,
-    marginBottom: 32,
+    paddingHorizontal: ui.spacing.sm,
+    paddingBottom: ui.spacing.xs,
+
+    marginBottom: ui.spacing.xs,
   },
   profileContent: {
     flexDirection: "row",
@@ -63,7 +71,6 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    borderWidth: 1,
     marginRight: 18,
     justifyContent: "center",
     alignItems: "center",

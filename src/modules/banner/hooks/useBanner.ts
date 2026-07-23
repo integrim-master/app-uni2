@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import { BannerService } from "../services/banner.service";
 import { BannerMedia } from "../types/banner.type";
 
 export const useBanner = () => {
-  return useQuery<BannerMedia>({
+  return useAuthQuery<BannerMedia>({
     queryKey: ["banner"],
     queryFn: () => BannerService.getBanner(),
     staleTime: Infinity,

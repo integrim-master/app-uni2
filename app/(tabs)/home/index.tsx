@@ -2,12 +2,11 @@ import LoadingComponent from "@/src/components/shared/LoadingComponent";
 import { Screen } from "@/src/components/shared/Screen";
 import HomeScreen from "@/src/modules/home/screens/HomeScreen";
 import type { UltimasCitas } from "@/src/modules/home/types/home.dates.types";
-import { useMeUser } from "@/src/modules/login/hooks/useMe";
+import { useMe } from "@/src/modules/user/hooks/useMe";
 import React from "react";
 
 export default function Index() {
-  const { data, refetch, isRefetching, isLoading, isError, error } =
-    useMeUser();
+  const { data, refetch, isRefetching, isLoading, isError, error } = useMe();
 
   const onRefresh = async () => {
     await refetch();

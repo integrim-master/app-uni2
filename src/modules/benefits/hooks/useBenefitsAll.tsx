@@ -1,5 +1,5 @@
 import { Benefits, BenefitUsed } from "@/src/types/shared/Benefits.type";
-import { useQuery } from "@tanstack/react-query";
+import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import { BenefitService } from "../services/benefits.service";
 
 interface BenefitsApiResponse {
@@ -13,7 +13,7 @@ interface BenefitsApiResponse {
 }
 
 export const useBenefitAll = () => {
-  return useQuery<BenefitsApiResponse, { status: number; message: string }>({
+  return useAuthQuery<BenefitsApiResponse, { status: number; message: string }>({
     queryKey: ["benefit"],
     queryFn: () => BenefitService.getBenefitsAll(),
     staleTime: Infinity,

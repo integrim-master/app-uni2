@@ -1,11 +1,11 @@
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useUser } from "@/src/modules/banner/hooks/userHome";
 import { useBenefit } from "@/src/modules/benefits/hooks/useBenefits";
 import { useRedemed } from "@/src/modules/benefits/hooks/useRedem";
 import BenefitScreen from "@/src/modules/benefits/screens/BenefitsDetailsScreen";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useUser } from "@/src/modules/user/hooks/useUser";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 
@@ -43,17 +43,9 @@ export default function Index() {
     }
   };
 
-  return (
-    <Screen>
-      <Stack.Screen
-        options={{
-          title: benefit?.title ?? "Beneficio",
-          headerShadowVisible: false,
-          headerBackVisible: true,
-        }}
-      />
-
-      {isError ? (
+  if (isError) {
+    return (
+      <Screen>
         <View className="flex-1 justify-center items-center px-6">
           <ThemedText type="title" className="mb-4 text-center">
             Error al cargar el beneficio
@@ -62,15 +54,17 @@ export default function Index() {
             {error?.message || "Ha ocurrido un error inesperado"}
           </ThemedText>
         </View>
-      ) : (
-        <BenefitScreen
-          onRedeem={sendRedeem}
-          benefit={benefit as any}
-          isPending={isLoading}
-          isLoadingRedeem={isPending}
-          sucessRedeem={sucessRedeem}
-        />
-      )}
-    </Screen>
+      </Screen>
+    );
+  }
+
+  return (
+    <BenefitScreen
+      onRedeem={sendRedeem}
+      benefit={benefit as any}
+      isPending={isLoading}
+      isLoadingRedeem={isPending}
+      sucessRedeem={sucessRedeem}
+    />
   );
 }

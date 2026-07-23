@@ -1,79 +1,42 @@
-import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { SymbolView } from "expo-symbols";
-import { Stack, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Stack } from "expo-router";
 import React from "react";
-import { Image, Platform, Pressable, Text, View } from "react-native";
-
-function NotificationButton() {
-  const router = useRouter();
-  const { colors } = useTheme();
-  const { unreadCount } = useNotifications();
-
-  return (
-    <Pressable
-      onPress={() => router.push("/notifications")}
-      style={{ position: "relative", padding: 4 }}
-    >
-      {Platform.OS === "ios" ? (
-        <SymbolView name="bell.fill" size={24} tintColor={colors.primary} />
-      ) : (
-        <Ionicons name="notifications" size={24} color={colors.primary} />
-      )}
-      {unreadCount > 0 && (
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            backgroundColor: "#FF3B30",
-            borderRadius: 9,
-            minWidth: 18,
-            height: 18,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 3,
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 10, fontWeight: "bold" }}>
-            {unreadCount > 99 ? "99+" : unreadCount}
-          </Text>
-        </View>
-      )}
-    </Pressable>
-  );
-}
+import { Image, Platform, Pressable } from "react-native";
 
 export default function HomeLayout() {
   const { colors } = useTheme();
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: true,
-        headerShadowVisible: false,
-        headerBlurEffect: "systemChromeMaterialDark",
-        headerTransparent: Platform.OS === "ios",
-        headerBackButtonDisplayMode: "minimal",
-        headerTintColor: colors.primary,
-        headerStyle: {
-          backgroundColor:
-            Platform.OS === "android" ? colors.backgroundHeader : undefined,
-        },
-      }}
-    >
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="index"
         options={{
+          headerShown: true,
           title: "",
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
           headerLeft: () => (
             <Image
               source={require("../../../assets/images/logo-careme-white.png")}
-              style={{ width: 110, height: 36, resizeMode: "contain" }}
+              className="h-10 w-40"
             />
           ),
-          headerRight: () => <NotificationButton />,
+          headerRight: () => (
+            <Pressable
+              onPress={() => router.push("/notifications")}
+              hitSlop={8}
+              style={{ marginRight: Platform.OS === "ios" ? 4 : 12 }}
+            >
+              <Ionicons
+                name="notifications-outline"
+                size={24}
+                color={colors.primary}
+              />
+            </Pressable>
+          ),
         }}
       />
       <Stack.Screen

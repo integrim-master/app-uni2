@@ -1,13 +1,11 @@
-import { BackButton } from "@/src/components/shared/BackButton";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useUser } from "@/src/modules/banner/hooks/userHome";
+import { useUser } from "@/src/modules/user/hooks/useUser";
 
 import { ProfileSkeleton } from "@/src/modules/profile/components/ProfileSkeleton";
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
-import { ui } from "@/src/themes/ui";
 import { router } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -16,48 +14,53 @@ export default function ProfileDetailScreen() {
   const { colors } = useTheme();
   const { data: user, isPending: isInfoPending } = useInfoProfile();
   const { data: email } = useUser();
+
   return (
-    <Screen
-      safeArea={true}
-      leftButton={<BackButton iconName="close-outline" />}
-    >
-      s
-      <ScrollView>
+    <Screen fullWidth>
+   
+      <View
+        style={[styles.overscrollFill, { backgroundColor: colors.primaryLight }]}
+        pointerEvents="none"
+      />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.scroll}
+        contentContainerStyle={{ backgroundColor: colors.background }}
+      >
         {isInfoPending ? (
           <ProfileSkeleton />
         ) : (
           <>
-            <View style={[styles.headerContainer]}>
+            {/* HEADER */}
+            <View
+              style={[
+                styles.headerContainer,
+                { backgroundColor: colors.primaryLight },
+              ]}
+            >
               <View
-                style={[
-                  styles.avatarCircle,
-                  {
-                    backgroundColor: colors.primaryLight,
-                  },
-                ]}
+                style={[styles.avatarCircle, { backgroundColor: colors.primary }]}
               >
-                <Text
-                  style={[styles.avatarInitial, { color: colors.cardText }]}
-                >
+                <Text style={[styles.avatarInitial, { color: colors.cardText }]}>
                   {user?.nombre?.charAt(0).toUpperCase()}
                 </Text>
               </View>
 
-              <Text style={[styles.name, { color: "#fff" }]}>
-                {user?.nombre}
-              </Text>
-              <Text style={[styles.email, { color: "rgba(255,255,255,0.8)" }]}>
+              <Text style={styles.name}>{user?.nombre}</Text>
+              <Text style={styles.email}>
                 {email?.user_email || "Correo no disponible"}
               </Text>
 
               <PrimaryButton
                 title="Editar perfil"
                 onPress={() => router.push("/profile-details/edit")}
-                style={{ marginTop: 14, alignSelf: "center" }}
+                style={styles.editBtn}
               />
             </View>
 
-            <View style={styles.sectionWrapper} className="flex gap-2">
+            {/* SECCIONES */}
+            <View style={styles.sectionWrapper}>
               <SimpleMenuSection
                 sectionTitle="Datos de contacto"
                 items={[
@@ -139,166 +142,59 @@ export default function ProfileDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    paddingBottom: 40,
-    alignItems: "center",
-    borderBottomRightRadius: ui.radii.xl,
+
+  overscrollFill: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 500,
+  },
+  scroll: {
+    backgroundColor: "transparent",
   },
 
+  headerContainer: {
+    alignItems: "center",
+    paddingTop: 24,
+    paddingBottom: 32,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
   avatarCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: ui.radii.pill,
+    width: 104,
+    height: 104,
+    borderRadius: 52,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 6,
+    borderWidth: 3,
+    borderColor: "rgba(255,255,255,0.25)",
   },
-
   avatarInitial: {
-    fontSize: 48,
+    fontSize: 42,
     fontWeight: "700",
   },
-
   name: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "700",
-    marginTop: 10,
+    color: "#fff",
+    marginTop: 14,
+    letterSpacing: -0.3,
   },
-
   email: {
     fontSize: 14,
+    color: "rgba(255,255,255,0.8)",
     marginTop: 2,
   },
-
-  editButton: {
-    marginTop: 14,
-    flexDirection: "row",
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    borderRadius: ui.radii.md,
-    alignItems: "center",
-  },
-
-  editText: {
-    color: "#fff",
-    marginLeft: 6,
-    fontSize: 15,
-    fontWeight: "600",
+  editBtn: {
+    marginTop: 18,
+    alignSelf: "center",
   },
 
   sectionWrapper: {
     paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-
-  luxuryContainer: {
-    flex: 1,
-    borderTopLeftRadius: ui.radii.xl,
-    borderTopRightRadius: ui.radii.xl,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-    shadowColor: "#000",
-    shadowOpacity: 0.35,
-    shadowRadius: 18,
-    shadowOffset: { height: -6, width: 0 },
-  },
-
-  blurLayer: {
-    ...StyleSheet.absoluteFillObject,
-  },
-
-  headerSection: {
-    marginBottom: 20,
-  },
-
-  iconContainer: {
-    marginBottom: 12,
-  },
-
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#fff",
-    marginBottom: 8,
-  },
-
-  subtitle: {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 14,
-    lineHeight: 20,
-  },
-
-  fieldWrapper: {
-    marginBottom: 20,
-  },
-
-  fieldLabel: {
-    color: "rgba(255,255,255,0.9)",
-    marginBottom: 8,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-
-  fieldBox: {
-    backgroundColor: "rgba(255,255,255,0.08)",
-    padding: 14,
-    borderRadius: ui.radii.md,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
-  },
-
-  fieldBoxDisabled: {
-    backgroundColor: "rgba(255,255,255,0.04)",
-    borderColor: "rgba(255,255,255,0.06)",
-  },
-
-  fieldText: {
-    color: "#fff",
-    fontSize: 15,
-  },
-
-  helperText: {
-    color: "rgba(255,255,255,0.5)",
-    fontSize: 12,
-    marginTop: 6,
-    fontStyle: "italic",
-  },
-
-  saveButton: {
-    marginTop: 28,
-    borderRadius: ui.radii.md,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    shadowOffset: { height: 4, width: 0 },
-    elevation: 5,
-  },
-
-  saveButtonDisabled: {
-    opacity: 0.7,
-  },
-
-  saveButtonGradient: {
-    paddingVertical: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  saveButtonText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-
-  loadingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  buttonContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    paddingTop: 24,
+    paddingBottom: 20,
+    gap: 20,
   },
 });

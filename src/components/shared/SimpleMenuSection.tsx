@@ -62,7 +62,7 @@ export const SimpleMenuSection = ({
         activeOpacity={item.onPress || item.link ? 0.7 : 1}
         onPress={handlePress}
         style={{ borderColor: colors.border }}
-        className="flex w-full border-b justify-between px-4 items-center flex-row gap-4 py-4"
+        className="flex w-full  justify-between px-4 items-center flex-row gap-4 py-4"
       >
         <View className="flex flex-row gap-4 items-center">
           {item.icon !== "" && (

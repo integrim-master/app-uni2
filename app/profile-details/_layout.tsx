@@ -1,7 +1,7 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Stack } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
 
 export default function ProfileDetailsLayout() {
   const { colors } = useTheme();
@@ -10,24 +10,25 @@ export default function ProfileDetailsLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        presentation: Platform.OS === "ios" ? "modal" : undefined,
-        headerBlurEffect: "systemChromeMaterial",
-        headerTransparent: Platform.OS === "ios",
-        headerShadowVisible: false,
-        headerTintColor: colors.textStrong,
-        headerBackButtonDisplayMode: "minimal",
-        headerStyle: {
-          backgroundColor:
-            Platform.OS === "android" ? "transparent" : undefined,
-        },
       }}
     >
+      <Stack.Screen
+        name="index"
+        options={{
+          headerShown: true,
+          title: "",
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: colors.primaryLight,
+          },
+          headerLeft: () => <BackButton />,
+        }}
+      />
       <Stack.Screen
         name="edit/index"
         options={{
           headerShown: false,
           headerTitle: "",
-          presentation: Platform.OS === "ios" ? "pageSheet" : undefined,
         }}
       />
       <Stack.Screen

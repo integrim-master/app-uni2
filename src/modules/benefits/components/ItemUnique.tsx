@@ -30,11 +30,7 @@ export default function ItemUnique({
   const borderColor = isActive ? colors.primary : colors.border;
 
   return (
-    <Card
-      borderColor={borderColor}
-      style={[styles.cardContainer]}
-      pressable={false}
-    >
+    <Card borderColor={borderColor} pressable={false}>
       <View style={styles.topSection}>
         <View style={styles.titleColumn}>
           <ThemedText
@@ -54,16 +50,16 @@ export default function ItemUnique({
           </ThemedText>
         </View>
 
-        <Badge
+        {/* <Badge
           text={
             data.remaining > 0
               ? `Restantes: ${data.remaining ?? 0}`
               : `Usado${data.used > 1 ? "s" : ""}: ${data.used}`
           }
           icon={"circle"}
-          variant={"default"}
+          variant={data.remaining > 0 ? "success" : "default"}
           style={styles.estadoBadge}
-        />
+        /> */}
       </View>
 
       {data ? (
@@ -73,67 +69,10 @@ export default function ItemUnique({
             icon="attach-money"
             variant="neutral"
             size="small"
-            sharp={false}
           />
-
-          <Badge
-            text="Diciembre"
-            icon="schedule"
-            variant="default"
-            size="small"
-            sharp={false}
-          />
-        </View>
-      ) : null}
-      <View style={styles.perforationWrap}>
-        <View
-          style={[
-            styles.perforationLine,
-            { borderColor: isDark ? colors.border : "#E5E7EB" },
-          ]}
-        />
-      </View>
-
-      <View style={styles.bottomSection}>
-        <View style={styles.actionsColumn}>
-          <View style={styles.ctaWrap}>
-            <PrimaryButton
-              title="Ver"
-              style={styles.fullWidthBtn}
-              variant="secondary"
-              onPress={onPressViewDetails}
-              icon={
-                <MaterialIcons
-                  name="visibility"
-                  size={16}
-                  color={colors.cardText}
-                />
-              }
-            />
-
-            <View style={{ height: 10 }} />
-
-            <PrimaryButton
-              title={isActive ? "Cancelar" : "Aplicar"}
-              textStyle={styles.applyText}
-              onPress={() =>
-                onPressRedeem?.(data, isActive ? "cancelar" : "aplicar")
-              }
-              disabled={isAnyBenefitActive && !isThisBenefitActive}
-              loading={isPendingRedeem && isThisBenefitActive}
-              style={styles.fullWidthBtn}
-              icon={
-                <MaterialIcons
-                  name={isActive ? "cancel" : "check-circle"}
-                  size={16}
-                  color={colors.cardText}
-                />
-              }
-            />
-          </View>
-
           {isActive && benefitRedemed?.estado && (
             <Badge
+              size="small"
               text={
                 benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
                   ? BENEFIT_STATUS_LABELS.EN_ESPERA
@@ -149,22 +88,79 @@ export default function ItemUnique({
                   ? "warning"
                   : "success"
               }
-              style={styles.pendingBadge}
             />
           )}
         </View>
+      ) : null}
+      <View style={styles.perforationWrap}>
+        <View
+          style={[
+            styles.perforationLine,
+            { borderColor: isDark ? colors.border : "#E5E7EB" },
+          ]}
+        />
+      </View>
+
+      <View style={styles.bottomSection}>
+        <View style={styles.ctaRow}>
+          <PrimaryButton
+            title="Ver"
+            variant="secondary"
+            onPress={onPressViewDetails}
+            icon={
+              <MaterialIcons
+                name="visibility"
+                size={16}
+                color={colors.primaryLight}
+              />
+            }
+          />
+
+          <PrimaryButton
+            title={isActive ? "Cancelar" : "Aplicar"}
+            textStyle={styles.applyText}
+            onPress={() =>
+              onPressRedeem?.(data, isActive ? "cancelar" : "aplicar")
+            }
+            disabled={isAnyBenefitActive && !isThisBenefitActive}
+            loading={isPendingRedeem && isThisBenefitActive}
+            style={styles.aplicarBtn}
+            icon={
+              <MaterialIcons
+                name={isActive ? "cancel" : "check-circle"}
+                size={16}
+                color={colors.cardText}
+              />
+            }
+          />
+        </View>
+
+        {/* {isActive && benefitRedemed?.estado && (
+          <Badge
+            text={
+              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                ? BENEFIT_STATUS_LABELS.EN_ESPERA
+                : BENEFIT_STATUS_LABELS.CANJEADO
+            }
+            icon={
+              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                ? "hourglass-empty"
+                : "check-circle"
+            }
+            variant={
+              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
+                ? "warning"
+                : "success"
+            }
+            style={styles.pendingBadge}
+          />
+        )} */}
       </View>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    marginHorizontal: 16,
-    padding: ui.spacing.xl,
-    flexDirection: "column",
-  },
-
   topSection: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -198,28 +194,24 @@ const styles = StyleSheet.create({
   },
 
   bottomSection: {
-    flexDirection: "row",
+    flexDirection: "column",
     width: "100%",
   },
-  actionsColumn: {
+
+  ctaRow: {
+    flexDirection: "column",
+    gap: 10,
+    width: "100%",
+  },
+  verBtn: {
     flex: 1,
   },
-  ctaWrap: {
-    flexDirection: "column",
-    alignItems: "stretch",
-    width: "100%",
-  },
-  fullWidthBtn: {
-    width: "100%",
+  aplicarBtn: {
+    flex: 1.4,
   },
   applyText: {
     color: Colors.cardText,
     fontSize: 14,
     fontWeight: "800",
-  },
-
-  pendingBadge: {
-    marginTop: ui.spacing.md,
-    alignSelf: "center",
   },
 });

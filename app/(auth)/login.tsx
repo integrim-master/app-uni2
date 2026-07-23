@@ -1,4 +1,4 @@
-import ConfirmActionModal from "@/src/components/shared/Modal";
+import ConfirmActionModal from "@/src/components/shared/ConfirmActionModal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
@@ -8,6 +8,8 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { useLogin } from "@/src/modules/login/hooks/useLogin";
 import { useSendNotifications } from "@/src/modules/login/hooks/useNotifications";
 import { useTerms } from "@/src/modules/login/hooks/useTerms";
+import { FULL_PROFILE_KEY } from "@/src/modules/user/types/me.types";
+import { useQueryClient } from "@tanstack/react-query";
 import { Redirect, router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -29,6 +31,7 @@ const Login = () => {
   const { login, logout, token } = useAuth();
   const { pushToken } = useNotifications();
   const { mutate: sendTokenNotifications } = useSendNotifications();
+  const queryClient = useQueryClient();
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [dataUser, setDataUser] = useState({
@@ -75,15 +78,15 @@ const Login = () => {
       },
       {
         onSuccess: async (data) => {
-          await login(
-            data.token,
-            data.user_data,
-            data.membership_data,
-            data.tratamientos_careme,
-            data.treatments_suggest,
-            data.promotions,
-            data.ultimas_citas,
-          );
+          await login(data.token);
+          queryClient.setQueryData(FULL_PROFILE_KEY, {
+            user_data: data.user_data,
+            membership_data: data.membership_data,
+            treatments_careme: data.tratamientos_careme,
+            treatments_suggest: data.treatments_suggest,
+            promotions: data.promotions,
+            ultimas_citas: data.ultimas_citas,
+          });
 
           if (pushToken) {
             const platform = Platform.OS === "ios" ? "ios" : "android";

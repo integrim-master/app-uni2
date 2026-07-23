@@ -35,12 +35,15 @@ const HomeScreen: React.FC<Props> = ({
   const router = useRouter();
 
   if (isError) {
-    return <ErrorScreen message={error?.message} />;
+    return <ErrorScreen message={error?.message} onRetry={onRefresh} />;
   }
 
   return (
     <ScrollView
-      style={styles.safeArea}
+      style={styles.scroll}
+      showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{ paddingBottom: ui.spacing.lg }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -67,10 +70,10 @@ const HomeScreen: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  scroll: {
     flex: 1,
-    paddingHorizontal: 16,
   },
+
 
   errorContainer: {
     flex: 1,

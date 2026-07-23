@@ -1,6 +1,6 @@
+import { useTheme } from "@/src/context/ThemeContext";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
 
 type TabOption = {
   key: string;
@@ -13,6 +13,7 @@ type TabBarProps = {
   setActiveTab: (tab: string) => void;
 };
 
+/** Segmented control genérico (no confundir con NativeTabs del router). */
 const TabBar: React.FC<TabBarProps> = ({
   options,
   activeTab,
@@ -32,8 +33,6 @@ const TabBar: React.FC<TabBarProps> = ({
                 activeTab === option.key ? colors.primaryLight : colors.card,
               flex: 1,
             },
-            options.length === 2 && { marginHorizontal: 8 },
-            options.length === 3 && { marginHorizontal: 4 },
           ]}
         >
           <Text
@@ -54,21 +53,10 @@ const styles = StyleSheet.create({
   customTabBar: {
     flexDirection: "row",
     borderRadius: 999,
-    paddingVertical: 3,
 
     width: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    elevation: 2,
-    marginBottom: 8,
   },
   tabItem: {
     paddingVertical: 7,

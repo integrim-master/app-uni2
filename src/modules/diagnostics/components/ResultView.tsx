@@ -6,13 +6,7 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { useTreatments } from "@/src/modules/user/hooks/useTreatments";
 import { normalizeString } from "@/src/utils/stringUtils";
 import React, { useMemo } from "react";
-import {
-  Dimensions,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -22,14 +16,11 @@ import DiagnosticCard from "./DiagnosticCard";
 import ResultHeader from "./ResultHeader";
 import TreatmentCard from "./TreatmentCard";
 
-const { width } = Dimensions.get("window");
-
 export default function ResultView({
   photoUri,
   diagnostic,
   onReset,
   onNewDiagnostic,
-  onClose,
 }: ResultViewProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();

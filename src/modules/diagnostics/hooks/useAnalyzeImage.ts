@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { AnalyzeImage } from "../n8n.service";
+import { analyzeImage } from "../services/analyze.service";
 
 export const useAnalyzeImage = () => {
   return useMutation({
-    mutationFn: AnalyzeImage,
+    mutationFn: analyzeImage,
   });
 };

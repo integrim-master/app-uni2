@@ -7,11 +7,7 @@ import { StyleSheet, View } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { useTheme } from "../../../context/ThemeContext";
 
-type SendPhotoProps = {
-  onComplete?: () => void;
-};
-
-const SendPhoto = ({ onComplete }: SendPhotoProps) => {
+const SendPhoto = () => {
   const { colors } = useTheme();
   const [index, setIndex] = useState(0);
 
@@ -20,7 +16,6 @@ const SendPhoto = ({ onComplete }: SendPhotoProps) => {
     "Analizando rostro...",
     "Procesando datos...",
     "Generando diagnóstico...",
-    
   ];
 
   useEffect(() => {

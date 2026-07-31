@@ -3,6 +3,7 @@ import {
   setOnUnauthorized,
   setSessionRestoring,
 } from "@/src/api/base";
+import { AuthService } from "@/src/modules/auth/services/auth.service";
 import {
   AuthContextType,
   AuthProviderProps,
@@ -13,7 +14,6 @@ import {
   removeStoredToken,
   saveStoredToken,
 } from "@/src/modules/auth/utils/tokenStorage";
-import { AuthService } from "@/src/modules/auth/services/auth.service";
 import { FULL_PROFILE_KEY } from "@/src/modules/user/types/me.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";

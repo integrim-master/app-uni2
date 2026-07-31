@@ -1,9 +1,9 @@
 import api from "@/src/api/base";
-import { MeApiResponse } from "@/src/modules/user/types/me.types";
 import {
   AcceptTermsResponse,
   LoginResponse,
 } from "@/src/modules/login/types/login.types";
+import { MeApiResponse } from "@/src/modules/user/types/me.types";
 
 export const AuthService = {
   getMeUser: async () => {

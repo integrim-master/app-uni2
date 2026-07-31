@@ -116,7 +116,7 @@ export default function CameraScreen() {
       : "Coloca tu rostro dentro del óvalo";
 
   return (
-    <Screen fullWidth>
+    <Screen fullWidth safeArea={true}>
       <View style={styles.headings}>
         <ThemedText
           type="display"

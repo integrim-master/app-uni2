@@ -4,7 +4,7 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function ProfileDetailsLayout() {
+export default function ScanLayout() {
   const { colors } = useTheme();
 
   return (
@@ -12,31 +12,19 @@ export default function ProfileDetailsLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
         }}
       >
         <Stack.Screen
-          name="index"
+          name="camera"
           options={{
             headerShown: true,
             title: "",
+            headerTransparent: true,
             headerShadowVisible: false,
-            headerStyle: {
-              backgroundColor: colors.primaryLight,
-            },
+            headerStyle: { backgroundColor: "transparent" },
+            contentStyle: { backgroundColor: colors.background },
             headerLeft: () => <BackButton />,
-          }}
-        />
-        <Stack.Screen
-          name="edit/index"
-          options={{
-            headerShown: false,
-            headerTitle: "",
-          }}
-        />
-        <Stack.Screen
-          name="edit/[slug]/index"
-          options={{
-            headerShown: false,
           }}
         />
       </Stack>

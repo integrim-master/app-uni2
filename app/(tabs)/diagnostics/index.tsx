@@ -50,7 +50,7 @@ function DiagnosticsContent({ userId }: { userId: string }) {
   }
 
   return (
-    <Screen fullWidth safeArea={false}>
+    <Screen  safeArea={true}>
       <StepOne />
     </Screen>
   );

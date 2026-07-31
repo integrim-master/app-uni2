@@ -34,7 +34,7 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState<"disponibles" | "canjeados">(
     "disponibles",
   );
-  const { data: benefitsData, isFetching, refetch, error } = useBenefitAll();
+  const { data: benefitsData, isLoading, refetch, error } = useBenefitAll();
 
   const membershipState: MembershipData | null = benefitsData
     ? {
@@ -55,7 +55,7 @@ export default function Index() {
 
   return (
     <BeneficiosScreen
-      loading={isFetching}
+      loading={isLoading}
       refreshing={refreshing}
       membership={membershipState}
       setRefreshing={setRefreshing}

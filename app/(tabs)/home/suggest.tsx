@@ -1,22 +1,18 @@
 import { BackButton } from "@/src/components/shared/BackButton";
 import { Screen } from "@/src/components/shared/Screen";
+import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import {
   ImageBackground,
   Pressable,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Suggest() {
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
   return (
     <Screen>
       <SafeAreaView className="flex-1 ">
@@ -30,8 +26,12 @@ export default function Suggest() {
             <View style={styles.gradientOverlay} />
 
             <View style={styles.titleWrapper}>
-              <Text style={styles.title}>Limpieza Facial</Text>
-              <Text style={styles.subtitle}>Tratamiento profesional</Text>
+              <ThemedText type="display" tone="inverse">
+                Limpieza Facial
+              </ThemedText>
+              <ThemedText type="body" tone="inverse">
+                Tratamiento profesional
+              </ThemedText>
             </View>
           </ImageBackground>
         </View>
@@ -39,26 +39,26 @@ export default function Suggest() {
         <View
           style={[styles.card, { backgroundColor: colors.gradientCard[0] }]}
         >
-          <View>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <View style={styles.copyBlock}>
+            <ThemedText type="titleSm">
               Descripción del tratamiento
-            </Text>
+            </ThemedText>
 
-            <Text style={[styles.desc, { color: colors.textSecondary }]}>
+            <ThemedText type="body" tone="secondary">
               La limpieza facial profunda elimina impurezas, celulas muertas y
               toxinas de la piel, dejándola suave, luminosa y revitalizada.
               Incluye exfoliación, extracción controlada y mascarilla hidratante
               para mejorar la salud del cutis.
-            </Text>
+            </ThemedText>
           </View>
           <View style={styles.buttonsRow}>
             <Pressable
               style={[styles.whatsappBtn, { backgroundColor: colors.success }]}
             >
               <Ionicons name="logo-whatsapp" size={22} color={colors.card} />
-              <Text style={[styles.whatsappText, { color: colors.card }]}>
+              <ThemedText type="semiBold" color={colors.card}>
                 Contactar asesor
-              </Text>
+              </ThemedText>
             </Pressable>
           </View>
         </View>
@@ -72,46 +72,23 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 260,
   },
-
   image: {
     flex: 1,
     justifyContent: "flex-end",
   },
-
   gradientOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.45)",
   },
-
-  backButton: {
-    position: "absolute",
-    left: 16,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-  },
-
   titleWrapper: {
     paddingHorizontal: 20,
     paddingBottom: 28,
+    gap: 4,
   },
-
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#fff",
+  copyBlock: {
+    gap: 12,
+    marginBottom: 28,
   },
-
-  subtitle: {
-    fontSize: 16,
-    color: "#eee",
-    marginTop: 4,
-  },
-
   card: {
     marginTop: -24,
     borderTopLeftRadius: 26,
@@ -119,30 +96,15 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
     flex: 1,
-
     shadowColor: "#000",
     shadowOpacity: 0.12,
     shadowRadius: 10,
     elevation: 10,
   },
-
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-
-  desc: {
-    fontSize: 15.5,
-    lineHeight: 23,
-    marginBottom: 28,
-  },
-
   buttonsRow: {
     flexDirection: "row",
     gap: 12,
   },
-
   whatsappBtn: {
     flex: 1,
     flexDirection: "row",
@@ -152,10 +114,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 6,
     elevation: 2,
-  },
-
-  whatsappText: {
-    fontSize: 15,
-    fontWeight: "600",
   },
 });

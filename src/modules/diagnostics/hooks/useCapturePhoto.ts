@@ -1,48 +1,38 @@
+import { getErrorMessage, showErrorToast } from "@/src/utils/showErrorToast";
 import * as ImageManipulator from "expo-image-manipulator";
-import { RefObject, useState } from "react";
+import { RefObject, useCallback, useState } from "react";
 import { Camera } from "react-native-vision-camera";
 
-type Layout = {
-  cameraHeight: number;
-  ovalWidth: number;
-  ovalHeight: number;
-};
-
-export function useCaptureAndCrop(
+/**
+ * Toma la foto tal cual la entrega la cámara (sin recortar). Solo se
+ * recomprime a JPEG para no subir el archivo crudo del sensor sin control
+ * de tamaño. El óvalo en pantalla es únicamente una guía visual para el
+ * usuario, no define una región de recorte real.
+ */
+export function useCapturePhoto(
   cameraRef: RefObject<Camera | null>,
-  layout: Layout,
   canCapture: boolean,
 ) {
   const [capturing, setCapturing] = useState(false);
   const [photoUri, setPhotoUri] = useState<{ uri: string } | null>(null);
 
-  const takePicture = async () => {
+  const takePicture = useCallback(async () => {
     if (capturing || !cameraRef.current || !canCapture) return;
     try {
       setCapturing(true);
       const photo = await cameraRef.current.takePhoto({ flash: "off" });
-      const scale = photo.height / layout.cameraHeight;
-      const cropped = await ImageManipulator.manipulateAsync(
+      const compressed = await ImageManipulator.manipulateAsync(
         `file://${photo.path}`,
-        [
-          {
-            crop: {
-              originX: (photo.width - layout.ovalWidth * scale) / 2,
-              originY: (photo.height - layout.ovalHeight * scale) / 2,
-              width: layout.ovalWidth * scale,
-              height: layout.ovalHeight * scale,
-            },
-          },
-        ],
+        [],
         { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
       );
-      setPhotoUri({ uri: cropped.uri });
+      setPhotoUri({ uri: compressed.uri });
     } catch (e) {
-      console.error(e);
+      showErrorToast("No se pudo tomar la foto", getErrorMessage(e));
     } finally {
       setCapturing(false);
     }
-  };
+  }, [cameraRef, canCapture, capturing]);
 
   return {
     capturing,

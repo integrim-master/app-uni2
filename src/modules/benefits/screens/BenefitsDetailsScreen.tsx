@@ -9,7 +9,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "expo-router";
 import { Skeleton } from "moti/skeleton";
 import React, { use } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import type { BenefitApiResponse } from "../types/benefits.types";
 
@@ -71,12 +71,9 @@ export default function BenefitsDetailsScreen({
           {isPending ? (
             <Skeleton width={220} height={28} radius={8} colorMode="dark" />
           ) : (
-            <Text
-              style={[styles.title, { color: colors.text }]}
-              numberOfLines={3}
-            >
+            <ThemedText type="title" numberOfLines={3}>
               {benefit?.title}
-            </Text>
+            </ThemedText>
           )}
 
           <View
@@ -86,10 +83,7 @@ export default function BenefitsDetailsScreen({
             ]}
           />
 
-          <ThemedText
-            type="body"
-            style={[styles.sectionLabel, { color: colors.textSecondary }]}
-          >
+          <ThemedText type="label" tone="secondary">
             Descripción
           </ThemedText>
 
@@ -100,13 +94,9 @@ export default function BenefitsDetailsScreen({
               <Skeleton height={14} width="75%" radius={6} />
             </View>
           ) : (
-            <ThemedText
-              type="body"
-              style={styles.description}
-              color={colors.text}
-            >
-              {benefit?.description}
-            </ThemedText>
+            <View style={styles.descriptionWrap}>
+              <ThemedText type="body">{benefit?.description}</ThemedText>
+            </View>
           )}
 
           <View className="mt-6 flex-row gap-2">
@@ -133,25 +123,11 @@ const styles = StyleSheet.create({
   badge: {
     marginBottom: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    lineHeight: 30,
-    letterSpacing: -0.3,
-  },
   divider: {
     height: StyleSheet.hairlineWidth,
     marginVertical: 20,
   },
-  sectionLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  description: {
-    fontSize: 15,
-    lineHeight: 23,
+  descriptionWrap: {
     marginTop: 8,
   },
 });

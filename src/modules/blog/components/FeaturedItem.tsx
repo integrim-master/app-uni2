@@ -4,15 +4,16 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { Image } from "expo-image";
 import React from "react";
 import {
-    Pressable,
-    StyleProp,
-    StyleSheet,
-    View,
-    ViewStyle,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
 } from "react-native";
+import type { BlogPost } from "../types/blog.types";
 
 type Props = {
-  item: any;
+  item: BlogPost;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
 };

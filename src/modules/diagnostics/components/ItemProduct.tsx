@@ -1,33 +1,36 @@
-import React from 'react';
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { ItemProductProps, Product } from '../types/diagnostics.types';
+import ThemedText from "@/src/components/shared/themed-text";
+import React from "react";
+import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import { ItemProductProps, Product } from "../types/diagnostics.types";
 
-export default function ItemProduct({ data, fondo, productReport }: ItemProductProps) {
-  const filteredProducts = data.filter(product => 
-    productReport.some(proc => 
-      product.categoria.toLowerCase().includes(proc.toLowerCase()) ||
-      product.nombre.toLowerCase().includes(proc.toLowerCase())
-    )
+export default function ItemProduct({
+  data,
+  fondo,
+  productReport,
+}: ItemProductProps) {
+  const filteredProducts = data.filter((product) =>
+    productReport.some(
+      (proc) =>
+        product.categoria.toLowerCase().includes(proc.toLowerCase()) ||
+        product.nombre.toLowerCase().includes(proc.toLowerCase()),
+    ),
   );
 
   const renderProduct = ({ item }: { item: Product }) => (
     <Pressable style={styles.productCard}>
       {item.imagen && (
-        <Image 
-          source={{ uri: item.imagen }}
-          style={styles.productImage}
-        />
+        <Image source={{ uri: item.imagen }} style={styles.productImage} />
       )}
-      <Text style={styles.productName} numberOfLines={2}>
-        {item.nombre}
-      </Text>
-      <Text style={styles.productDescription} numberOfLines={3}>
-        {item.descripcion}
-      </Text>
+      <View style={styles.productCopy}>
+        <ThemedText type="semiBold" numberOfLines={2}>
+          {item.nombre}
+        </ThemedText>
+        <ThemedText type="caption" tone="secondary" numberOfLines={3}>
+          {item.descripcion}
+        </ThemedText>
+      </View>
       <View style={[styles.priceContainer, { backgroundColor: fondo }]}>
-        <Text style={styles.priceText}>
-          ${item.precio.toLocaleString()}
-        </Text>
+        <ThemedText type="semiBold">${item.precio.toLocaleString()}</ThemedText>
       </View>
     </Pressable>
   );
@@ -35,19 +38,21 @@ export default function ItemProduct({ data, fondo, productReport }: ItemProductP
   if (filteredProducts.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Productos Recomendados</Text>
-        <Text style={styles.noProductsText}>
+        <View style={styles.titleWrap}>
+          <ThemedText type="titleSm">Productos Recomendados</ThemedText>
+        </View>
+        <ThemedText type="caption" tone="secondary" align="center">
           No hay productos disponibles para este diagnóstico
-        </Text>
+        </ThemedText>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        Productos Recomendados
-      </Text>
+      <View style={styles.titleWrap}>
+        <ThemedText type="titleSm">Productos Recomendados</ThemedText>
+      </View>
       <FlatList
         data={filteredProducts}
         renderItem={renderProduct}
@@ -62,63 +67,41 @@ export default function ItemProduct({ data, fondo, productReport }: ItemProductP
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16
+    paddingVertical: 16,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
+  titleWrap: {
     paddingHorizontal: 16,
-    color: '#1a1a1a'
-  },
-  noProductsText: {
-    color: '#666',
-    textAlign: 'center',
-    fontSize: 14,
-    paddingHorizontal: 16
+    marginBottom: 16,
   },
   listContainer: {
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   productCard: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
     marginRight: 12,
     width: 200,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   productImage: {
-    width: '100%',
+    width: "100%",
     height: 120,
     borderRadius: 8,
-    marginBottom: 8
-  },
-  productName: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-    color: '#1a1a1a'
-  },
-  productDescription: {
-    fontSize: 14,
     marginBottom: 8,
-    color: '#666',
-    lineHeight: 18
+  },
+  productCopy: {
+    gap: 4,
+    marginBottom: 8,
   },
   priceContainer: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    alignSelf: 'flex-start'
+    alignSelf: "flex-start",
   },
-  priceText: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: '#1a1a1a'
-  }
 });

@@ -1,6 +1,7 @@
+import ThemedText from "@/src/components/shared/themed-text";
 import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../../context/ThemeContext";
 
@@ -34,17 +35,17 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
             },
           ]}
         >
-          <Text style={[styles.profileInitial, { color: colors.cardText }]}>
+          <ThemedText type="title" color={colors.cardText} weight="bold">
             {userInitial}
-          </Text>
+          </ThemedText>
         </View>
         <View style={styles.profileTextContainer}>
-          <Text style={[styles.profileName, { color: colors.cardText }]}>
+          <ThemedText type="titleSm" color={colors.cardText}>
             {userName}
-          </Text>
-          <Text style={[styles.profileSubtext, { color: colors.cardText }]}>
+          </ThemedText>
+          <ThemedText type="caption" color={colors.cardText}>
             Ver perfil
-          </Text>
+          </ThemedText>
         </View>
       </View>
       <Ionicons name="chevron-forward" size={20} color={colors.primary} />
@@ -59,7 +60,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: ui.spacing.sm,
     paddingBottom: ui.spacing.xs,
-
     marginBottom: ui.spacing.xs,
   },
   profileContent: {
@@ -75,19 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  profileInitial: {
-    fontSize: 24,
-    fontWeight: "700",
-  },
   profileTextContainer: {
     flex: 1,
-  },
-  profileName: {
-    fontSize: 19,
-    fontWeight: "700",
-  },
-  profileSubtext: {
-    fontSize: 14,
-    fontWeight: "400",
   },
 });

@@ -11,7 +11,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 import {
@@ -76,9 +75,9 @@ export default function ResultView({
   ) {
     return (
       <Screen>
-        <Text style={{ color: colors.textSecondary }}>
+        <ThemedText type="body" tone="secondary">
           No se recibió información del diagnóstico
-        </Text>
+        </ThemedText>
         <Pressable
           style={[
             styles.button,
@@ -86,7 +85,9 @@ export default function ResultView({
           ]}
           onPress={onReset}
         >
-          <Text style={styles.buttonText}>Realizar nuevo diagnóstico</Text>
+          <ThemedText type="semiBold" tone="inverse">
+            Realizar nuevo diagnóstico
+          </ThemedText>
         </Pressable>
       </Screen>
     );
@@ -195,5 +196,4 @@ const styles = StyleSheet.create({
   treatmentsSection: { marginTop: 10 },
 
   button: { paddingVertical: 18, paddingHorizontal: 24, borderRadius: 18 },
-  buttonText: { color: "#fff", fontWeight: "700" },
 });

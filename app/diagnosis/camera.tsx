@@ -1,25 +1,18 @@
-import { BackButton } from "@/src/components/shared/BackButton";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTheme } from "@/src/context/ThemeContext";
+import FaceCaptureRing from "@/src/modules/diagnostics/components/FaceCaptureRing";
 import SendPhoto from "@/src/modules/diagnostics/components/loadingPhoto";
-import { useCaptureAndCrop } from "@/src/modules/diagnostics/hooks/useCaptureAndCrop";
+import { useCapturePhoto } from "@/src/modules/diagnostics/hooks/useCapturePhoto";
 import { useFaceAlignment } from "@/src/modules/diagnostics/hooks/useFaceAlignment";
 import { useSendDiagnosticPhoto } from "@/src/modules/diagnostics/hooks/useSendDiagnosticPhoto";
 import ErrorScreen from "@/src/modules/diagnostics/screens/ErrorScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useRef, useState } from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
 import { Camera, useCameraPermission } from "react-native-vision-camera";
 
 export default function CameraScreen() {
@@ -28,11 +21,9 @@ export default function CameraScreen() {
   const { data: userInfo } = useUser();
   const userId = userInfo?.user_id;
 
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
-  const CAMERA_WIDTH = SCREEN_WIDTH * 0.92;
-  const CAMERA_HEIGHT = SCREEN_HEIGHT * 0.58;
-  const OVAL_WIDTH = CAMERA_WIDTH * 0.62;
-  const OVAL_HEIGHT = CAMERA_HEIGHT * 0.65;
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const OVAL_W = SCREEN_WIDTH * 0.66;
+  const OVAL_H = OVAL_W * 1.32;
 
   const cameraRef = useRef<Camera>(null);
   const [facing, setFacing] = useState<"front" | "back">("front");
@@ -41,18 +32,13 @@ export default function CameraScreen() {
   const { device, status, isFaceAligned, frameProcessor } = useFaceAlignment(
     facing,
     {
-      cameraWidth: CAMERA_WIDTH,
-      cameraHeight: CAMERA_HEIGHT,
-      ovalWidth: OVAL_WIDTH,
+      cameraWidth: OVAL_W,
+      cameraHeight: OVAL_H,
+      ovalWidth: OVAL_W,
     },
   );
-  const { capturing, photoUri, setPhotoUri, takePicture } = useCaptureAndCrop(
+  const { capturing, photoUri, setPhotoUri, takePicture } = useCapturePhoto(
     cameraRef,
-    {
-      cameraHeight: CAMERA_HEIGHT,
-      ovalWidth: OVAL_WIDTH,
-      ovalHeight: OVAL_HEIGHT,
-    },
     isFaceAligned,
   );
   const {
@@ -63,20 +49,36 @@ export default function CameraScreen() {
     clearValidationError,
   } = useSendDiagnosticPhoto(userId, token);
 
+  useEffect(() => {
+    if (!hasPermission || photoUri || !isFaceAligned || capturing) return;
+
+    const timer = setTimeout(() => {
+      takePicture();
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [hasPermission, photoUri, isFaceAligned, capturing, takePicture]);
+
   if (!hasPermission) {
     return (
-      <Screen
-        safeArea
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-          width: "100%",
-        }}
-      >
-        <View className="h-full flex justify-center w-full p-2">
-          <PrimaryButton title="Permitir Cámara" onPress={requestPermission} />
+      <Screen>
+        <View style={styles.permissionWrap}>
+          <View style={styles.permissionIcon}>
+            <MaterialIcons name="face" size={44} color="#FFFFFF" />
+          </View>
+          <ThemedText type="display" tone="inverse" align="center">
+            Activa tu cámara
+          </ThemedText>
+          <ThemedText type="body" tone="secondary" align="center">
+            Necesitamos acceso a la cámara para realizar tu escaneo facial de
+            forma segura.
+          </ThemedText>
+          <View style={styles.permissionBtn}>
+            <PrimaryButton
+              title="Permitir Cámara"
+              onPress={requestPermission}
+            />
+          </View>
         </View>
       </Screen>
     );
@@ -97,147 +99,112 @@ export default function CameraScreen() {
     );
   }
 
+  const ringColor = isFaceAligned ? colors.success : "#FFFFFF";
+  const title = photoUri
+    ? "Revisa tu foto"
+    : status === "far"
+      ? "Acércate más"
+      : status === "uncentered"
+        ? "Centra tu rostro"
+        : isFaceAligned
+          ? "Rostro reconocido"
+          : "Escaneo facial";
+  const subtitle = photoUri
+    ? "Confirma que la imagen se ve bien antes de analizar"
+    : isFaceAligned
+      ? "Mantente quieto y captura"
+      : "Coloca tu rostro dentro del óvalo";
+
   return (
-    <Screen
-      safeArea
-      leftButton={<BackButton />}
-      style={{ backgroundColor: colors.background }}
-    >
-      <View style={styles.header}>
+    <Screen fullWidth>
+      <View style={styles.headings}>
         <ThemedText
-          type="title"
-          color={isFaceAligned ? colors.success : colors.primaryLight}
+          type="display"
+          align="center"
+          tone={isFaceAligned ? "primary" : "inverse"}
         >
-          {photoUri
-            ? "Revisa tu foto"
-            : status === "far"
-              ? "Acércate más"
-              : status === "uncentered"
-                ? "Centra tu rostro en ovalo "
-                : isFaceAligned
-                  ? "¡Perfecto!"
-                  : "Encuadra tu rostro"}
+          {title}
         </ThemedText>
-        <Text style={[styles.subText, { color: colors.textSecondary }]}>
-          Escaneo facial
-        </Text>
+        <ThemedText type="body" tone="secondary" align="center">
+          {subtitle}
+        </ThemedText>
       </View>
 
-      <View
-        style={[
-          styles.card,
-          { backgroundColor: colors.card, shadowColor: colors.shadow },
-          isFaceAligned && { borderColor: colors.success, borderWidth: 2 },
-        ]}
-      >
-        <View
-          style={[
-            styles.camContainer,
-            { width: CAMERA_WIDTH, height: CAMERA_HEIGHT },
-          ]}
-        >
-          {photoUri ? (
-            <Image source={{ uri: photoUri.uri }} style={styles.cameraImg} />
-          ) : (
-            <>
-              <Camera
-                ref={cameraRef}
-                style={StyleSheet.absoluteFill}
-                device={device!}
-                isActive={true}
-                photo={true}
-                frameProcessor={frameProcessor}
-                pixelFormat="yuv"
-              />
-              <View style={styles.overlay}>
-                <View
-                  style={[
-                    styles.oval,
-                    {
-                      width: OVAL_WIDTH,
-                      height: OVAL_HEIGHT,
-                      borderColor: isFaceAligned
-                        ? colors.success
-                        : colors.borderLight,
-                    },
-                  ]}
-                >
-                  {!isFaceAligned && (
-                    <View
-                      style={[
-                        styles.glassLabel,
-                        { backgroundColor: colors.backgroundSurface + "99" },
-                      ]}
-                    >
-                      <MaterialIcons
-                        name="face"
-                        size={18}
-                        color={colors.primaryLight}
-                      />
-                      <Text style={{ color: colors.text, fontWeight: "700" }}>
-                        {status === "far" ? "Más cerca" : "Alinear"}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            </>
-          )}
-        </View>
-      </View>
+      <FaceCaptureRing
+        ovalW={OVAL_W}
+        ovalH={OVAL_H}
+        ringColor={ringColor}
+        aligned={isFaceAligned}
+        photoUri={photoUri?.uri}
+        cameraRef={cameraRef}
+        device={device!}
+        frameProcessor={frameProcessor}
+      />
 
-      <View style={styles.footer}>
+      <View style={styles.bottom}>
         {!photoUri ? (
           <View style={styles.shutterRow}>
-            <Pressable
-              onPress={() =>
-                setFacing((f) => (f === "front" ? "back" : "front"))
-              }
-              style={[
-                styles.iconBtn,
-                { backgroundColor: colors.backgroundSurface },
-              ]}
-            >
-              <MaterialIcons
-                name="flip-camera-android"
-                size={26}
-                color={colors.primaryLight}
-              />
-            </Pressable>
+            <View style={styles.sideSlot} />
 
             <Pressable
               onPress={takePicture}
               disabled={!isFaceAligned || capturing}
-              style={[
+              style={({ pressed }) => [
                 styles.shutterOuter,
-                { borderColor: isFaceAligned ? colors.success : colors.border },
+                {
+                  borderColor: isFaceAligned ? colors.success : "#FFFFFF",
+                  opacity: !isFaceAligned || capturing ? 0.4 : 1,
+                },
+                pressed && isFaceAligned && { transform: [{ scale: 0.92 }] },
               ]}
             >
               <View
                 style={[
                   styles.shutterInner,
                   {
-                    backgroundColor: isFaceAligned
-                      ? colors.success
-                      : colors.borderLight,
+                    backgroundColor: isFaceAligned ? colors.success : "#FFFFFF",
                   },
                 ]}
               />
             </Pressable>
 
-            <View style={{ width: 50 }} />
+            <View style={styles.sideSlot}>
+              <Pressable
+                onPress={() =>
+                  setFacing((f) => (f === "front" ? "back" : "front"))
+                }
+                style={({ pressed }) => [
+                  styles.flipBtn,
+                  pressed && { opacity: 0.5 },
+                ]}
+              >
+                <MaterialIcons
+                  name="flip-camera-android"
+                  size={26}
+                  color="#FFFFFF"
+                />
+              </Pressable>
+            </View>
           </View>
         ) : (
-          <View className="flex gap-4 w-full p-2 ">
-            <PrimaryButton
-              variant="secondary"
-              title="Repetir"
+          <View style={styles.actions}>
+            <Pressable
               onPress={() => setPhotoUri(null)}
-            />
-            <PrimaryButton
-              title="Analizar ahora"
-              onPress={() => sendPhoto(photoUri)}
-            />
+              style={({ pressed }) => [
+                styles.retryText,
+                pressed && { opacity: 0.5 },
+              ]}
+            >
+              <ThemedText type="semiBold" tone="accent" align="center">
+                Repetir
+              </ThemedText>
+            </Pressable>
+            <View style={styles.analyzeBtn}>
+              <PrimaryButton
+                title="Analizar ahora"
+                onPress={() => sendPhoto(photoUri)}
+              />
+            </View>
           </View>
         )}
       </View>
@@ -246,67 +213,80 @@ export default function CameraScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: "center", marginVertical: 20 },
-  subText: {
-    fontSize: 13,
-    marginTop: 4,
-    fontWeight: "500",
-    textTransform: "uppercase",
-    letterSpacing: 1,
+  root: {
+    flex: 1,
   },
-  card: {
-    alignSelf: "center",
-    borderRadius: 42,
-    padding: 6,
-    borderWidth: 2,
-    borderColor: "transparent",
-    elevation: 4,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-  },
-  camContainer: { borderRadius: 36, overflow: "hidden" },
-  cameraImg: { flex: 1 },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
+  center: {
     justifyContent: "center",
     alignItems: "center",
   },
-  oval: {
-    borderRadius: 180,
-    borderWidth: 2,
-    borderStyle: "dashed",
+  headings: {
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 24,
+    paddingTop: 8,
+  },
+  bottom: {
+    paddingBottom: 48,
+    paddingHorizontal: 32,
+    minHeight: 140,
     justifyContent: "center",
-    alignItems: "center",
   },
-  glassLabel: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 6,
-  },
-  footer: { flex: 1, justifyContent: "center", paddingHorizontal: 35 },
   shutterRow: {
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
+  },
+  sideSlot: {
+    width: 52,
     alignItems: "center",
   },
   shutterOuter: {
-    width: 78,
-    height: 78,
-    borderRadius: 39,
-    borderWidth: 4,
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    borderWidth: 5,
     justifyContent: "center",
     alignItems: "center",
   },
-  shutterInner: { width: 60, height: 60, borderRadius: 30 },
-  iconBtn: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+  shutterInner: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+  },
+  flipBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "rgba(255,255,255,0.12)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  actions: {
+    alignItems: "center",
+    gap: 16,
+  },
+  retryText: {
+    paddingVertical: 6,
+  },
+  analyzeBtn: {
+    width: "100%",
+  },
+  permissionWrap: {
+    alignItems: "center",
+    gap: 12,
+  },
+  permissionBtn: {
+    width: "100%",
+    marginTop: 12,
+  },
+  permissionIcon: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
   },
 });

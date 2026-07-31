@@ -1,6 +1,7 @@
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
+import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 
@@ -8,7 +9,7 @@ import { ProfileSkeleton } from "@/src/modules/profile/components/ProfileSkeleto
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
 import { router } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 export default function ProfileDetailScreen() {
   const { colors } = useTheme();
@@ -42,15 +43,23 @@ export default function ProfileDetailScreen() {
               <View
                 style={[styles.avatarCircle, { backgroundColor: colors.primary }]}
               >
-                <Text style={[styles.avatarInitial, { color: colors.cardText }]}>
+                <ThemedText
+                  type="display"
+                  color={colors.cardText}
+                  weight="bold"
+                >
                   {user?.nombre?.charAt(0).toUpperCase()}
-                </Text>
+                </ThemedText>
               </View>
 
-              <Text style={styles.name}>{user?.nombre}</Text>
-              <Text style={styles.email}>
-                {email?.user_email || "Correo no disponible"}
-              </Text>
+              <View style={styles.nameBlock}>
+                <ThemedText type="title" tone="inverse">
+                  {user?.nombre}
+                </ThemedText>
+                <ThemedText type="caption" tone="inverse">
+                  {email?.user_email || "Correo no disponible"}
+                </ThemedText>
+              </View>
 
               <PrimaryButton
                 title="Editar perfil"
@@ -170,21 +179,10 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "rgba(255,255,255,0.25)",
   },
-  avatarInitial: {
-    fontSize: 42,
-    fontWeight: "700",
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#fff",
+  nameBlock: {
     marginTop: 14,
-    letterSpacing: -0.3,
-  },
-  email: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.8)",
-    marginTop: 2,
+    alignItems: "center",
+    gap: 2,
   },
   editBtn: {
     marginTop: 18,

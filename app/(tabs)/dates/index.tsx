@@ -3,7 +3,14 @@ import DatesScreen from "@/src/modules/dates/screens/DateScreen";
 import React from "react";
 
 export default function Dates() {
-  const { data: dates, isFetching, isError, error, refetch } = useDates();
+  const {
+    data: dates,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useDates();
 
   const handleRefresh = async () => {
     await refetch();
@@ -12,7 +19,7 @@ export default function Dates() {
   return (
     <DatesScreen
       dates={dates}
-      isLoading={isFetching}
+      isLoading={isLoading}
       isError={isError}
       error={error}
       onRefresh={handleRefresh}

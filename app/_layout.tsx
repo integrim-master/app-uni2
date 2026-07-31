@@ -7,10 +7,18 @@ import {
   useNotifications,
 } from "@/src/context/notifications";
 import { ThemeProvider } from "@/src/context/ThemeContext";
+import { createAppQueryClient } from "@/src/lib/queryClient";
 import { PromotionGuard } from "@/src/modules/banner/components/PromotionGuard";
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
+  useFonts,
+} from "@expo-google-fonts/plus-jakarta-sans";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useFonts } from "expo-font";
+import { QueryClientProvider } from "@tanstack/react-query";
 import * as Notifications from "expo-notifications";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -90,21 +98,14 @@ function NotificationListener() {
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    Nunito: require("../assets/fonts/Nunito-VariableFont_wght.ttf"),
-    NunitoItalic: require("../assets/fonts/Nunito-Italic-VariableFont_wght.ttf"),
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
+    PlusJakartaSans_800ExtraBold,
   });
 
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: 1,
-            staleTime: 1000 * 60,
-          },
-        },
-      }),
-  );
+  const [queryClient] = useState(() => createAppQueryClient());
 
   useEffect(() => {
     if (fontsLoaded) {

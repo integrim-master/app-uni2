@@ -1,3 +1,10 @@
+/**
+ * ProfileScreen (iOS) — SwiftUI vía @expo/ui.
+ *
+ * Resuelto automáticamente por Metro en iOS (sufijo `.ios.tsx`).
+ * No consolidar con el `.tsx` genérico: perderíamos List/Section nativos.
+ * Lógica compartida: `../hooks/useProfileScreen`.
+ */
 import { Screen } from "@/src/components/shared/Screen";
 import { useTheme } from "@/src/context/ThemeContext";
 import {

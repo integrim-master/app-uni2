@@ -1,8 +1,9 @@
-import { Screen } from "@/src/components/shared/Screen";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
+import { Screen } from "@/src/components/shared/Screen";
+import ThemedText from "@/src/components/shared/themed-text";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 interface ErrorScreenProps {
   message?: string;
@@ -21,11 +22,15 @@ const ErrorScreen: React.FC<ErrorScreenProps> = ({
 }) => (
   <Screen style={styles.errorContainer}>
     <Ionicons name="alert-circle-outline" size={64} color="#E53935" />
-    <Text style={styles.errorTitle}>Algo salió mal</Text>
-    <Text style={styles.errorMessage}>
-      {message ??
-        "No fue posible cargar la información. Verifica tu conexión e inténtalo nuevamente."}
-    </Text>
+    <View style={styles.copy}>
+      <ThemedText type="title" tone="danger" align="center">
+        Algo salió mal
+      </ThemedText>
+      <ThemedText type="body" tone="danger" align="center">
+        {message ??
+          "No fue posible cargar la información. Verifica tu conexión e inténtalo nuevamente."}
+      </ThemedText>
+    </View>
     {onRetry ? (
       <View style={styles.retryWrap}>
         <PrimaryButton title={retryLabel} onPress={onRetry} size="md" />
@@ -42,19 +47,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     backgroundColor: "#FFF5F5",
   },
-  errorTitle: {
+  copy: {
     marginTop: 16,
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#C62828",
-    textAlign: "center",
-  },
-  errorMessage: {
-    marginTop: 12,
-    fontSize: 16,
-    color: "#8E0000",
-    textAlign: "center",
-    lineHeight: 22,
+    gap: 12,
+    alignItems: "center",
   },
   retryWrap: {
     marginTop: 24,

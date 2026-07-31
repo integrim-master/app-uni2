@@ -1,5 +1,6 @@
+import ThemedText from "@/src/components/shared/themed-text";
 import React from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppThemeColors as ThemeColors } from "../../../themes/colors";
 
 interface FiltersBottomSheetProps {
@@ -12,10 +13,20 @@ interface FiltersBottomSheetProps {
   colors: ThemeColors;
 }
 
-export default function FiltersBottomSheet({ procedimientos, estados, selectedProcedimiento, selectedEstado, setSelectedProcedimiento, setSelectedEstado, colors }: FiltersBottomSheetProps) {
+export default function FiltersBottomSheet({
+  procedimientos,
+  estados,
+  selectedProcedimiento,
+  selectedEstado,
+  setSelectedProcedimiento,
+  setSelectedEstado,
+  colors,
+}: FiltersBottomSheetProps) {
   return (
     <View style={styles.sheetContent}>
-      <Text style={[styles.filterTitle, { color: colors.primaryLight }]}>Filtrar por procedimiento</Text>
+      <ThemedText type="semiBold" tone="primary">
+        Filtrar por procedimiento
+      </ThemedText>
       <FlatList
         horizontal
         data={procedimientos}
@@ -28,17 +39,27 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
               onPress={() => setSelectedProcedimiento(selected ? null : item)}
               style={[
                 styles.filterButton,
-                { backgroundColor: selected ? colors.primary : colors.gradientCard[1] }
+                {
+                  backgroundColor: selected
+                    ? colors.primary
+                    : colors.gradientCard[1],
+                },
               ]}
             >
-              <Text style={[styles.filterButtonText, selected && { color: '#fff', fontWeight: '600' }]}>
+              <ThemedText
+                type="semiBold"
+                tone="inverse"
+                weight={selected ? "semibold" : "bold"}
+              >
                 {item}
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
           );
         }}
       />
-      <Text style={[styles.filterTitle, { color: colors.primaryLight, marginTop: 18 }]}>Filtrar por estado</Text>
+      <ThemedText type="semiBold" tone="primary">
+        Filtrar por estado
+      </ThemedText>
       <FlatList
         horizontal
         data={estados}
@@ -51,12 +72,16 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
               onPress={() => setSelectedEstado(selected ? null : item)}
               style={[
                 styles.filterButton,
-                { backgroundColor: selected ? colors.success : colors.gradientCard[1] }
+                {
+                  backgroundColor: selected
+                    ? colors.success
+                    : colors.gradientCard[1],
+                },
               ]}
             >
-              <Text style={[styles.filterButtonText, selected && { color: '#fff', fontWeight: '600' }]}>
+              <ThemedText type="semiBold" tone="inverse">
                 {item}
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
           );
         }}
@@ -68,11 +93,7 @@ export default function FiltersBottomSheet({ procedimientos, estados, selectedPr
 const styles = StyleSheet.create({
   sheetContent: {
     padding: 20,
-  },
-  filterTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 8,
+    gap: 8,
   },
   filterButton: {
     padding: 12,
@@ -80,10 +101,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     minWidth: 80,
     alignItems: "center",
-  },
-  filterButtonText: {
-    fontWeight: "700",
-    color: 'white',
-
   },
 });

@@ -20,12 +20,12 @@ export default function ResultHeader({ colors, imageUri }: Props) {
         animate={{ opacity: 1, translateY: 0 }}
         style={styles.header}
       >
-        <ThemedText style={[styles.kicker, { color: colors.textSecondary }]}>
+        <ThemedText type="label" tone="secondary">
           ANÁLISIS COMPLETADO
         </ThemedText>
-        <ThemedText type="title" color={colors.primaryLight}>
+        <ThemedText type="title" tone="primary">
           Resultado{" "}
-          <ThemedText type="title" style={{ fontWeight: "300" }}>
+          <ThemedText type="title" weight="regular">
             Facial
           </ThemedText>
         </ThemedText>
@@ -58,13 +58,7 @@ export default function ResultHeader({ colors, imageUri }: Props) {
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: "center", marginBottom: 30 },
-  kicker: {
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 2,
-    marginBottom: 4,
-  },
+  header: { alignItems: "center", marginBottom: 30, gap: 4 },
   ovalWrapper: {
     width: width * 0.75,
     height: width * 0.95,

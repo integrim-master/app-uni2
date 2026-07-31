@@ -6,7 +6,8 @@ import {
 } from "@/src/types/shared/Benefits.type";
 import { MotiView } from "moti";
 import React from "react";
-import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
+import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "../../../context/ThemeContext";
 import ItemUnique from "./ItemUnique";
 import ItemUniqueUsed from "./ItemUniqueUsed";
@@ -71,9 +72,9 @@ export default function BenefitsList({
             ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={[styles.emptyText, { color: colors.textMuted }]}>
+                <ThemedText type="body" tone="muted" align="center">
                   {emptyMessage}
-                </Text>
+                </ThemedText>
               </View>
             }
             refreshControl={
@@ -96,9 +97,9 @@ export default function BenefitsList({
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyText, { color: colors.textMuted }]}>
+              <ThemedText type="body" tone="muted" align="center">
                 {emptyMessage}
-              </Text>
+              </ThemedText>
             </View>
           }
           refreshControl={

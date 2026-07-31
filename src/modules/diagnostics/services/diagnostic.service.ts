@@ -1,4 +1,8 @@
-import api, { API_BASE_URL, getMemoryToken } from "@/src/api/base";
+import api, {
+  API_BASE_URL,
+  getMemoryToken,
+  handleUnauthorized,
+} from "@/src/api/base";
 
 export interface UploadImageParams {
   photo: {
@@ -73,6 +77,10 @@ export const DiagnosticsServices = {
       });
 
       if (!res.ok) {
+        if (res.status === 401) {
+          handleUnauthorized();
+          throw new Error("Tu sesión ha expirado. Inicia sesión nuevamente.");
+        }
         throw new Error(`Error subiendo imagen: status ${res.status}`);
       }
 

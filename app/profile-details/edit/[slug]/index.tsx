@@ -8,7 +8,6 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { useEditProfile } from "@/src/modules/profile/hooks/useEditProfile";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { AnimatePresence, MotiView } from "moti";
 import React, { useEffect, useState } from "react";
@@ -26,7 +25,6 @@ const Index = () => {
   const { slug, name } = useLocalSearchParams();
   const { colors } = useTheme();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const [value, setValue] = useState((slug as string) || "");
   const [date, setDate] = useState(new Date());
@@ -69,7 +67,6 @@ const Index = () => {
       { [name as string]: finalValue },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["profile-info"] });
           setIsSuccess(true);
         },
         onError: () => {
@@ -104,14 +101,11 @@ const Index = () => {
           >
             <View className="items-center gap-10">
               <EmptySvgPush width={180} height={180} />
-              <View>
-                <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+              <View className="items-center gap-2">
+                <ThemedText type="subtitle" align="center">
                   Listo
                 </ThemedText>
-                <ThemedText
-                  type="body"
-                  style={{ textAlign: "center", marginTop: 10 }}
-                >
+                <ThemedText type="body" align="center">
                   Tu perfil ha sido actualizado correctamente.
                 </ThemedText>
               </View>
@@ -135,7 +129,7 @@ const Index = () => {
                 exit={{ opacity: 0, translateY: -15 }}
                 transition={{ type: "timing", duration: 500 }}
               >
-                <ThemedText type="title" style={{ textAlign: "center" }}>
+                <ThemedText type="title" align="center">
                   {loadingTexts[loadingIndex]}
                 </ThemedText>
               </MotiView>
@@ -168,15 +162,17 @@ const Index = () => {
             >
               <View className="flex-1 mt-4 p-6">
                 <View className="flex-1">
-                  <ThemedText type="title" style={styles.mainHeaderTitle}>
-                    {name === "nombre"
-                      ? "Cómo quieres que te llamemos"
-                      : name === "fnacimiento"
-                        ? "Fecha de nacimiento"
-                        : name === "localizacion"
-                          ? "Tu ubicación"
-                          : `Editar ${name?.toString().replace("_", " ")}`}
-                  </ThemedText>
+                  <View style={styles.headerTitleWrap}>
+                    <ThemedText type="display">
+                      {name === "nombre"
+                        ? "Cómo quieres que te llamemos"
+                        : name === "fnacimiento"
+                          ? "Fecha de nacimiento"
+                          : name === "localizacion"
+                            ? "Tu ubicación"
+                            : `Editar ${name?.toString().replace("_", " ")}`}
+                    </ThemedText>
+                  </View>
 
                   {name === "localizacion" ? (
                     <View>
@@ -245,7 +241,7 @@ const Index = () => {
                         { borderColor: colors.primary, paddingVertical: 15 },
                       ]}
                     >
-                      <ThemedText style={{ fontSize: 24 }}>
+                      <ThemedText type="titleSm">
                         {date.toLocaleDateString()}
                       </ThemedText>
                     </TouchableOpacity>
@@ -306,6 +302,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   loadingWrapper: { flex: 1, justifyContent: "center", padding: 40 },
+  headerTitleWrap: { marginBottom: 32 },
   progressBarBg: {
     height: 6,
     width: "100%",
@@ -313,7 +310,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
     overflow: "hidden",
   },
-  mainHeaderTitle: { fontSize: 28, marginBottom: 32, fontWeight: "700" },
   pickerContainer: { marginBottom: 20, borderBottomWidth: 2, paddingBottom: 4 },
   inputBorder: { borderBottomWidth: 2, marginBottom: 20 },
   textInput: { fontSize: 24, paddingVertical: 12, borderBottomWidth: 2 },

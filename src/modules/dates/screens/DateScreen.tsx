@@ -1,9 +1,10 @@
 import { Screen } from "@/src/components/shared/Screen";
+import ThemedText from "@/src/components/shared/themed-text";
 import { parseDateString } from "@/src/utils/dateUtils";
 import { router } from "expo-router";
 import { AnimatePresence, MotiView } from "moti";
 import React, { useMemo } from "react";
-import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import CitaCard from "../components/CitaCard";
 import CitaCardSkeleton from "../components/CitaCardSkeleton";
@@ -56,12 +57,12 @@ export default function DatesScreen({
 
           {!showLoading && isError && !USE_MOCK_CITAS && (
             <View style={styles.center}>
-              <Text style={{ color: colors.text, marginBottom: 8 }}>
-                Error cargando citas
-              </Text>
-              <Text style={{ color: colors.textMuted }}>
-                {String(error?.message ?? error ?? "")}
-              </Text>
+              <View style={{ gap: 8, alignItems: "center" }}>
+                <ThemedText type="subtitle">Error cargando citas</ThemedText>
+                <ThemedText type="caption" tone="muted" align="center">
+                  {String(error?.message ?? error ?? "")}
+                </ThemedText>
+              </View>
             </View>
           )}
 

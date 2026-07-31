@@ -3,9 +3,10 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { Image } from "expo-image";
 import React from "react";
 import { Pressable, View } from "react-native";
+import type { BlogPost } from "../types/blog.types";
 
 type Props = {
-  item: any;
+  item: BlogPost;
   onPress?: () => void;
 };
 

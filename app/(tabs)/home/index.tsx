@@ -20,6 +20,8 @@ export default function Index() {
     | UltimasCitas
     | undefined;
 
+  // Solo full-screen si no hay cache (p. ej. red falló en restore).
+  // Tras boot con sesión, AuthContext ya siembra FULL_PROFILE_KEY.
   if (isLoading && !data) {
     return (
       <Screen>

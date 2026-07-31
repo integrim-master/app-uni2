@@ -1,3 +1,14 @@
+/**
+ * ProfileScreen — fallback (web / plataformas sin árbol nativo Expo UI).
+ *
+ * Metro resuelve por plataforma:
+ * - ProfileScreen.ios.tsx → SwiftUI (@expo/ui)
+ * - ProfileScreen.android.tsx → RN + header con safe area
+ * - ProfileScreen.tsx → este archivo (default)
+ *
+ * NO borrar este archivo ni los .ios/.android: Metro elige uno automáticamente.
+ * La lógica compartida vive en `../hooks/useProfileScreen`.
+ */
 import ConfirmActionModal from "@/src/components/shared/ConfirmActionModal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";

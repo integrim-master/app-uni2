@@ -13,7 +13,8 @@ import {
   removeStoredToken,
   saveStoredToken,
 } from "@/src/modules/auth/utils/tokenStorage";
-import { AuthService } from "@/src/modules/login/services/auth.service";
+import { AuthService } from "@/src/modules/auth/services/auth.service";
+import { FULL_PROFILE_KEY } from "@/src/modules/user/types/me.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import React, {
@@ -23,6 +24,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import Toast from "react-native-toast-message";
 import { useLoading } from "./LoadingContext";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,7 +48,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     setOnUnauthorized(() => {
-      void clearSession().then(() => router.replace("/login"));
+      void clearSession().then(() => {
+        router.replace("/login");
+        Toast.show({
+          type: "info",
+          text1: "Sesión expirada",
+          text2: "Por seguridad, inicia sesión nuevamente.",
+        });
+      });
     });
     return () => setOnUnauthorized(null);
   }, [clearSession]);
@@ -61,7 +70,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setMemoryToken(stored);
 
       try {
-        await AuthService.getMeUser();
+        const me = await AuthService.getMeUser();
+        queryClient.setQueryData(FULL_PROFILE_KEY, me);
       } catch (error) {
         setMemoryToken(null);
 
@@ -69,6 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           await removeStoredToken();
           return;
         }
+        // Red / otro error: permitir entrar; Home hará el fetch.
       }
 
       setToken(stored);
@@ -76,7 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setSessionRestoring(false);
       setLoading(false);
     }
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     void restoreSession();

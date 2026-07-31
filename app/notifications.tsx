@@ -5,7 +5,7 @@ import { useUser } from "@/src/modules/user/hooks/useUser";
 import React, { useState } from "react";
 
 export default function Notifications() {
-  const { notifications, markAsRead, refetch, isFetching } = useNotifications();
+  const { notifications, markAsRead, refetch, isLoading } = useNotifications();
   const [activeTab, setActiveTab] = useState<string>("all");
   const { data: user } = useUser();
 
@@ -23,7 +23,7 @@ export default function Notifications() {
       notifications={filteredNotifications}
       onNotificationPress={handleNotificationPress}
       onRefresh={refetch}
-      isLoading={isFetching}
+      isLoading={isLoading}
       activeTab={activeTab}
       onTabChange={setActiveTab}
     />

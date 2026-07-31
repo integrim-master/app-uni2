@@ -1,36 +1,23 @@
+import TabBar from "@/src/components/shared/TabBar";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { FavoriteCard } from "../components/FavoriteCard";
-import { CategoryType, FavoriteItem } from "../types/favorites.types";
-
-const FAVORITES_DATA: FavoriteItem[] = [
-  {
-    id: "1",
-    title: "Limpieza Facial Profunda",
-    description: "Tratamiento completo para tu piel",
-    category: "beneficios",
-  },
-  {
-    id: "2",
-    title: "Masaje Relajante",
-    description: "60 minutos de relajación",
-    category: "tratamientos",
-  },
-  {
-    id: "3",
-    title: "Consulta Nutricional",
-    description: "Plan personalizado",
-    category: "beneficios",
-  },
-];
+import { useFavorites } from "../hooks/useFavorites";
+import type { CategoryType } from "../types/favorites.types";
 
 export default function FavoritesScreen() {
   const { colors } = useTheme();
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType | "todos">("todos");
+  const {
+    favorites,
+    selectedCategory,
+    setSelectedCategory,
+    animatingId,
+    toggleFavorite,
+  } = useFavorites();
 
   const tabOptions = [
     { key: "todos", label: "Todos" },
@@ -38,31 +25,41 @@ export default function FavoritesScreen() {
     { key: "tratamientos", label: "Tratamientos" },
   ];
 
-  const filteredData =
-    selectedCategory === "todos"
-      ? FAVORITES_DATA
-      : FAVORITES_DATA.filter((item) => item.category === selectedCategory);
-
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <MaterialIcons name="favorite-border" size={80} color={colors.border} />
-      <ThemedText type="title" style={styles.emptyTitle}>
-        No hay favoritos
-      </ThemedText>
-      <ThemedText type="caption" color={colors.textSecondary} style={styles.emptyText}>
-        {selectedCategory === "todos"
-          ? "Aún no has agregado favoritos"
-          : `No tienes ${selectedCategory} favoritos`}
-      </ThemedText>
+      <View style={styles.emptyCopy}>
+        <ThemedText type="title">No hay favoritos</ThemedText>
+        <ThemedText type="caption" tone="secondary" align="center">
+          {selectedCategory === "todos"
+            ? "Aún no has agregado favoritos"
+            : `No tienes ${selectedCategory} favoritos`}
+        </ThemedText>
+      </View>
     </View>
   );
 
   return (
     <Screen>
-     
+      <View style={styles.tabContainer}>
+        <TabBar
+          options={tabOptions}
+          activeTab={selectedCategory}
+          setActiveTab={(tab) =>
+            setSelectedCategory(tab as CategoryType | "todos")
+          }
+        />
+      </View>
+
       <FlatList
-        data={filteredData}
-        renderItem={({ item }) => <FavoriteCard item={item} />}
+        data={favorites}
+        renderItem={({ item }) => (
+          <FavoriteCard
+            item={item}
+            onToggleFavorite={() => toggleFavorite(item.id)}
+            isAnimating={animatingId === item.id}
+          />
+        )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={renderEmpty}
@@ -88,12 +85,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 60,
+    gap: 16,
   },
-  emptyTitle: {
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptyText: {
-    textAlign: "center",
+  emptyCopy: {
+    gap: 8,
+    alignItems: "center",
   },
 });

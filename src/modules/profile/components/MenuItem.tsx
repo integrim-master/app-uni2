@@ -1,6 +1,6 @@
+import ThemedText from "@/src/components/shared/themed-text";
 import { Ionicons } from "@expo/vector-icons";
-// import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 
 export type MenuItemProps = {
@@ -20,7 +20,6 @@ export function MenuItem({
   label,
   color,
   textColor,
-  borderColor,
   isLast,
   title,
   onPress,
@@ -53,16 +52,18 @@ export function MenuItem({
         )}
         <View className="">
           {title && (
-            <Text
-              style={[
-                styles.menuTitle,
-                { color: colors.secondaryDark, opacity: 0.7 },
-              ]}
+            <ThemedText
+              type="caption"
+              weight="bold"
+              color={colors.secondaryDark}
+              style={{ opacity: 0.7, marginBottom: 2 }}
             >
               {title}
-            </Text>
+            </ThemedText>
           )}
-          <Text style={[styles.menuText, { color: textColor }]}>{label}</Text>
+          <ThemedText type="body" weight="medium" color={textColor}>
+            {label}
+          </ThemedText>
         </View>
       </View>
       {onPress && <Ionicons name="chevron-forward" size={20} color={color} />}
@@ -86,14 +87,5 @@ const styles = StyleSheet.create({
   },
   menuIcon: {
     marginRight: 16,
-  },
-  menuTitle: {
-    fontSize: 13,
-    fontWeight: "700",
-    marginBottom: 2,
-  },
-  menuText: {
-    fontSize: 16,
-    fontWeight: "500",
   },
 });

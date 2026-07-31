@@ -1,6 +1,6 @@
+import ThemedText from "@/src/components/shared/themed-text";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
+import { StyleSheet, View } from "react-native";
 import { AccesoDirecto } from "./Acess";
 import { Card } from "./card";
 
@@ -13,8 +13,6 @@ export const TabContent: React.FC<TabContentProps> = ({
   activeTab,
   dataButtons,
 }) => {
-  const { colors } = useTheme();
-
   const renderContent = () => {
     switch (activeTab) {
       case "first":
@@ -44,29 +42,15 @@ export const TabContent: React.FC<TabContentProps> = ({
               >
                 <View className="flex-row items-start justify-start p-4">
                   <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        color: colors.text,
-                        fontWeight: "600",
-                      }}
-                    >
+                    <ThemedText type="titleSm" weight="semibold">
                       {item.item}
-                    </Text>
+                    </ThemedText>
                   </View>
                 </View>
               </Card>
             ))}
           </View>
         );
-      //   case "third":
-      //     return (
-      //       <View style={styles.emptyContainer}>
-      //         <Text style={{ color: colors.text }}>
-      //          opciones
-      //         </Text>
-      //       </View>
-      //     );
       default:
         return null;
     }

@@ -27,6 +27,7 @@ interface NotificationsContextProps {
   pushToken: string | null;
   setPushToken: (token: string) => void;
   refetch: () => void;
+  isLoading: boolean;
   isFetching: boolean;
 }
 
@@ -40,6 +41,7 @@ export const NotificationsContext = createContext<NotificationsContextProps>({
   pushToken: null,
   setPushToken: () => {},
   refetch: () => {},
+  isLoading: false,
   isFetching: false,
 });
 
@@ -51,9 +53,13 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   const queryClient = useQueryClient();
   const [pushToken, setPushToken] = useState<string | null>(null);
   
-  const { data: notifications = [], refetch, isFetching } = useNotificationsApi();
+  const {
+    data: notifications = [],
+    refetch,
+    isLoading,
+    isFetching,
+  } = useNotificationsApi();
   const { mutate: markAsReadApi } = useMarkerReadNotifications();
-  console.log("notifications", notifications);
 
   const queryKey = ["notifications"]; 
 
@@ -115,6 +121,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
         pushToken,
         setPushToken,
         refetch,
+        isLoading,
         isFetching,
       }}
     >

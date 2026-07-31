@@ -24,6 +24,23 @@ export function getMemoryToken(): string | null {
   return _memoryToken;
 }
 
+/**
+ * Dispara el flujo global de "sesión expirada" (limpiar sesión + redirigir a
+ * login). Lo usa el interceptor de axios, pero también debe llamarse a mano
+ * desde cualquier request que NO pase por la instancia `api` (ej. `fetch`
+ * crudo para subir archivos), para que un 401 ahí también cierre la sesión
+ * en vez de mostrarse como un error genérico.
+ */
+export function handleUnauthorized() {
+  if (_sessionRestoring || _handling401) return;
+
+  _handling401 = true;
+  _onUnauthorized?.();
+  setTimeout(() => {
+    _handling401 = false;
+  }, 1000);
+}
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
@@ -34,8 +51,9 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${_memoryToken}`;
   }
 
-  config.headers.Accept = "application/json";
-  config.headers["Content-Type"] = "application/json";
+  config.headers.Accept ??= "application/json";
+  // No pisar el Content-Type si el request ya trae uno propio (ej. multipart/form-data).
+  config.headers["Content-Type"] ??= "application/json";
 
   return config;
 });
@@ -48,13 +66,7 @@ api.interceptors.response.use(
     const isLoginRequest = requestUrl.includes("jwt-auth/v1/token");
 
     if (status === 401 && !isLoginRequest && _memoryToken && !_sessionRestoring) {
-      if (!_handling401) {
-        _handling401 = true;
-        _onUnauthorized?.();
-        setTimeout(() => {
-          _handling401 = false;
-        }, 1000);
-      }
+      handleUnauthorized();
 
       return Promise.reject({
         status,

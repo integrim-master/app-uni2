@@ -1,7 +1,8 @@
+import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface EmptyDatesProps {
   title?: string;
@@ -21,18 +22,22 @@ export default function EmptyDates({
   return (
     <View style={styles.container}>
       <Ionicons name="time-outline" size={56} color={colors.textMuted} />
-      <Text style={[styles.title, { color: colors.primaryLight }]}>
-        {title}
-      </Text>
-      <Text style={[styles.subtitle, { color: colors.text }]}>{subtitle}</Text>
+      <View style={styles.copy}>
+        <ThemedText type="titleSm" tone="primary" align="center">
+          {title}
+        </ThemedText>
+        <ThemedText type="caption" align="center">
+          {subtitle}
+        </ThemedText>
+      </View>
       {onAction ? (
         <TouchableOpacity
           onPress={onAction}
           style={[styles.button, { backgroundColor: colors.primary }]}
         >
-          <Text style={[styles.buttonText, { color: colors.background }]}>
+          <ThemedText type="semiBold" color={colors.background}>
             {actionLabel}
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
       ) : null}
     </View>
@@ -45,18 +50,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 24,
+    gap: 12,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginTop: 12,
-    marginBottom: 6,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: "center",
-    marginBottom: 12,
+  copy: {
+    gap: 6,
+    alignItems: "center",
   },
   button: {
     paddingHorizontal: 16,
@@ -64,5 +62,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 8,
   },
-  buttonText: { fontWeight: "700" },
 });

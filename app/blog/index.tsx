@@ -1,58 +1,21 @@
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
-import BlogListItem from "@/src/modules/blog/BlogListItem";
-import FeaturedItem from "@/src/modules/blog/FeaturedItem";
+import BlogListItem from "@/src/modules/blog/components/BlogListItem";
+import FeaturedItem from "@/src/modules/blog/components/FeaturedItem";
+import { useBlogPosts } from "@/src/modules/blog/hooks/useBlogPosts";
+import type { BlogPost } from "@/src/modules/blog/types/blog.types";
 import { useRouter } from "expo-router";
 import { MotiView, View } from "moti";
 import React from "react";
-import { Dimensions, FlatList } from "react-native";
-
-const { width } = Dimensions.get("window");
-
-const blogPosts = [
-  {
-    id: 1,
-    title: "Rinoplastia Ultrasónica: El futuro de la cirugía facial",
-    summary:
-      "Resultados más naturales con una recuperación un 50% más rápida gracias a la tecnología piezoeléctrica.",
-    image:
-      "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80",
-    category: "Cirugía Facial",
-    date: "Hoy",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Postoperatorio: Guía de éxito",
-    summary: "Cuidados esenciales tras una lipoescultura de alta definición.",
-    image:
-      "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80",
-    category: "Cuidados",
-    date: "24 Feb",
-  },
-  {
-    id: 3,
-    title: "Bioestimuladores de Colágeno",
-    summary: "La nueva era de rejuvenecimiento sin entrar a quirófano.",
-    image:
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
-    category: "Dermatología",
-    date: "22 Feb",
-  },
-];
+import { FlatList } from "react-native";
 
 export default function HybridBlogList() {
   const { colors } = useTheme();
   const router = useRouter();
+  const { data: blogPosts } = useBlogPosts();
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: (typeof blogPosts)[0];
-    index: number;
-  }) => {
+  const renderItem = ({ item, index }: { item: BlogPost; index: number }) => {
     if (index === 0) {
       return (
         <MotiView

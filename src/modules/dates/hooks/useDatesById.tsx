@@ -1,3 +1,4 @@
+import { GC_TIME, STALE_TIME } from "@/src/lib/queryClient";
 import {
   useAuthenticated,
   useAuthQuery,
@@ -11,8 +12,8 @@ export const useDatesDetails = (id: string) => {
     queryKey: ["dates-details", id],
     queryFn: () => DatesService.getDateDetails(id),
     enabled: !!id,
-    staleTime: Infinity,
-    gcTime: 1000 * 60 * 10,
+    staleTime: STALE_TIME.STATIC,
+    gcTime: GC_TIME.DEFAULT,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
     retry: 1,
@@ -31,8 +32,8 @@ export const useDatesDetailsSuspense = (id: string) => {
       }
       return DatesService.getDateDetails(id);
     },
-    staleTime: Infinity,
-    gcTime: 1000 * 60 * 10,
+    staleTime: STALE_TIME.STATIC,
+    gcTime: GC_TIME.DEFAULT,
     retry: 1,
   });
 };

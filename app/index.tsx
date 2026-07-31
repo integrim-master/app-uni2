@@ -1,3 +1,4 @@
+import BrandSpinner from "@/src/components/shared/BrandSpinner";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
@@ -7,7 +8,7 @@ import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { MotiView } from "moti";
 import React, { useEffect } from "react";
-import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Index() {
@@ -30,12 +31,12 @@ export default function Index() {
     if (token) {
       router.replace("/home");
     }
-  }, [token]);
+  }, [token, router]);
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: "#000" }]}>
-        <ActivityIndicator size="large" color="#D4AF37" />
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <BrandSpinner />
       </View>
     );
   }

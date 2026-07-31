@@ -1,5 +1,6 @@
+import ThemedText from "@/src/components/shared/themed-text";
 import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import { Cita } from "../types/date.api.types";
 
@@ -20,17 +21,14 @@ export default function HistoryCard({ cita }: HistoryCardProps) {
       >
         <View style={styles.historyContent}>
           <View style={styles.leftBlock}>
-            <View style={{ marginLeft: 0, flex: 1 }}>
-              <Text
-                style={[styles.procTitle, { color: colors.text }]}
-                numberOfLines={1}
-              >
+            <View style={{ flex: 1, gap: 6 }}>
+              <ThemedText type="semiBold" numberOfLines={1}>
                 {cita.Procedimiento}
-              </Text>
-              <Text style={[styles.procMeta, { color: colors.textMuted }]}>
+              </ThemedText>
+              <ThemedText type="caption" tone="muted">
                 {cita.profesional} · {formatDate(cita.fecha_cita)} ·{" "}
                 {cita.hora_cita}
-              </Text>
+              </ThemedText>
             </View>
           </View>
         </View>
@@ -71,34 +69,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingRight: 12,
   },
-  avatarCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: { fontWeight: "800", fontSize: 16 },
-  procTitle: { fontSize: 16, fontWeight: "800" },
-  procMeta: { fontSize: 13, marginTop: 6 },
-  rightBlock: {
-    alignItems: "flex-end",
-    minWidth: 86,
-  },
-  statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    gap: 8,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "800",
-    letterSpacing: 0.6,
-  },
 });
 
 function PlatformSelectShadow() {
@@ -109,4 +79,5 @@ function PlatformSelectShadow() {
       shadowRadius: 20,
     };
   }
+  return {};
 }

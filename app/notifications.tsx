@@ -1,11 +1,12 @@
-import type { NotificationsResponse } from "@/src/modules/notifications/types/notifications.types";
+import { RequireAuth } from "@/src/components/shared/RequireAuth";
 import { useNotifications } from "@/src/context/notifications";
 import NotificationsScreen from "@/src/modules/notifications/screens/NotificationsScreen";
+import type { NotificationsResponse } from "@/src/modules/notifications/types/notifications.types";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 import React, { useState } from "react";
 
 export default function Notifications() {
-  const { notifications, markAsRead, refetch, isFetching } = useNotifications();
+  const { notifications, markAsRead, refetch, isLoading } = useNotifications();
   const [activeTab, setActiveTab] = useState<string>("all");
   const { data: user } = useUser();
 
@@ -19,13 +20,15 @@ export default function Notifications() {
   };
 
   return (
-    <NotificationsScreen
-      notifications={filteredNotifications}
-      onNotificationPress={handleNotificationPress}
-      onRefresh={refetch}
-      isLoading={isFetching}
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-    />
+    <RequireAuth>
+      <NotificationsScreen
+        notifications={filteredNotifications}
+        onNotificationPress={handleNotificationPress}
+        onRefresh={refetch}
+        isLoading={isLoading}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+    </RequireAuth>
   );
 }

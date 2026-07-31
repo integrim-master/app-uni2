@@ -39,4 +39,24 @@ export interface BeneficiosProps {
 
 export interface HistoryByDatesProps {
   dark: string;
+  citas: {
+    id?: string | number;
+    procedimiento: string;
+    fecha: string;
+    hora: string;
+    especialista: string;
+    estado: string;
+  }[];
+}
+
+export interface ItemsHistoryProps {
+  buttons?: "Activo" | "Inactivo";
+  dark?: string;
+  light?: string;
+  transparent?: string;
+  procedimiento: string;
+  fecha: string;
+  hora: string;
+  medico: string;
+  estado: "Cancelada" | "Pendiente" | "Completada" | string;
 }

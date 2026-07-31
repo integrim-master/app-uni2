@@ -1,51 +1,53 @@
-import { Link } from 'expo-router';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../context/ThemeContext';
-import { AccesoDirectoProps } from '../types/home.types';
+import ThemedText from "@/src/components/shared/themed-text";
+import { Link } from "expo-router";
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { useTheme } from "../../../context/ThemeContext";
+import { AccesoDirectoProps } from "../types/home.types";
 
 export function AccesoDirecto({
-  item, 
-  icon: Icon, 
-  routPage, 
-  dark, 
-  light, 
-  colorFondo
+  item,
+  icon: Icon,
+  routPage,
 }: AccesoDirectoProps) {
   const { colors } = useTheme();
-  
+
   return (
     <Link asChild href={`/(tabs)/${routPage}`}>
-      <Pressable className=''>
+      <Pressable className="">
         {({ pressed }) => (
-          <View style={[
-            styles.container,
-            { 
-              backgroundColor: colors.card, 
-              borderColor: colors.border,
-              opacity: pressed ? 0.5 : 1 
-            }
-          ]}>
+          <View
+            style={[
+              styles.container,
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                opacity: pressed ? 0.5 : 1,
+              },
+            ]}
+          >
             <View style={styles.iconContainer}>
               <Icon width={60} height={60} />
             </View>
-            <Text style={[styles.text, { color: colors.text }]}>{item}</Text>
+            <ThemedText type="titleSm" weight="medium" align="center">
+              {item}
+            </ThemedText>
           </View>
         )}
       </Pressable>
     </Link>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderWidth: 1,
     width: 174,
     height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -53,7 +55,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 2,
     shadowRadius: 0.4,
     elevation: 1,
-
     borderRadius: 12,
     paddingHorizontal: 40,
     paddingVertical: 8,
@@ -61,12 +62,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     borderRadius: 9999,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  text: {
-    fontSize: 18,
-    textAlign: 'center',
-    fontWeight: '500',
-  },
-})
+});

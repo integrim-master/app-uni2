@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  runAsync,
   useCameraDevice,
   useFrameProcessor,
 } from "react-native-vision-camera";
@@ -17,10 +18,7 @@ type Layout = {
   ovalWidth: number;
 };
 
-export function useFaceAlignment(
-  facing: "front" | "back",
-  layout: Layout,
-) {
+export function useFaceAlignment(facing: "front" | "back", layout: Layout) {
   const [status, setStatus] = useState<FaceStatus>("none");
   const device = useCameraDevice(facing);
 
@@ -37,9 +35,6 @@ export function useFaceAlignment(
 
   const { detectFaces, stopListeners } = useFaceDetector(faceDetectorOptions);
 
-  const statusRef = useRef(status);
-  statusRef.current = status;
-
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
 
@@ -51,35 +46,39 @@ export function useFaceAlignment(
     const { cameraWidth, cameraHeight, ovalWidth } = layoutRef.current;
 
     if (faces.length === 0) {
-      if (statusRef.current !== "none") setStatus("none");
+      setStatus("none");
       return;
     }
 
     const { bounds } = faces[0];
     const faceCenterX = bounds.x + bounds.width / 2;
     const faceCenterY = bounds.y + bounds.height / 2;
+    const distance = Math.hypot(
+      faceCenterX - cameraWidth / 2,
+      faceCenterY - cameraHeight / 2,
+    );
 
-    const isCentered =
-      Math.sqrt(
-        Math.pow(faceCenterX - cameraWidth / 2, 2) +
-          Math.pow(faceCenterY - cameraHeight / 2, 2),
-      ) < 60;
+    const isCentered = distance < ovalWidth * 0.12;
     const isCloseEnough = bounds.width > ovalWidth * 0.8;
 
-    const newStatus: FaceStatus = isCentered
-      ? isCloseEnough
-        ? "ok"
-        : "far"
-      : "uncentered";
-
-    if (statusRef.current !== newStatus) setStatus(newStatus);
+    if (!isCentered) {
+      setStatus("uncentered");
+      
+    } else if (!isCloseEnough) {
+      setStatus("far");
+    } else {
+      setStatus("ok");
+    }
   });
 
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-      const faces = detectFaces(frame);
-      handleDetectedFaces(faces);
+      runAsync(frame, () => {
+        "worklet";
+        const faces = detectFaces(frame);
+        handleDetectedFaces(faces);
+      });
     },
     [detectFaces, handleDetectedFaces],
   );

@@ -1,3 +1,4 @@
+import { STALE_TIME } from "@/src/lib/queryClient";
 import { UserData } from "@/src/types/shared/Auth.types";
 import {
   MembershipData,
@@ -16,4 +17,4 @@ export interface MeApiResponse {
 }
 
 export const FULL_PROFILE_KEY = ["full-profile"] as const;
-export const PROFILE_STALE_TIME = 1000 * 60 * 5;
+export const PROFILE_STALE_TIME = STALE_TIME.MEDIUM;

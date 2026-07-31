@@ -2,8 +2,8 @@ import {
   useCreateDiagnostic,
   useUploadDiagnosticImage,
 } from "@/src/modules/diagnostics/hooks/useDiagnostic";
-import { useSetDiagnosticSession } from "@/src/modules/diagnostics/hooks/useDiagnosticSession";
-import { useAnalyzeImage } from "@/src/n8n/hooks/useAnalizeImage";
+import { useAnalyzeImage } from "@/src/modules/diagnostics/hooks/useAnalyzeImage";
+import { LAST_DIAGNOSTIC_KEY } from "@/src/modules/diagnostics/hooks/useLastDiagnostic";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -15,7 +15,6 @@ export function useSendDiagnosticPhoto(
   token: string | undefined,
 ) {
   const queryClient = useQueryClient();
-  const setDiagnosticSession = useSetDiagnosticSession();
   const { mutateAsync: uploadImage, reset: resetUpload } =
     useUploadDiagnosticImage();
   const { mutateAsync: analyzeImage, isPending: isAnalyzing } =
@@ -49,20 +48,8 @@ export function useSendDiagnosticPhoto(
         imageId: upload.id,
         userId: String(userId),
       });
-      try {
-        setDiagnosticSession({
-          analysis: {
-            diagnostico: data.diagnostico,
-            procedimientos: data.procedimientos || [],
-          },
-          photoUri,
-          mediaId: upload.id,
-        } as any);
-      } catch (e) {
-        console.warn("setDiagnosticSession failed", e);
-      }
       queryClient.invalidateQueries({
-        queryKey: ["last-diagnostic", String(userId)],
+        queryKey: LAST_DIAGNOSTIC_KEY(String(userId)),
       });
       router.replace("/(tabs)/diagnostics");
     } catch (error: any) {

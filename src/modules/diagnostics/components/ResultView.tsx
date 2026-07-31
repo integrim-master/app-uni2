@@ -6,14 +6,7 @@ import { useTheme } from "@/src/context/ThemeContext";
 import { useTreatments } from "@/src/modules/user/hooks/useTreatments";
 import { normalizeString } from "@/src/utils/stringUtils";
 import React, { useMemo } from "react";
-import {
-  Dimensions,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -23,14 +16,11 @@ import DiagnosticCard from "./DiagnosticCard";
 import ResultHeader from "./ResultHeader";
 import TreatmentCard from "./TreatmentCard";
 
-const { width } = Dimensions.get("window");
-
 export default function ResultView({
   photoUri,
   diagnostic,
   onReset,
   onNewDiagnostic,
-  onClose,
 }: ResultViewProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -76,9 +66,9 @@ export default function ResultView({
   ) {
     return (
       <Screen>
-        <Text style={{ color: colors.textSecondary }}>
+        <ThemedText type="body" tone="secondary">
           No se recibió información del diagnóstico
-        </Text>
+        </ThemedText>
         <Pressable
           style={[
             styles.button,
@@ -86,7 +76,9 @@ export default function ResultView({
           ]}
           onPress={onReset}
         >
-          <Text style={styles.buttonText}>Realizar nuevo diagnóstico</Text>
+          <ThemedText type="semiBold" tone="inverse">
+            Realizar nuevo diagnóstico
+          </ThemedText>
         </Pressable>
       </Screen>
     );
@@ -195,5 +187,4 @@ const styles = StyleSheet.create({
   treatmentsSection: { marginTop: 10 },
 
   button: { paddingVertical: 18, paddingHorizontal: 24, borderRadius: 18 },
-  buttonText: { color: "#fff", fontWeight: "700" },
 });

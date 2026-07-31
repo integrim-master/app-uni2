@@ -1,4 +1,4 @@
-import ErrorScreen from "@/src/components/ui/ErrorScreen";
+﻿import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import { ui } from "@/src/themes/ui";
 import { useRouter } from "expo-router";
 import React from "react";

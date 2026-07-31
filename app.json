@@ -83,7 +83,15 @@
           "microphonePermissionText": "Careme360 necesita acceso al micrófono para grabar video."
         }
       ],
-      "expo-image"
+      "expo-image",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "uni2",
+          "organization": "andres-oz"
+        }
+      ]
     ],
     "extra": {
       "router": {},

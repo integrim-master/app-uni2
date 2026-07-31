@@ -1,19 +1,21 @@
+import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import ThemedText from "@/src/components/shared/themed-text";
 import { MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 
+const TIPS = [
+  { icon: "face", text: "Relaja tu rostro" },
+  { icon: "remove-red-eye", text: "Quita gafas, tapabocas o gorra" },
+  { icon: "wb-sunny", text: "Busca un lugar bien iluminado" },
+  { icon: "camera", text: "Mantén tu rostro centrado" },
+] as const;
+
 export default function StepOne() {
   const { colors } = useTheme();
-
-  const tips = [
-    { icon: "face", text: "Relaja tu rostro" },
-    { icon: "remove-red-eye", text: "Quita gafas, tapabocas o gorra" },
-    { icon: "wb-sunny", text: "Busca un lugar bien iluminado" },
-    { icon: "camera", text: "Mantén tu rostro centrado" },
-  ];
 
   return (
     <View style={styles.card}>
@@ -21,40 +23,40 @@ export default function StepOne() {
         <LottieView
           source={require("../../../../assets/animations/profile-avatar-of-young-boy.json")}
           autoPlay
-          loop={true}
+          loop
           style={styles.animation}
         />
       </View>
+
       <ThemedText
         type="title"
         style={[styles.title, { color: colors.primary }]}
       >
         Bienvenido al diagnóstico
       </ThemedText>
+
       <ThemedText style={[styles.description, { color: colors.textSecondary }]}>
-        Para mejores resultados, por favor retírate gafas, gorra o cualquier
-        cosa que obstruya tu rostro.
+        Para mejores resultados, retira gafas, gorra o cualquier cosa que
+        obstruya tu rostro.
       </ThemedText>
+
       <ThemedText
         type="semiBold"
         style={[styles.subtitle, { color: colors.text }]}
       >
-        Algunos tips para mejorar el diagnóstico:
+        Tips para mejorar el diagnóstico
       </ThemedText>
+
       <View style={styles.tipsContainer}>
-        {tips.map((tip, index) => (
-          <View key={index} style={styles.tipItem}>
+        {TIPS.map((tip) => (
+          <View key={tip.text} style={styles.tipItem}>
             <View
               style={[
                 styles.tipIconWrapper,
                 { backgroundColor: colors.primary + "22" },
               ]}
             >
-              <MaterialIcons
-                name={tip.icon as any}
-                size={22}
-                color={colors.primary}
-              />
+              <MaterialIcons name={tip.icon} size={22} color={colors.primary} />
             </View>
             <ThemedText
               style={[styles.tipText, { color: colors.textSecondary }]}
@@ -63,6 +65,13 @@ export default function StepOne() {
             </ThemedText>
           </View>
         ))}
+      </View>
+
+      <View style={styles.cta}>
+        <PrimaryButton
+          title="Comenzar escaneo"
+          onPress={() => router.push("/scan/camera")}
+        />
       </View>
     </View>
   );
@@ -86,7 +95,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 24,
     borderWidth: 2,
-    borderColor: "#e0e0e0",
   },
   animation: {
     width: 220,
@@ -126,5 +134,9 @@ const styles = StyleSheet.create({
   },
   tipText: {
     flex: 1,
+  },
+  cta: {
+    width: "100%",
+    marginTop: 28,
   },
 });

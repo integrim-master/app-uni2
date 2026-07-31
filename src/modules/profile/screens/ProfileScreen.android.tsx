@@ -1,3 +1,11 @@
+/**
+ * ProfileScreen (Android) — React Native (Expo UI Jetpack quedó descartado
+ * por problemas de layout de texto en SDK actual).
+ *
+ * Resuelto automáticamente por Metro en Android (sufijo `.android.tsx`).
+ * Incluye padding de safe area en el header de color.
+ * Lógica compartida: `../hooks/useProfileScreen`.
+ */
 import ConfirmActionModal from "@/src/components/shared/ConfirmActionModal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";

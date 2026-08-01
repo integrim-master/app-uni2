@@ -80,10 +80,7 @@ export default function StepOne() {
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    maxWidth: 370,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+
     alignItems: "center",
     marginVertical: 24,
   },

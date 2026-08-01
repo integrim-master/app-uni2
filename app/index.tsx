@@ -110,6 +110,7 @@ export default function Index() {
           >
             <ThemedText
               type="micro"
+              tone="inverse"
               style={{
                 textTransform: "uppercase",
               }}

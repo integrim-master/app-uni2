@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Platform } from "react-native";
 import {
   runAsync,
+  runAtTargetFps,
   useCameraDevice,
   useFrameProcessor,
 } from "react-native-vision-camera";
@@ -22,58 +24,73 @@ export function useFaceAlignment(facing: "front" | "back", layout: Layout) {
   const [status, setStatus] = useState<FaceStatus>("none");
   const device = useCameraDevice(facing);
 
-  const faceDetectorOptions = useMemo(
-    () => ({
-      performanceMode: "fast" as const,
-      autoMode: true,
-      windowWidth: layout.cameraWidth,
-      windowHeight: layout.cameraHeight,
-      cameraFacing: facing,
-    }),
-    [layout.cameraWidth, layout.cameraHeight, facing],
-  );
-
-  const { detectFaces, stopListeners } = useFaceDetector(faceDetectorOptions);
-
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
+
+  // Opciones estables: recrear el detector en cada render rompe iOS release.
+  const faceDetectionOptions = useRef({
+    performanceMode: "fast" as const,
+    autoMode: true,
+    windowWidth: layout.cameraWidth,
+    windowHeight: layout.cameraHeight,
+    cameraFacing: facing,
+  }).current;
+
+  faceDetectionOptions.windowWidth = layout.cameraWidth;
+  faceDetectionOptions.windowHeight = layout.cameraHeight;
+  faceDetectionOptions.cameraFacing = facing;
+
+  const { detectFaces, stopListeners } = useFaceDetector(faceDetectionOptions);
 
   useEffect(() => {
     return () => stopListeners();
   }, [stopListeners]);
 
-  const handleDetectedFaces = Worklets.createRunOnJS((faces: Face[]) => {
-    const { cameraWidth, cameraHeight, ovalWidth } = layoutRef.current;
+  const handleDetectedFaces = useMemo(
+    () =>
+      Worklets.createRunOnJS((faces: Face[]) => {
+        const { cameraWidth, cameraHeight, ovalWidth } = layoutRef.current;
 
-    if (faces.length === 0) {
-      setStatus("none");
-      return;
-    }
+        if (faces.length === 0) {
+          setStatus("none");
+          return;
+        }
 
-    const { bounds } = faces[0];
-    const faceCenterX = bounds.x + bounds.width / 2;
-    const faceCenterY = bounds.y + bounds.height / 2;
-    const distance = Math.hypot(
-      faceCenterX - cameraWidth / 2,
-      faceCenterY - cameraHeight / 2,
-    );
+        const { bounds } = faces[0];
+        const faceCenterX = bounds.x + bounds.width / 2;
+        const faceCenterY = bounds.y + bounds.height / 2;
+        const distance = Math.hypot(
+          faceCenterX - cameraWidth / 2,
+          faceCenterY - cameraHeight / 2,
+        );
 
-    const isCentered = distance < ovalWidth * 0.12;
-    const isCloseEnough = bounds.width > ovalWidth * 0.8;
+        const isCentered = distance < ovalWidth * 0.12;
+        const isCloseEnough = bounds.width > ovalWidth * 0.8;
 
-    if (!isCentered) {
-      setStatus("uncentered");
-      
-    } else if (!isCloseEnough) {
-      setStatus("far");
-    } else {
-      setStatus("ok");
-    }
-  });
+        if (!isCentered) {
+          setStatus("uncentered");
+        } else if (!isCloseEnough) {
+          setStatus("far");
+        } else {
+          setStatus("ok");
+        }
+      }),
+    [],
+  );
 
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
+
+      if (Platform.OS === "ios") {
+        runAtTargetFps(5, () => {
+          "worklet";
+          const faces = detectFaces(frame);
+          handleDetectedFaces(faces);
+        });
+        return;
+      }
+
       runAsync(frame, () => {
         "worklet";
         const faces = detectFaces(frame);

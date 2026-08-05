@@ -20,7 +20,7 @@ export default function HomeLayout() {
           },
           headerLeft: () => (
             <Image
-              source={require("../../../assets/images/logo-careme-white.png")}
+              source={require("@/assets/images/logo-careme-white.png")}
               className="h-10 w-40"
             />
           ),

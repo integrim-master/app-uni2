@@ -58,22 +58,22 @@ export default function MediaScreen() {
     {
       id: "1",
       title: "Cirugía",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
     },
     {
       id: "2",
       title: "Diagnóstico",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
     },
     {
       id: "3",
       title: "Post-Op",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
     },
     {
       id: "4",
       title: "Estética",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
     },
   ];
 
@@ -81,17 +81,17 @@ export default function MediaScreen() {
     {
       id: "1",
       title: "Laparoscopía",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
     },
     {
       id: "2",
       title: "Reconstrucción",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
     },
     {
       id: "3",
       title: "Diagnóstico",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
     },
   ];
 
@@ -99,25 +99,25 @@ export default function MediaScreen() {
     {
       id: "1",
       title: "Procedimiento Destacado",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
       duration: "12:34",
       views: "2.5K",
       date: "Hace 3 días",
       description:
         "Una mirada detallada a un procedimiento quirúrgico avanzado.",
-      thumbnail: require("../assets/images/campana.jpg"),
+      thumbnail: require("@/assets/images/campana.jpg"),
       videoUrl:
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     },
     {
       id: "2",
       title: "Caso Clínico Real",
-      image: require("../assets/images/campana.jpg"),
+      image: require("@/assets/images/campana.jpg"),
       duration: "09:20",
       views: "1.2K",
       date: "Hace 2 días",
       description: "Análisis detallado de un caso clínico reciente.",
-      thumbnail: require("../assets/images/campana.jpg"),
+      thumbnail: require("@/assets/images/campana.jpg"),
       videoUrl:
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     },

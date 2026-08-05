@@ -61,7 +61,7 @@ export default function CameraScreen() {
 
   if (!hasPermission) {
     return (
-      <Screen>
+      <Screen safeArea={true}>
         <View style={styles.permissionWrap}>
           <View style={styles.permissionIcon}>
             <MaterialIcons name="face" size={44} color="#FFFFFF" />

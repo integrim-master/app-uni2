@@ -5,12 +5,7 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
-import { useLogin } from "@/src/modules/login/hooks/useLogin";
-import { useSendNotifications } from "@/src/modules/login/hooks/useNotifications";
 import { useTerms } from "@/src/modules/login/hooks/useTerms";
-import { FULL_PROFILE_KEY } from "@/src/modules/user/types/me.types";
-import { useQueryClient } from "@tanstack/react-query";
-import { Redirect, router } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
@@ -26,12 +21,14 @@ import Toast from "react-native-toast-message";
 
 const Login = () => {
   const { colors } = useTheme();
-  const { mutate, isPending } = useLogin();
   const { mutate: acceptTerms, isPending: isLoadinPrivacy } = useTerms();
-  const { login, logout, token } = useAuth();
+  const {
+    signIn,
+    activateSession,
+    logout,
+    isAuthTransitioning,
+  } = useAuth();
   const { pushToken } = useNotifications();
-  const { mutate: sendTokenNotifications } = useSendNotifications();
-  const queryClient = useQueryClient();
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [dataUser, setDataUser] = useState({
@@ -39,15 +36,19 @@ const Login = () => {
     password: "",
   });
 
-  if (token) {
-    return <Redirect href="/home" />;
-  }
-
   const handleAcceptPrivacy = () => {
     acceptTerms(undefined, {
       onSuccess: async () => {
         setShowPrivacyModal(false);
-        router.replace("/home");
+        try {
+          await activateSession();
+        } catch {
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "No se pudo activar la sesión",
+          });
+        }
       },
       onError: (error: any) => {
         Toast.show({
@@ -61,7 +62,7 @@ const Login = () => {
     });
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!dataUser.username || !dataUser.password) {
       Toast.show({
         type: "error",
@@ -71,52 +72,27 @@ const Login = () => {
       return;
     }
 
-    mutate(
-      {
-        username: dataUser.username,
-        password: dataUser.password,
-      },
-      {
-        onSuccess: async (data) => {
-          await login(data.token);
-          queryClient.setQueryData(FULL_PROFILE_KEY, {
-            user_data: data.user_data,
-            membership_data: data.membership_data,
-            treatments_careme: data.tratamientos_careme,
-            treatments_suggest: data.treatments_suggest,
-            promotions: data.promotions,
-            ultimas_citas: data.ultimas_citas,
-          });
-
-          if (pushToken) {
-            const platform = Platform.OS === "ios" ? "ios" : "android";
-            sendTokenNotifications(
-              { expo_token: pushToken, platform },
-              {
-                onError: (error) => {
-                  console.error("Error enviando push token:", error);
-                },
-              },
-            );
-          }
-
-          if (data.user_data.user_terms !== "Aceptado") {
-            setShowPrivacyModal(true);
-          } else {
-            router.replace("/home");
-          }
+    try {
+      const result = await signIn(
+        {
+          username: dataUser.username,
+          password: dataUser.password,
         },
-        onError: (error: any) => {
-          Toast.show({
-            type: "error",
-            text1: "Credenciales inválidas",
-            text2:
-              error?.response?.data?.message ||
-              "Usuario o contraseña incorrectos",
-          });
-        },
-      },
-    );
+        { pushToken },
+      );
+
+      if (result.needsTerms) {
+        setShowPrivacyModal(true);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: "Credenciales inválidas",
+        text2:
+          error?.response?.data?.message ||
+          "Usuario o contraseña incorrectos",
+      });
+    }
   };
 
   return (
@@ -249,8 +225,10 @@ const Login = () => {
 
               <PrimaryButton
                 title="Iniciar Sesión"
-                onPress={handleLogin}
-                loading={isPending}
+                onPress={() => {
+                  void handleLogin();
+                }}
+                loading={Boolean(isAuthTransitioning)}
               />
 
               <View

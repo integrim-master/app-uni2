@@ -21,8 +21,8 @@ import {
 } from "expo-router";
 import React, { Suspense, useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Screen } from "../../../../src/components/shared/Screen";
-import { useTheme } from "../../../../src/context/ThemeContext";
+import { Screen } from "@/src/components/shared/Screen";
+import { useTheme } from "@/src/context/ThemeContext";
 
 /** Estándar Expo Router: se exporta, no se usa como wrapper. */
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {

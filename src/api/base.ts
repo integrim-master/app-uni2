@@ -64,8 +64,16 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const requestUrl = error.config?.url ?? "";
     const isLoginRequest = requestUrl.includes("jwt-auth/v1/token");
+    const isPushTokenRequest = requestUrl.includes("push-token");
 
-    if (status === 401 && !isLoginRequest && _memoryToken && !_sessionRestoring) {
+    // Un 401 en push-token no debe cerrar la sesión recién iniciada
+    if (
+      status === 401 &&
+      !isLoginRequest &&
+      !isPushTokenRequest &&
+      _memoryToken &&
+      !_sessionRestoring
+    ) {
       handleUnauthorized();
 
       return Promise.reject({

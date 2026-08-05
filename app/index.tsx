@@ -1,8 +1,6 @@
-import BrandSpinner from "@/src/components/shared/BrandSpinner";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import ThemedText from "@/src/components/shared/themed-text";
-import { useAuth } from "@/src/context/AuthContext";
-import { useTheme } from "@/src/context/ThemeContext";
+import { useIsFocused } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
@@ -11,46 +9,41 @@ import React, { useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function Index() {
-  const { loading, token } = useAuth();
-  const { colors } = useTheme();
+/**
+ * Welcome pública. Solo se monta si Stack.Protected (guard={!auth}) lo permite.
+ */
+export default function WelcomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
 
-  // --- CONFIGURACIÓN DEL VIDEO ---
   const videoSource =
     "https://api.careme360.com/wp-content/uploads/2026/02/loop-tratamientos-10-seg.mp4";
 
-  const player = useVideoPlayer(videoSource, (player) => {
-    player.loop = true;
-    player.muted = true;
-    player.play();
+  const player = useVideoPlayer(videoSource, (videoPlayer) => {
+    videoPlayer.loop = true;
+    videoPlayer.muted = true;
   });
 
   useEffect(() => {
-    if (token) {
-      router.replace("/home");
+    if (!player) return;
+    if (isFocused) {
+      player.play();
+    } else {
+      player.pause();
     }
-  }, [token, router]);
-
-  if (loading) {
-    return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <BrandSpinner />
-      </View>
-    );
-  }
-
-  if (token) return null;
+  }, [isFocused, player]);
 
   return (
     <View style={styles.container}>
-      <VideoView
-        player={player}
-        contentFit="cover"
-        style={StyleSheet.absoluteFillObject}
-        nativeControls={false}
-      />
+      {isFocused ? (
+        <VideoView
+          player={player}
+          contentFit="cover"
+          style={StyleSheet.absoluteFillObject}
+          nativeControls={false}
+        />
+      ) : null}
 
       <View style={styles.darkOverlay} />
 
@@ -130,11 +123,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
 
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -151,10 +139,9 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
     justifyContent: "space-between",
-    zIndex: 10, // Asegura que esté por encima de las capas del video
+    zIndex: 10,
   },
 
-  // -- CUERPO CENTRAL (Logo) --
   body: {
     flex: 1,
     justifyContent: "flex-start",
@@ -167,10 +154,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    elevation: 8, // Leve sombra dorada detrás del logo blanco
+    elevation: 8,
   },
   logo: {
-    width: 220, // Un poco más grande para impactar
+    width: 220,
     height: 90,
   },
   divider: {
@@ -182,19 +169,11 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
 
-  // -- FOOTER (Botones) --
   footer: {
     width: "100%",
     paddingHorizontal: 28,
-    paddingBottom: 20, // El insets.bottom del wrapper maneja el resto
+    paddingBottom: 20,
     alignItems: "center",
     gap: 16,
-  },
-
-  footerNote: {
-    color: "rgba(255,255,255,0.6)",
-    fontSize: 12,
-    letterSpacing: 0.8,
-    textAlign: "center",
   },
 });

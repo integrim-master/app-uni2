@@ -1,6 +1,6 @@
 import { ErrorBoundary } from "@/src/components/shared/ErrorBoundary";
 import { toastConfig } from "@/src/constants/toastConfig";
-import { AuthProvider } from "@/src/context/AuthContext";
+import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 import { LoadingProvider } from "@/src/context/LoadingContext";
 import {
   NotificationsProvider,
@@ -47,7 +47,6 @@ Notifications.setNotificationHandler({
 
 function NotificationListener() {
   const { addNotification, setPushToken } = useNotifications();
-  const lastNotificationResponse = Notifications.useLastNotificationResponse();
 
   useEffect(() => {
     const register = async () => {
@@ -99,8 +98,51 @@ function NotificationListener() {
   return null;
 }
 
+/**
+ * Auth vive aquí (dentro de AuthProvider).
+ * Stack.Protected decide rutas; isAuthTransitioning evita flash login↔home.
+ */
+function RootNavigator() {
+  const { token, loading, isAuthTransitioning } = useAuth();
+  const isAuthenticated = !!token;
+
+  useEffect(() => {
+    if (loading || isAuthTransitioning) return;
+    void SplashScreen.hideAsync();
+  }, [loading, isAuthTransitioning]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      void SplashScreen.hideAsync();
+    }, 8000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Mientras restaura sesión o hace login/logout: no montar Stack
+  // (el overlay de LoadingProvider cubre la UI).
+  if (loading || isAuthTransitioning) return null;
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: BG_COLOR },
+      }}
+    >
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="(app)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="index" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
 export default Sentry.wrap(function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
@@ -109,14 +151,9 @@ export default Sentry.wrap(function RootLayout() {
   });
 
   const [queryClient] = useState(() => createAppQueryClient());
+  const fontsReady = fontsLoaded || !!fontError;
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) return null;
+  if (!fontsReady) return null;
 
   return (
     <ErrorBoundary>
@@ -129,22 +166,7 @@ export default Sentry.wrap(function RootLayout() {
                   <NotificationsProvider>
                     <NotificationListener />
                     <PromotionGuard>
-                      <Stack
-                        screenOptions={{
-                          headerShown: false,
-                          contentStyle: { backgroundColor: BG_COLOR },
-                        }}
-                      >
-                        <Stack.Screen name="(tabs)" />
-                        <Stack.Screen
-                          name="scan"
-                          options={{
-                            presentation: "fullScreenModal",
-                          }}
-                        />
-                        <Stack.Screen name="blog" />
-                        <Stack.Screen name="profile-details" />
-                      </Stack>
+                      <RootNavigator />
                     </PromotionGuard>
                   </NotificationsProvider>
                 </AuthProvider>

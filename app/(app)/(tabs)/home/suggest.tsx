@@ -19,7 +19,7 @@ export default function Suggest() {
         <BackButton />
         <View style={styles.imageWrapper}>
           <ImageBackground
-            source={require("../../../assets/images/campana.jpg")}
+            source={require("@/assets/images/campana.jpg")}
             style={styles.image}
             imageStyle={{ borderRadius: 0 }}
           >

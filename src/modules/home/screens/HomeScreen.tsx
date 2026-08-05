@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-
   errorContainer: {
     flex: 1,
     justifyContent: "center",

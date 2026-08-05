@@ -1,35 +1,12 @@
-import BrandSpinner from "@/src/components/shared/BrandSpinner";
-import { useAuth } from "@/src/context/AuthContext";
 import { TabBarContext } from "@/src/context/TabBarContext";
 import { useTheme } from "@/src/context/ThemeContext";
-import { Redirect } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import React, { useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform } from "react-native";
 
 export default function TabsLayout() {
-  const { token, loading } = useAuth();
   const { colors } = useTheme();
   const [showTabBar, setShowTabBar] = useState(false);
-
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: colors.background,
-        }}
-      >
-        <BrandSpinner />
-      </View>
-    );
-  }
-
-  if (!token) {
-    return <Redirect href="/login" />;
-  }
 
   return (
     <TabBarContext.Provider value={{ setShowTabBar }}>
@@ -37,9 +14,7 @@ export default function TabsLayout() {
         hidden={showTabBar}
         labelVisibilityMode="labeled"
         tintColor={Platform.OS === "ios" ? colors.primary : "white"}
-        backgroundColor={
-          Platform.OS === "ios" ? colors.background : colors.background
-        }
+        backgroundColor={colors.background}
         indicatorColor={colors.primary}
       >
         <NativeTabs.Trigger name="home">

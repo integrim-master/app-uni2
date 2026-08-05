@@ -7,6 +7,7 @@ import { AuthService } from "@/src/modules/auth/services/auth.service";
 import {
   AuthContextType,
   AuthProviderProps,
+  SignInResult,
 } from "@/src/modules/auth/types/auth.types";
 import { isUnauthorizedError } from "@/src/modules/auth/utils/apiError";
 import {
@@ -16,7 +17,6 @@ import {
 } from "@/src/modules/auth/utils/tokenStorage";
 import { FULL_PROFILE_KEY } from "@/src/modules/user/types/me.types";
 import { useQueryClient } from "@tanstack/react-query";
-import { router } from "expo-router";
 import React, {
   createContext,
   useCallback,
@@ -24,6 +24,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import { useLoading } from "./LoadingContext";
 
@@ -32,6 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: AuthProviderProps) {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthTransitioning, setIsAuthTransitioning] = useState(false);
   const queryClient = useQueryClient();
   const { showLoading, hideLoading } = useLoading();
 
@@ -49,7 +51,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     setOnUnauthorized(() => {
       void clearSession().then(() => {
-        router.replace("/login");
         Toast.show({
           type: "info",
           text1: "Sesión expirada",
@@ -79,7 +80,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           await removeStoredToken();
           return;
         }
-        // Red / otro error: permitir entrar; Home hará el fetch.
       }
 
       setToken(stored);
@@ -93,31 +93,89 @@ export function AuthProvider({ children }: AuthProviderProps) {
     void restoreSession();
   }, [restoreSession]);
 
-  const login = async (tokenValue: string) => {
-    showLoading("Iniciando sesión...");
+  const signIn = async (
+    credentials: { username: string; password: string },
+    options?: { pushToken?: string | null },
+  ): Promise<SignInResult> => {
+    showLoading("");
+
     try {
-      await saveStoredToken(tokenValue);
-      setToken(tokenValue);
+      const data = await AuthService.Login(credentials);
+
+      queryClient.setQueryData(FULL_PROFILE_KEY, {
+        user_data: data.user_data,
+        membership_data: data.membership_data,
+        treatments_careme: data.tratamientos_careme,
+        treatments_suggest: data.treatments_suggest,
+        promotions: data.promotions,
+        ultimas_citas: data.ultimas_citas,
+      });
+
+      // Primero el JWT en memoria/storage; si no, push-token va sin auth → 401
+      await saveStoredToken(data.token);
+      setMemoryToken(data.token);
+
+      if (options?.pushToken) {
+        const platform = Platform.OS === "ios" ? "ios" : "android";
+        void AuthService.sendTokenNotifications({
+          expo_token: options.pushToken,
+          platform,
+        }).catch((error) => {
+          console.error("Error enviando push token:", error);
+        });
+      }
+
+      // Términos pendientes: no abrir (app) aún
+      if (data.user_data.user_terms !== "Aceptado") {
+        return { needsTerms: true };
+      }
+
+      setIsAuthTransitioning(true);
+      setToken(data.token);
+      return { needsTerms: false };
     } finally {
+      setIsAuthTransitioning(false);
+      console.log("hideLoading");
+      hideLoading();
+    }
+  };
+
+  const activateSession = async () => {
+    showLoading();
+    setIsAuthTransitioning(true);
+
+    try {
+      const stored = await getStoredToken();
+      if (!stored) {
+        throw new Error("No hay sesión pendiente");
+      }
+      setMemoryToken(stored);
+      setToken(stored);
+    } finally {
+      setIsAuthTransitioning(false);
       hideLoading();
     }
   };
 
   const logout = async () => {
-    showLoading("Cerrando sesión...");
+    // showLoading("Cerrando sesión...");
+    setIsAuthTransitioning(true);
+
     try {
       await clearSession();
-      router.replace("/login");
     } finally {
-      hideLoading();
+      setIsAuthTransitioning(false);
+      // hideLoading();
     }
   };
 
   const value: AuthContextType = {
     token: token ?? undefined,
     loading,
+    isAuthTransitioning,
     isAuthenticated: !!token && !loading,
-    login,
+    signIn,
+    activateSession,
     logout,
   };
 

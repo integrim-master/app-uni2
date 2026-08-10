@@ -1,35 +1,25 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function DatesLayout() {
+export default function DatesTabLayout() {
   const { colors } = useTheme();
 
   return (
-    <Stack screenOptions={{ headerShown: true }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{
           title: "Mis citas",
           headerShown: true,
-          headerTitle: "Mis citas",
           headerTintColor: colors.textStrong,
           headerShadowVisible: false,
-          headerBackButtonDisplayMode: "minimal",
-          headerStyle: {
-            backgroundColor: colors.background,
-          },
-        }}
-      />
-      <Stack.Screen
-        name="[date_id]/index"
-        options={{
-          title: "Detalle de la cita",
-          headerShown: true,
-          headerTitle: "Detalle de la cita",
-          headerTintColor: colors.textStrong,
-          headerShadowVisible: false,
-          headerBackButtonDisplayMode: "minimal",
           headerStyle: {
             backgroundColor: colors.background,
           },

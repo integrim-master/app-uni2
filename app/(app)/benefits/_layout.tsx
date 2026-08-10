@@ -1,8 +1,9 @@
+import { BackButton } from "@/src/components/shared/BackButton";
 import { useTheme } from "@/src/context/ThemeContext";
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function BenefitsTabLayout() {
+export default function BenefitDetailsLayout() {
   const { colors } = useTheme();
 
   return (
@@ -13,15 +14,15 @@ export default function BenefitsTabLayout() {
       }}
     >
       <Stack.Screen
-        name="index"
+        name="[id_benefits]/index"
         options={{
-          title: "Beneficios",
-          headerTintColor: colors.textStrong,
           headerShown: true,
+          title: "",
           headerShadowVisible: false,
           headerStyle: {
             backgroundColor: colors.background,
           },
+          headerLeft: () => <BackButton />,
         }}
       />
     </Stack>

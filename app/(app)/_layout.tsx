@@ -24,6 +24,8 @@ export default function AppLayout() {
       />
       <Stack.Screen name="blog" />
       <Stack.Screen name="profile-details" />
+      <Stack.Screen name="benefits" />
+      <Stack.Screen name="dates" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="media" />
     </Stack>

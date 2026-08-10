@@ -1,20 +1,16 @@
-"use client";
-
 import Badge from "@/src/components/shared/Badge";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
-import { TabBarContext } from "@/src/context/TabBarContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useFocusEffect } from "expo-router";
 import { Skeleton } from "moti/skeleton";
-import React, { use } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 import type { BenefitApiResponse } from "../types/benefits.types";
 
 type Props = {
-  benefit: BenefitApiResponse;
+  benefit?: BenefitApiResponse;
   onRedeem?: (id: string, title_prod: string) => void;
   isPending?: boolean;
   isLoadingRedeem?: boolean;
@@ -26,30 +22,26 @@ export default function BenefitsDetailsScreen({
   isPending = false,
 }: Props) {
   const { colors } = useTheme();
-  const { setShowTabBar } = use(TabBarContext);
-
-  useFocusEffect(() => {
-    setShowTabBar(true);
-    return () => {
-      setShowTabBar(false);
-    };
-  });
 
   return (
-    <Screen fullWidth>
-      <View className="flex-1">
-        <View className="relative w-full aspect-[3/3]">
-          <Image
-            source={{
-              uri:
-                benefit?.image ||
-                "https://via.placeholder.com/600x400?text=No+Image",
-            }}
-            className="absolute inset-0 size-full"
-            style={isPending ? { opacity: 0.6 } : undefined}
-            contentFit="cover"
-            transition={600}
-          />
+    <Screen fullWidth safeArea edges={["bottom"]}>
+      <View
+        className="flex-1"
+        style={{ backgroundColor: colors.background }}
+      >
+        <View
+          className="relative w-full aspect-[3/3]"
+          style={{ backgroundColor: colors.backgroundElevated }}
+        >
+          {benefit?.image ? (
+            <Image
+              source={{ uri: benefit.image }}
+              className="absolute inset-0 size-full"
+              style={isPending ? { opacity: 0.6 } : undefined}
+              contentFit="cover"
+              transition={200}
+            />
+          ) : null}
           <LinearGradient
             colors={["transparent", "rgba(0,0,0,0.55)"]}
             style={StyleSheet.absoluteFillObject}
@@ -89,9 +81,9 @@ export default function BenefitsDetailsScreen({
 
           {isPending ? (
             <View className="mt-2 gap-2.5">
-              <Skeleton height={14} radius={6} />
-              <Skeleton height={14} width="90%" radius={6} />
-              <Skeleton height={14} width="75%" radius={6} />
+              <Skeleton height={14} radius={6} colorMode="dark" />
+              <Skeleton height={14} width="90%" radius={6} colorMode="dark" />
+              <Skeleton height={14} width="75%" radius={6} colorMode="dark" />
             </View>
           ) : (
             <View style={styles.descriptionWrap}>

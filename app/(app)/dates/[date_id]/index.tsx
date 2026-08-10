@@ -1,28 +1,23 @@
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
+import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
+import { useTheme } from "@/src/context/ThemeContext";
 import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkeleton";
 import { useDatesDetailsSuspense } from "@/src/modules/dates/hooks/useDatesById";
 import {
   getMockCitaById,
-  type MockCita,
   USE_MOCK_CITAS,
+  type MockCita,
 } from "@/src/modules/dates/mocks/mockCitas";
 import type { Cita } from "@/src/modules/dates/types/date.api.types";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  Stack,
-  useLocalSearchParams,
-  type ErrorBoundaryProps,
-} from "expo-router";
+import { useLocalSearchParams, type ErrorBoundaryProps } from "expo-router";
 import React, { Suspense, useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Screen } from "@/src/components/shared/Screen";
-import { useTheme } from "@/src/context/ThemeContext";
 
 /** Estándar Expo Router: se exporta, no se usa como wrapper. */
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
@@ -36,7 +31,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 
 function DetailsLoading() {
   return (
-    <Screen>
+    <Screen fullWidth safeArea edges={["bottom"]}>
       <View style={styles.content}>
         <CitaDetailsSkeleton />
       </View>
@@ -77,35 +72,20 @@ function CitaDetailsView({
   const { colors } = useTheme();
   const { data: user } = useUser();
 
-  const recomendaciones =
-    (dateDetails &&
-      "recomendaciones" in dateDetails &&
-      dateDetails.recomendaciones) ||
-    [
-      "Llega 10 minutos antes de tu cita.",
-      "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
-    ];
+  const recomendaciones = (dateDetails &&
+    "recomendaciones" in dateDetails &&
+    dateDetails.recomendaciones) || [
+    "Llega 10 minutos antes de tu cita.",
+    "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
+  ];
 
   return (
-    <Screen fullWidth>
-      <Stack.Screen
-        options={{
-          headerShadowVisible: false,
-          headerBackVisible: true,
-          headerTitle: "Detalles de la cita",
-        }}
-      />
-
+    <Screen fullWidth safeArea edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        <LinearGradient
-          colors={colors.gradientBackground}
-          start={[0, 0]}
-          end={[1, 1]}
-          style={[styles.hero, { backgroundColor: colors.background }]}
-        >
+        <View style={styles.hero}>
           <View style={styles.heroTopRow}>
             <View style={styles.heroIcon}>
               <Ionicons name="calendar" color="#FFFFFF" size={26} />
@@ -143,7 +123,7 @@ function CitaDetailsView({
               </ThemedText>
             </View>
           </View>
-        </LinearGradient>
+        </View>
 
         <View style={styles.content}>
           <Card pressable={false} style={styles.card}>
@@ -230,7 +210,10 @@ function InfoRow({
   return (
     <View style={styles.infoRow}>
       <View
-        style={[styles.infoIcon, { backgroundColor: colors.primaryLight + "1A" }]}
+        style={[
+          styles.infoIcon,
+          { backgroundColor: colors.primaryLight + "1A" },
+        ]}
       >
         <Ionicons name={icon} size={20} color={colors.primaryLight} />
       </View>
@@ -256,7 +239,11 @@ function RecoItem({ colors, text }: { colors: any; text: string }) {
       <View style={[styles.recoDot, { backgroundColor: colors.primaryLight }]}>
         <Ionicons name="checkmark" size={13} color="#FFFFFF" />
       </View>
-      <ThemedText type="body" color={colors.textSecondary} style={styles.recoText}>
+      <ThemedText
+        type="body"
+        color={colors.textSecondary}
+        style={styles.recoText}
+      >
         {text}
       </ThemedText>
     </View>

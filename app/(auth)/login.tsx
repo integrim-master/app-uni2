@@ -22,12 +22,7 @@ import Toast from "react-native-toast-message";
 const Login = () => {
   const { colors } = useTheme();
   const { mutate: acceptTerms, isPending: isLoadinPrivacy } = useTerms();
-  const {
-    signIn,
-    activateSession,
-    logout,
-    isAuthTransitioning,
-  } = useAuth();
+  const { signIn, activateSession, logout, isAuthTransitioning } = useAuth();
   const { pushToken } = useNotifications();
 
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -89,8 +84,7 @@ const Login = () => {
         type: "error",
         text1: "Credenciales inválidas",
         text2:
-          error?.response?.data?.message ||
-          "Usuario o contraseña incorrectos",
+          error?.response?.data?.message || "Usuario o contraseña incorrectos",
       });
     }
   };

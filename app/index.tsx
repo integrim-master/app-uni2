@@ -9,9 +9,6 @@ import React, { useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-/**
- * Welcome pública. Solo se monta si Stack.Protected (guard={!auth}) lo permite.
- */
 export default function WelcomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();

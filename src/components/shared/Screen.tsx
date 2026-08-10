@@ -1,13 +1,14 @@
 import { ui } from "@/src/themes/ui";
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
 
 interface ScreenProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   safeArea?: boolean;
+  edges?: readonly Edge[];
   leftButton?: React.ReactNode;
   fullWidth?: boolean;
 }
@@ -17,6 +18,7 @@ export function Screen({
   fullWidth = false,
   style,
   safeArea = false,
+  edges,
   leftButton,
 }: ScreenProps) {
   const { colors } = useTheme();
@@ -40,7 +42,9 @@ export function Screen({
       ]}
     >
       {safeArea ? (
-        <SafeAreaView style={styles.container}>{Content}</SafeAreaView>
+        <SafeAreaView style={styles.container} edges={edges}>
+          {Content}
+        </SafeAreaView>
       ) : (
         Content
       )}

@@ -3,18 +3,18 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useBenefit } from "@/src/modules/benefits/hooks/useBenefits";
 import { useRedemed } from "@/src/modules/benefits/hooks/useRedem";
-import BenefitScreen from "@/src/modules/benefits/screens/BenefitsDetailsScreen";
+import BenefitsDetailsScreen from "@/src/modules/benefits/screens/BenefitsDetailsScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 
-export default function Index() {
+export default function BenefitDetailsRoute() {
   const { id_benefits } = useLocalSearchParams<{ id_benefits: string }>();
   const { colors } = useTheme();
   const { data: benefit, isLoading, isError, error } = useBenefit(id_benefits);
   const { data: user } = useUser();
-  const { mutate, isPending, isSuccess } = useRedemed();
+  const { mutate, isPending } = useRedemed();
   const [sucessRedeem, setSuccessRedeem] = useState(false);
 
   const sendRedeem = (idProd: string, title_prod: string) => {
@@ -29,17 +29,12 @@ export default function Index() {
     };
     try {
       mutate(payload, {
-        onSuccess: (data) => {
-          // if (data.success) {
-          //   setSuccessRedeem(true);
-          // }
-        },
-        onError: (error) => {
-          console.error("Error redeeming benefit:", error);
+        onError: (err) => {
+          console.error("Error redeeming benefit:", err);
         },
       });
-    } catch (error) {
-      console.error("Error llamando a mutate:", error);
+    } catch (err) {
+      console.error("Error llamando a mutate:", err);
     }
   };
 
@@ -59,7 +54,7 @@ export default function Index() {
   }
 
   return (
-    <BenefitScreen
+    <BenefitsDetailsScreen
       onRedeem={sendRedeem}
       benefit={benefit as any}
       isPending={isLoading}

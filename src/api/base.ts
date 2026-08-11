@@ -6,7 +6,7 @@ export const API_BASE_URL =
 let _memoryToken: string | null = null;
 let _onUnauthorized: (() => void) | null = null;
 let _sessionRestoring = false;
-let _handling401 = false;
+let _handling403 = false;
 
 export function setMemoryToken(token: string | null) {
   _memoryToken = token;
@@ -32,12 +32,12 @@ export function getMemoryToken(): string | null {
  * en vez de mostrarse como un error genérico.
  */
 export function handleUnauthorized() {
-  if (_sessionRestoring || _handling401) return;
+  if (_sessionRestoring || _handling403) return;
 
-  _handling401 = true;
+  _handling403 = true;
   _onUnauthorized?.();
   setTimeout(() => {
-    _handling401 = false;
+    _handling403 = false;
   }, 1000);
 }
 
@@ -68,7 +68,7 @@ api.interceptors.response.use(
 
     // Un 401 en push-token no debe cerrar la sesión recién iniciada
     if (
-      status === 401 &&
+      status === 403 &&
       !isLoginRequest &&
       !isPushTokenRequest &&
       _memoryToken &&

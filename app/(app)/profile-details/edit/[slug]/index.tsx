@@ -1,4 +1,3 @@
-import EmptySvgPush from "@/assets/svg/Push.svg";
 import { BackButton } from "@/src/components/shared/BackButton";
 import CustomPicker from "@/src/components/shared/CustomPicker";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
@@ -6,11 +5,23 @@ import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useEditProfile } from "@/src/modules/profile/hooks/useEditProfile";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
+import {
+  buildProfileFieldValue,
+  getFieldTitle,
+  ProfileField,
+  validateProfileField,
+} from "@/src/modules/profile/utils/validateProfileField";
+import { FULL_PROFILE_KEY } from "@/src/modules/user/types/me.types";
+import {
+  getErrorMessage,
+  showErrorToast,
+} from "@/src/utils/showErrorToast";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { AnimatePresence, MotiView } from "moti";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -19,300 +30,335 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Easing } from "react-native-reanimated";
+import Toast from "react-native-toast-message";
+
+const TYPE_ID_ITEMS = [
+  { l: "Cédula", v: "cc" },
+  { l: "Pasaporte", v: "ppto" },
+];
+
+function parseInitialValue(slug?: string | string[]) {
+  const raw = Array.isArray(slug) ? slug[0] : slug;
+  if (!raw || raw === "vacio") return "";
+  return raw;
+}
+
+function parseInitialDate(slug?: string | string[]) {
+  const raw = parseInitialValue(slug);
+  if (!raw) return new Date();
+  const parsed = new Date(raw.includes("T") ? raw : `${raw}T12:00:00`);
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+}
 
 const Index = () => {
-  const { slug, name } = useLocalSearchParams();
+  const { slug, name: nameParam } = useLocalSearchParams<{
+    slug: string;
+    name: string;
+  }>();
+  const field = (
+    Array.isArray(nameParam) ? nameParam[0] : nameParam
+  ) as ProfileField;
   const { colors } = useTheme();
   const router = useRouter();
 
-  const [value, setValue] = useState((slug as string) || "");
-  const [date, setDate] = useState(new Date());
+  const initialValue = parseInitialValue(slug);
+  const [value, setValue] = useState(initialValue);
+  const [date, setDate] = useState(() => parseInitialDate(slug));
+  const [pendingDate, setPendingDate] = useState(() => parseInitialDate(slug));
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const [country, setCountry] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
-
+  const queryClient = useQueryClient();
   const { mutate: updateProfile, isPending } = useEditProfile();
 
-  const [loadingIndex, setLoadingIndex] = useState(0);
-  const loadingTexts = [
-    "Actualizando datos",
-    "Conectando al servidor",
-    "Casi terminamos",
-  ];
+  const title = useMemo(() => getFieldTitle(field), [field]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPending) {
-      interval = setInterval(() => {
-        setLoadingIndex((prev) => (prev + 1) % loadingTexts.length);
-      }, 2000);
-    }
-    return () => clearInterval(interval);
-  }, [isPending]);
+  const isSaveDisabled = useMemo(() => {
+    if (isPending) return true;
+    if (field === "localizacion") return !country || !state || !city;
+    if (field === "fnacimiento") return false;
+    if (field === "type_id") return !value;
+    return !value.trim();
+  }, [isPending, field, country, state, city, value]);
 
   const handleSave = () => {
-    let finalValue: string = value;
-
-    if (name === "fnacimiento") {
-      finalValue = date.toISOString().split("T")[0];
-    } else if (name === "localizacion") {
-      finalValue = `${city}, ${state}, ${country}`;
+    const error = validateProfileField({
+      field,
+      value,
+      date,
+      country,
+      state,
+      city,
+    });
+    if (error) {
+      setValidationError(error);
+      // showErrorToast("Revisa el campo", error);
+      return;
     }
 
+    setValidationError(null);
+
+    const finalValue = buildProfileFieldValue({
+      field,
+      value,
+      date,
+      country,
+      state,
+      city,
+    });
+    console.log("finalValue", finalValue);
+
     updateProfile(
-      { [name as string]: finalValue },
+      
+      { [field]: finalValue },
       {
         onSuccess: () => {
-          setIsSuccess(true);
+          queryClient.invalidateQueries({ queryKey: FULL_PROFILE_KEY });
+          Toast.show({
+            type: "success",
+            text1: "Perfil actualizado",
+            text2: "Tus cambios se guardaron correctamente.",
+          });
+          router.back();
         },
-        onError: () => {
-          console.error("Error al actualizar");
+        onError: (err) => {
+          showErrorToast(
+            "No se pudo guardar",
+            getErrorMessage(err, "Intenta de nuevo en un momento."),
+          );
         },
       },
     );
   };
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(Platform.OS === "ios");
+  const openDatePicker = () => {
+    setPendingDate(date);
+    setShowDatePicker(true);
+  };
+
+  const confirmDate = () => {
+    setDate(pendingDate);
+    setValue(pendingDate.toLocaleDateString());
+    setShowDatePicker(false);
+    setValidationError(null);
+  };
+
+  const cancelDate = () => {
+    setPendingDate(date);
+    setShowDatePicker(false);
+  };
+
+  const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (Platform.OS === "android") {
+      setShowDatePicker(false);
+      if (event.type === "set" && selectedDate) {
+        setDate(selectedDate);
+        setPendingDate(selectedDate);
+        setValue(selectedDate.toLocaleDateString());
+        setValidationError(null);
+      }
+      return;
+    }
+
     if (selectedDate) {
-      setDate(selectedDate);
-      setValue(selectedDate.toLocaleDateString());
+      setPendingDate(selectedDate);
     }
   };
 
-  return (
-    <Screen
-      safeArea
-      leftButton={
-        !isPending && <BackButton iconName={isSuccess ? "close" : undefined} />
-      }
-    >
-      <AnimatePresence exitBeforeEnter>
-        {isSuccess ? (
-          <MotiView
-            key="success"
-            from={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            style={styles.fullCenter}
-          >
-            <View className="items-center gap-10">
-              <EmptySvgPush width={180} height={180} />
-              <View className="items-center gap-2">
-                <ThemedText type="subtitle" align="center">
-                  Listo
-                </ThemedText>
-                <ThemedText type="body" align="center">
-                  Tu perfil ha sido actualizado correctamente.
-                </ThemedText>
-              </View>
-            </View>
-            <View style={{ width: "100%", marginTop: 40 }}>
-              <PrimaryButton title="Continuar" onPress={() => router.back()} />
-            </View>
-          </MotiView>
-        ) : isPending ? (
-          <MotiView
-            key="loading"
-            from={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={styles.loadingWrapper}
-          >
-            <AnimatePresence exitBeforeEnter>
-              <MotiView
-                key={loadingIndex}
-                from={{ opacity: 0, translateY: 15 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                exit={{ opacity: 0, translateY: -15 }}
-                transition={{ type: "timing", duration: 500 }}
-              >
-                <ThemedText type="title" align="center">
-                  {loadingTexts[loadingIndex]}
-                </ThemedText>
-              </MotiView>
-            </AnimatePresence>
-            <View
-              style={[styles.progressBarBg, { backgroundColor: colors.border }]}
-            >
-              <MotiView
-                from={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{
-                  type: "timing",
-                  duration: 4000,
-                  easing: Easing.linear,
-                }}
-                style={{ height: "100%", backgroundColor: colors.primary }}
-              />
-            </View>
-          </MotiView>
-        ) : (
-          <MotiView
-            key="form"
-            from={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={{ flex: 1 }}
-          >
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ flex: 1 }}
-            >
-              <View className="flex-1 mt-4 p-6">
-                <View className="flex-1">
-                  <View style={styles.headerTitleWrap}>
-                    <ThemedText type="display">
-                      {name === "nombre"
-                        ? "Cómo quieres que te llamemos"
-                        : name === "fnacimiento"
-                          ? "Fecha de nacimiento"
-                          : name === "localizacion"
-                            ? "Tu ubicación"
-                            : `Editar ${name?.toString().replace("_", " ")}`}
-                    </ThemedText>
-                  </View>
+  const onChangeText = (text: string) => {
+    setValue(text);
+    if (validationError) setValidationError(null);
+  };
 
-                  {name === "localizacion" ? (
-                    <View>
-                      <CustomPicker
-                        label="País"
-                        selectedValue={country}
-                        onValueChange={(v: string) => {
-                          setCountry(v);
-                          setState("");
-                          setCity("");
-                        }}
-                        items={[
-                          { l: "Colombia", v: "CO" },
-                          { l: "México", v: "MX" },
-                        ]}
-                      />
-                      <CustomPicker
-                        label="Estado / Departamento"
-                        visible={!!country}
-                        selectedValue={state}
-                        onValueChange={(v: string) => {
-                          setState(v);
-                          setCity("");
-                        }}
-                        items={[
-                          { l: "Atlántico", v: "ATL" },
-                          { l: "Antioquia", v: "ANT" },
-                        ]}
-                      />
-                      <CustomPicker
-                        label="Ciudad / Municipio"
-                        visible={!!state}
-                        selectedValue={city}
-                        onValueChange={(v: string) => setCity(v)}
-                        items={[
-                          { l: "Barranquilla", v: "BAQ" },
-                          { l: "Medellín", v: "MED" },
-                        ]}
-                      />
-                    </View>
-                  ) : name === "type_id" ? (
-                    <View
-                      style={[
-                        styles.inputBorder,
-                        { borderColor: colors.primary },
-                      ]}
-                    >
-                      <Picker
-                        selectedValue={value}
-                        onValueChange={(itemValue) => setValue(itemValue)}
-                        style={{ color: colors.text }}
-                      >
-                        <Picker.Item
-                          label="Selecciona tipo de identificación"
-                          value=""
-                        />
-                        <Picker.Item label="Cédula" value="cc" />
-                        <Picker.Item label="Pasaporte" value="ppto" />
-                      </Picker>
-                    </View>
-                  ) : name === "fnacimiento" ? (
+  return (
+    <Screen safeArea leftButton={<BackButton />}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.flex}
+        keyboardVerticalOffset={70}
+      >
+        <View className="flex-1 mt-4 p-6">
+          <View className="flex-1">
+            <View style={styles.headerTitleWrap}>
+              <ThemedText
+                type="display"
+                accessibilityRole="header"
+              >
+                {title}
+              </ThemedText>
+            </View>
+
+            {field === "localizacion" ? (
+              <View accessibilityLabel="Selector de ubicación">
+                <CustomPicker
+                  label="País"
+                  selectedValue={country}
+                  onValueChange={(v: string) => {
+                    setCountry(v);
+                    setState("");
+                    setCity("");
+                    setValidationError(null);
+                  }}
+                  items={[
+                    { l: "Colombia", v: "CO" },
+                    { l: "México", v: "MX" },
+                  ]}
+                />
+                <CustomPicker
+                  label="Estado / Departamento"
+                  visible={!!country}
+                  selectedValue={state}
+                  onValueChange={(v: string) => {
+                    setState(v);
+                    setCity("");
+                    setValidationError(null);
+                  }}
+                  items={[
+                    { l: "Atlántico", v: "ATL" },
+                    { l: "Antioquia", v: "ANT" },
+                  ]}
+                />
+                <CustomPicker
+                  label="Ciudad / Municipio"
+                  visible={!!state}
+                  selectedValue={city}
+                  onValueChange={(v: string) => {
+                    setCity(v);
+                    setValidationError(null);
+                  }}
+                  items={[
+                    { l: "Barranquilla", v: "BAQ" },
+                    { l: "Medellín", v: "MED" },
+                  ]}
+                />
+              </View>
+            ) : field === "type_id" ? (
+              <CustomPicker
+                label="Tipo de identificación"
+                selectedValue={value}
+                onValueChange={(itemValue: string) => {
+                  setValue(itemValue);
+                  setValidationError(null);
+                }}
+                items={TYPE_ID_ITEMS}
+              />
+            ) : field === "fnacimiento" ? (
+              <TouchableOpacity
+                onPress={openDatePicker}
+                accessibilityRole="button"
+                accessibilityLabel="Seleccionar fecha de nacimiento"
+                accessibilityHint="Abre el selector de fecha"
+                style={[
+                  styles.inputBorder,
+                  {
+                    borderColor: colors.primary,
+                    paddingVertical: 15,
+                  },
+                ]}
+              >
+                <ThemedText type="titleSm">
+                  {date.toLocaleDateString()}
+                </ThemedText>
+              </TouchableOpacity>
+            ) : (
+              <TextInput
+                placeholder="Escribe aquí..."
+                value={value}
+                onChangeText={onChangeText}
+                autoFocus
+                autoCapitalize={field === "nombre" ? "words" : "none"}
+                keyboardType={field === "telefono" ? "phone-pad" : "default"}
+                returnKeyType="done"
+                onSubmitEditing={handleSave}
+                accessibilityLabel={title}
+                placeholderTextColor={colors.textSecondary}
+                style={[
+                  styles.textInput,
+                  {
+                    borderColor:
+                      value.length > 0 ? colors.primary : colors.border,
+                    color: colors.text,
+                  },
+                ]}
+              />
+            )}
+
+            {validationError ? (
+              <ThemedText
+                type="caption"
+                tone="danger"
+                style={{ marginTop: 8 }}
+                accessibilityLiveRegion="polite"
+              >
+                {validationError}
+              </ThemedText>
+            ) : null}
+
+            {showDatePicker && (
+              <View style={styles.datePickerWrap}>
+                {Platform.OS === "ios" && (
+                  <View style={styles.dateToolbar}>
                     <TouchableOpacity
-                      onPress={() => setShowDatePicker(true)}
-                      style={[
-                        styles.inputBorder,
-                        { borderColor: colors.primary, paddingVertical: 15 },
-                      ]}
+                      onPress={cancelDate}
+                      accessibilityRole="button"
+                      accessibilityLabel="Cancelar fecha"
                     >
-                      <ThemedText type="titleSm">
-                        {date.toLocaleDateString()}
+                      <ThemedText type="body" tone="secondary">
+                        Cancelar
                       </ThemedText>
                     </TouchableOpacity>
-                  ) : (
-                    <TextInput
-                      placeholder="Escribe aquí..."
-                      value={value}
-                      onChangeText={setValue}
-                      autoFocus
-                      placeholderTextColor={colors.textSecondary}
-                      style={[
-                        styles.textInput,
-                        {
-                          borderColor:
-                            value.length > 0 ? colors.primary : colors.border,
-                          color: colors.text,
-                        },
-                      ]}
-                    />
-                  )}
-
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={date}
-                      mode="date"
-                      display={Platform.OS === "ios" ? "spinner" : "default"}
-                      onChange={onDateChange}
-                      maximumDate={new Date()}
-                    />
-                  )}
-                </View>
-
-                <View style={{ marginBottom: Platform.OS === "ios" ? 40 : 20 }}>
-                  <PrimaryButton
-                    title="Guardar cambios"
-                    onPress={handleSave}
-                    disabled={
-                      name === "localizacion"
-                        ? !country || !state || !city
-                        : name !== "fnacimiento" && !value.trim()
-                    }
-                  />
-                </View>
+                    <TouchableOpacity
+                      onPress={confirmDate}
+                      accessibilityRole="button"
+                      accessibilityLabel="Confirmar fecha"
+                    >
+                      <ThemedText type="body" color={colors.primary} weight="bold">
+                        Confirmar
+                      </ThemedText>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                <DateTimePicker
+                  value={Platform.OS === "ios" ? pendingDate : date}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={onDateChange}
+                  maximumDate={new Date()}
+                  accessibilityLabel="Selector de fecha de nacimiento"
+                />
               </View>
-            </KeyboardAvoidingView>
-          </MotiView>
-        )}
-      </AnimatePresence>
+            )}
+          </View>
+
+          <View style={{ marginBottom: Platform.OS === "ios" ? 40 : 20 }}>
+            <PrimaryButton
+              title="Guardar cambios"
+              onPress={handleSave}
+              loading={isPending}
+              disabled={isSaveDisabled}
+            />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </Screen>
   );
 };
 
 const styles = StyleSheet.create({
-  fullCenter: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-around",
-    padding: 16,
-  },
-  loadingWrapper: { flex: 1, justifyContent: "center", padding: 40 },
+  flex: { flex: 1 },
   headerTitleWrap: { marginBottom: 32 },
-  progressBarBg: {
-    height: 6,
-    width: "100%",
-    borderRadius: 3,
-    marginTop: 30,
-    overflow: "hidden",
-  },
-  pickerContainer: { marginBottom: 20, borderBottomWidth: 2, paddingBottom: 4 },
   inputBorder: { borderBottomWidth: 2, marginBottom: 20 },
   textInput: { fontSize: 24, paddingVertical: 12, borderBottomWidth: 2 },
+  datePickerWrap: { marginTop: 8 },
+  dateToolbar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
 });
 
 export default Index;

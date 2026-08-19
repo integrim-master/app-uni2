@@ -1,4 +1,8 @@
 import axios from "axios";
+import {
+  isSessionAuthStatus,
+  SESSION_EXPIRED_MESSAGE,
+} from "@/src/modules/auth/utils/apiError";
 
 export const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL ?? "https://api.careme360.com";
@@ -6,7 +10,7 @@ export const API_BASE_URL =
 let _memoryToken: string | null = null;
 let _onUnauthorized: (() => void) | null = null;
 let _sessionRestoring = false;
-let _handling403 = false;
+let _handlingUnauthorized = false;
 
 export function setMemoryToken(token: string | null) {
   _memoryToken = token;
@@ -28,16 +32,16 @@ export function getMemoryToken(): string | null {
  * Dispara el flujo global de "sesión expirada" (limpiar sesión + redirigir a
  * login). Lo usa el interceptor de axios, pero también debe llamarse a mano
  * desde cualquier request que NO pase por la instancia `api` (ej. `fetch`
- * crudo para subir archivos), para que un 401 ahí también cierre la sesión
+ * crudo para subir archivos), para que un 401/403 ahí también cierre la sesión
  * en vez de mostrarse como un error genérico.
  */
 export function handleUnauthorized() {
-  if (_sessionRestoring || _handling403) return;
+  if (_sessionRestoring || _handlingUnauthorized) return;
 
-  _handling403 = true;
+  _handlingUnauthorized = true;
   _onUnauthorized?.();
   setTimeout(() => {
-    _handling403 = false;
+    _handlingUnauthorized = false;
   }, 1000);
 }
 
@@ -66,23 +70,24 @@ api.interceptors.response.use(
     const isLoginRequest = requestUrl.includes("jwt-auth/v1/token");
     const isPushTokenRequest = requestUrl.includes("push-token");
 
-    // Un 401 en push-token no debe cerrar la sesión recién iniciada
-    if (
-      status === 403 &&
+    // Login/push-token: un 401/403 no debe cerrar (ni inventar) una sesión.
+    const shouldEndSession =
+      isSessionAuthStatus(status) &&
       !isLoginRequest &&
       !isPushTokenRequest &&
-      _memoryToken &&
-      !_sessionRestoring
-    ) {
+      !!_memoryToken &&
+      !_sessionRestoring;
+
+    if (shouldEndSession) {
       handleUnauthorized();
 
       return Promise.reject({
         status,
-        message: "Tu sesión ha expirado. Inicia sesión nuevamente.",
+        message: SESSION_EXPIRED_MESSAGE,
       });
     }
 
-    if (status === 403) {
+    if (status === 403 && !isLoginRequest) {
       return Promise.reject({
         status,
         message: "No tienes permisos para realizar esta acción.",

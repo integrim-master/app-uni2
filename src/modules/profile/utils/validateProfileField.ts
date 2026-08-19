@@ -1,15 +1,25 @@
-export type ProfileField =
-  | "nombre"
-  | "fnacimiento"
-  | "localizacion"
-  | "type_id"
-  | "identificacion"
-  | "telefono"
-  | "pais_origen"
-  | "pais_residencia"
-  | "ciudad"
-  | "postal"
-  | (string & {});
+export const PROFILE_FIELDS = [
+  "nombre",
+  "fnacimiento",
+  "localizacion",
+  "type_id",
+  "identificacion",
+  "telefono",
+  "pais_origen",
+  "pais_residencia",
+  "ciudad",
+  "postal",
+] as const;
+
+export type ProfileField = (typeof PROFILE_FIELDS)[number];
+
+export function isProfileField(value: string): value is ProfileField {
+  return (PROFILE_FIELDS as readonly string[]).includes(value);
+}
+
+export function getEditFieldHref(field: ProfileField) {
+  return `/profile-details/edit/${field}` as const;
+}
 
 export const FIELD_TITLES: Record<string, string> = {
   nombre: "Cómo quieres que te llamemos",
@@ -120,15 +130,9 @@ export function buildProfileFieldValue({
   field,
   value,
   date,
-  country,
-  state,
-  city,
 }: ValidateProfileFieldInput): string {
   if (field === "fnacimiento" && date) {
     return date.toISOString().split("T")[0];
-  }
-  if (field === "localizacion") {
-    return `${city}, ${state}, ${country}`;
   }
   if (field === "telefono") {
     return value.replace(/\D/g, "");

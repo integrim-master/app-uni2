@@ -1,9 +1,19 @@
 import api from "@/src/api/base";
 
-export interface EditProfilePayload {
+export type EditProfilePayload = {
   id?: number;
   user_name?: string;
-}
+  nombre?: string;
+  fnacimiento?: string;
+  type_id?: string | number | null;
+  identificacion?: string;
+  telefono?: string;
+  pais_residencia?: string;
+  provincia?: string;
+  ciudad?: string;
+  postal?: string;
+  pais_origen?: string;
+};
 
 export const MeService = {
   editProfileById: async (payload: EditProfilePayload) => {

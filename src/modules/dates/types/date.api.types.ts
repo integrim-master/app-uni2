@@ -1,4 +1,5 @@
 export interface Cita {
+  id?: string;
   fecha_cita: string;
   hora_cita: string;
   categoria: string;
@@ -6,6 +7,7 @@ export interface Cita {
   duracion: string;
   profesional: string;
   sede: string;
+  recomendaciones?: string[];
 }
 
 export type CitasApiResponse = Cita[];

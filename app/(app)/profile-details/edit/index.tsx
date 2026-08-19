@@ -3,6 +3,7 @@ import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
+import { getEditFieldHref } from "@/src/modules/profile/utils/validateProfileField";
 import React from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
@@ -30,28 +31,28 @@ export default function EditProfileScreen() {
             subtitle={user?.nombre || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.nombre || "vacio"}?name=nombre`}
+            link={getEditFieldHref("nombre")}
           />
           <SimpleMenuSection
             title="Identificación"
             subtitle={user?.identificacion || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.identificacion || "vacio"}?name=identificacion`}
+            link={getEditFieldHref("identificacion")}
           />
           <SimpleMenuSection
             title="Tipo de identificación"
             subtitle={user?.type_id?.toString() || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.type_id || "vacio"}?name=type_id`}
+            link={getEditFieldHref("type_id")}
           />
           <SimpleMenuSection
             title="Fecha de nacimiento"
             subtitle={user?.fnacimiento || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.fnacimiento || "vacio"}?name=fnacimiento`}
+            link={getEditFieldHref("fnacimiento")}
           />
 
           <SimpleMenuSection
@@ -59,23 +60,23 @@ export default function EditProfileScreen() {
             subtitle={user?.pais_origen || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.pais_origen || "vacio"}?name=pais_origen`}
+            link={getEditFieldHref("pais_origen")}
           />
 
-          <SimpleMenuSection
+          {/* <SimpleMenuSection
             title="País de residencia"
             subtitle={user?.pais_residencia || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.pais_residencia || "vacio"}?name=pais_residencia`}
-          />
+            link={getEditFieldHref("pais_residencia")}
+          /> */}
 
           <SimpleMenuSection
             title="Teléfono"
             subtitle={user?.telefono || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.telefono || "vacio"}?name=telefono`}
+            link={getEditFieldHref("telefono")}
           />
 
           <SimpleMenuSection
@@ -83,7 +84,7 @@ export default function EditProfileScreen() {
             subtitle={user?.ciudad || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.ciudad || "vacio"}?name=ciudad`}
+            link={getEditFieldHref("ciudad")}
           />
 
           <SimpleMenuSection
@@ -91,7 +92,7 @@ export default function EditProfileScreen() {
             subtitle={user?.provincia || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.provincia || "vacio"}?name=localizacion`}
+            link={getEditFieldHref("localizacion")}
           />
 
           <SimpleMenuSection
@@ -99,7 +100,7 @@ export default function EditProfileScreen() {
             subtitle={user?.postal || "N/A"}
             rightIcon="chevron-forward"
             icon=""
-            link={`/profile-details/edit/${user?.postal || "vacio"}?name=postal`}
+            link={getEditFieldHref("postal")}
           />
         </View>
       </ScrollView>

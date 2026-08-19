@@ -3,6 +3,11 @@ import api, {
   getMemoryToken,
   handleUnauthorized,
 } from "@/src/api/base";
+import {
+  isSessionAuthStatus,
+  isUnauthorizedError,
+  SESSION_EXPIRED_MESSAGE,
+} from "@/src/modules/auth/utils/apiError";
 
 export interface UploadImageParams {
   photo: {
@@ -67,19 +72,30 @@ export const DiagnosticsServices = {
       formData.append("title", `${userId}-${Date.now()}`);
 
       const token = getMemoryToken();
+      if (!token) {
+        handleUnauthorized();
+        throw {
+          status: 401,
+          message: SESSION_EXPIRED_MESSAGE,
+        };
+      }
+
       const res = await fetch(`${API_BASE_URL}/wp-json/wp/v2/media`, {
         method: "POST",
         body: formData,
         headers: {
           Accept: "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!res.ok) {
-        if (res.status === 401) {
+        if (isSessionAuthStatus(res.status)) {
           handleUnauthorized();
-          throw new Error("Tu sesión ha expirado. Inicia sesión nuevamente.");
+          throw {
+            status: res.status,
+            message: SESSION_EXPIRED_MESSAGE,
+          };
         }
         throw new Error(`Error subiendo imagen: status ${res.status}`);
       }
@@ -92,6 +108,7 @@ export const DiagnosticsServices = {
 
       return { id: data.id };
     } catch (error: any) {
+      if (isUnauthorizedError(error)) throw error;
       throw new Error(error?.message ?? "Error subiendo imagen");
     }
   },

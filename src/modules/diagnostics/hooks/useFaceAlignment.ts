@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Platform } from "react-native";
 import {
-  runAsync,
   runAtTargetFps,
   useCameraDevice,
   useFrameProcessor,
@@ -27,7 +25,7 @@ export function useFaceAlignment(facing: "front" | "back", layout: Layout) {
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
 
-  // Opciones estables: recrear el detector en cada render rompe iOS release.
+  // Opciones estables: recrear el detector en cada render rompe release.
   const faceDetectionOptions = useRef({
     performanceMode: "fast" as const,
     autoMode: true,
@@ -78,23 +76,22 @@ export function useFaceAlignment(facing: "front" | "back", layout: Layout) {
     [],
   );
 
+  /**
+   * No usar `runAsync` en Android: en APK release provoca
+   * RNWorklet::JsiWorkletContext::invokeOnWorkletThread (BusError).
+   * `runAtTargetFps` corre en el mismo hilo del frame processor.
+   */
   const frameProcessor = useFrameProcessor(
     (frame) => {
       "worklet";
-
-      if (Platform.OS === "ios") {
-        runAtTargetFps(5, () => {
-          "worklet";
+      runAtTargetFps(5, () => {
+        "worklet";
+        try {
           const faces = detectFaces(frame);
           handleDetectedFaces(faces);
-        });
-        return;
-      }
+        } catch {
 
-      runAsync(frame, () => {
-        "worklet";
-        const faces = detectFaces(frame);
-        handleDetectedFaces(faces);
+        }
       });
     },
     [detectFaces, handleDetectedFaces],

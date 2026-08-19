@@ -9,7 +9,8 @@ type Props = {
   aligned: boolean;
   photoUri?: string | null;
   cameraRef: RefObject<Camera | null>;
-  device: CameraDevice;
+  device?: CameraDevice;
+  isActive?: boolean;
   frameProcessor: NonNullable<ComponentProps<typeof Camera>["frameProcessor"]>;
 };
 
@@ -24,6 +25,7 @@ export default function FaceCaptureRing({
   photoUri,
   cameraRef,
   device,
+  isActive = true,
   frameProcessor,
 }: Props) {
   const boxW = ovalW + PAD * 2;
@@ -92,17 +94,17 @@ export default function FaceCaptureRing({
         >
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.fill} />
-          ) : (
+          ) : device ? (
             <Camera
               ref={cameraRef}
               style={styles.fill}
               device={device}
-              isActive
+              isActive={isActive}
               photo
-              frameProcessor={frameProcessor}
+              frameProcessor={isActive ? frameProcessor : undefined}
               pixelFormat="yuv"
             />
-          )}
+          ) : null}
         </View>
       </View>
     </View>

@@ -6,10 +6,10 @@ module.exports = function (api) {
       "nativewind/babel",
     ],
     plugins: [
-      // VisionCamera frame processors
+      // VisionCamera frame processors (worklets-core ≠ Reanimated 4)
       ["react-native-worklets-core/plugin"],
       // Reanimated 4 — debe ir al final
-      "react-native-worklets/plugin",
+      ["react-native-worklets/plugin"],
     ],
   };
 };

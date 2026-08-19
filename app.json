@@ -80,7 +80,8 @@
         {
           "cameraPermissionText": "Careme360 necesita acceso a la cámara para realizar diagnósticos faciales.",
           "enableMicrophonePermission": true,
-          "microphonePermissionText": "Careme360 necesita acceso al micrófono para grabar video."
+          "microphonePermissionText": "Careme360 necesita acceso al micrófono para grabar video.",
+          "enableFrameProcessors": true
         }
       ],
       "expo-image",

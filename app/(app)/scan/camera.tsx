@@ -11,6 +11,7 @@ import { useSendDiagnosticPhoto } from "@/src/modules/diagnostics/hooks/useSendD
 import ErrorScreen from "@/src/modules/diagnostics/screens/ErrorScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useIsFocused } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
 import { Camera, useCameraPermission } from "react-native-vision-camera";
@@ -27,6 +28,7 @@ export default function CameraScreen() {
 
   const cameraRef = useRef<Camera>(null);
   const [facing, setFacing] = useState<"front" | "back">("front");
+  const isFocused = useIsFocused();
 
   const { hasPermission, requestPermission } = useCameraPermission();
   const { device, status, isFaceAligned, frameProcessor } = useFaceAlignment(
@@ -137,7 +139,8 @@ export default function CameraScreen() {
         aligned={isFaceAligned}
         photoUri={photoUri?.uri}
         cameraRef={cameraRef}
-        device={device!}
+        device={device}
+        isActive={isFocused && !photoUri}
         frameProcessor={frameProcessor}
       />
 

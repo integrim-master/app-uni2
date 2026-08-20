@@ -11,11 +11,10 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
-  View,
+  View
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -208,14 +207,14 @@ const Login = () => {
                   secureTextEntry
                 />
               </View>
-
+              {/* 
               <Pressable style={styles.forgotPassword}>
                 <ThemedText
                   style={[styles.forgotPasswordText, { color: colors.primary }]}
                 >
                   ¿Olvidaste tu contraseña?
                 </ThemedText>
-              </Pressable>
+              </Pressable> */}
 
               <PrimaryButton
                 title="Iniciar Sesión"

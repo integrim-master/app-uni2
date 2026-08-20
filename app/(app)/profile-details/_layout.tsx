@@ -32,7 +32,7 @@ export default function ProfileDetailsLayout() {
         }}
       />
       <Stack.Screen
-        name="edit/[slug]/index"
+        name="edit/[field]"
         options={{
           headerShown: false,
         }}

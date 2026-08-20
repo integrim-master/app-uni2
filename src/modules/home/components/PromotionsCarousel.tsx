@@ -40,11 +40,7 @@ export const PromotionsCarousel = ({
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText
-          type="subtitle"
-          color={colors.textAccent}
-          style={styles.title}
-        >
+        <ThemedText type="subtitle" color={colors.textAccent}>
           Promociones exclusivas
         </ThemedText>
       </View>

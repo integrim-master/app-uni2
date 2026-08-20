@@ -6,17 +6,12 @@ import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import { useTheme } from "@/src/context/ThemeContext";
 import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkeleton";
 import { useDatesDetailsSuspense } from "@/src/modules/dates/hooks/useDatesById";
-import {
-  getMockCitaById,
-  USE_MOCK_CITAS,
-  type MockCita,
-} from "@/src/modules/dates/mocks/mockCitas";
 import type { Cita } from "@/src/modules/dates/types/date.api.types";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, type ErrorBoundaryProps } from "expo-router";
-import React, { Suspense, useMemo } from "react";
+import React, { Suspense } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 /** Estándar Expo Router: se exporta, no se usa como wrapper. */
@@ -32,7 +27,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 function DetailsLoading() {
   return (
     <Screen fullWidth safeArea edges={["bottom"]}>
-      <View style={styles.content}>
+      <View className="flex-1 gap-10">
         <CitaDetailsSkeleton />
       </View>
     </Screen>
@@ -42,19 +37,9 @@ function DetailsLoading() {
 export default function CitaDetailsScreen() {
   return (
     <Suspense fallback={<DetailsLoading />}>
-      {USE_MOCK_CITAS ? <MockCitaDetails /> : <ApiCitaDetails />}
+      <ApiCitaDetails />
     </Suspense>
   );
-}
-
-function MockCitaDetails() {
-  const { date_id } = useLocalSearchParams<{ date_id: string }>();
-  const dateDetails = useMemo(
-    () => getMockCitaById(String(date_id)),
-    [date_id],
-  );
-
-  return <CitaDetailsView dateDetails={dateDetails} />;
 }
 
 function ApiCitaDetails() {
@@ -64,11 +49,7 @@ function ApiCitaDetails() {
   return <CitaDetailsView dateDetails={dateDetails} />;
 }
 
-function CitaDetailsView({
-  dateDetails,
-}: {
-  dateDetails?: Cita | MockCita | null;
-}) {
+function CitaDetailsView({ dateDetails }: { dateDetails?: Cita | null }) {
   const { colors } = useTheme();
   const { data: user } = useUser();
 
@@ -77,55 +58,66 @@ function CitaDetailsView({
     dateDetails.recomendaciones) || [
     "Llega 10 minutos antes de tu cita.",
     "Si no puedes asistir, cancela con al menos dos horas de anticipación.",
-  ];
+  ]; // const recomendaciones = dateDetails?.recomendaciones ?? [];
 
   return (
-    <Screen fullWidth safeArea edges={["bottom"]}>
+    <Screen safeArea edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 0 }}
       >
-        <View style={styles.hero}>
-          <View style={styles.heroTopRow}>
-            <View style={styles.heroIcon}>
-              <Ionicons name="calendar" color="#FFFFFF" size={26} />
-            </View>
-            <Badge
-              showIcon={false}
-              text={dateDetails?.categoria || "General"}
-              variant="warning"
-              size="small"
-              layout="horizontal"
-            />
-          </View>
+        <View className="flex gap-10">
+          <View style={styles.hero}>
+            {/* <View style={styles.heroTopRow}>
+              <View style={styles.heroIcon}>
+                <Ionicons name="calendar" color="#FFFFFF" size={26} />
+              </View>
+              <Badge
+                showIcon={false}
+                text={dateDetails?.categoria || "General"}
+                variant="warning"
+                size="small"
+                layout="horizontal"
+              />
+            </View> */}
 
-          <View style={styles.heroTextBlock}>
-            <ThemedText type="caption" style={styles.heroLabel}>
-              CITA AGENDADA
-            </ThemedText>
-            <ThemedText type="title" style={styles.heroTitle}>
-              {dateDetails?.Procedimiento}
-            </ThemedText>
-          </View>
-
-          <View style={styles.heroDatePill}>
-            <View style={styles.heroDateItem}>
-              <Ionicons name="calendar-outline" size={16} color="#FFFFFF" />
-              <ThemedText type="semiBold" style={styles.heroDateText}>
-                {formatDateToText(dateDetails?.fecha_cita)}
+            <View style={styles.heroTextBlock}>
+              <View className="flex flex-row w-full justify-between items-center mb-2">
+                <ThemedText type="caption" style={styles.heroLabel}>
+                  CITA AGENDADA
+                </ThemedText>
+                <Badge
+                  showIcon={false}
+                  text={dateDetails?.categoria || "General"}
+                  variant={
+                    dateDetails?.categoria === "Estetico" ? "premium" : "info"
+                  }
+                  size="xs"
+                  layout="horizontal"
+                />
+              </View>
+              <ThemedText type="title" style={styles.heroTitle}>
+                {dateDetails?.Procedimiento}
               </ThemedText>
             </View>
-            <View style={styles.heroDateDivider} />
-            <View style={styles.heroDateItem}>
-              <Ionicons name="time-outline" size={16} color="#FFFFFF" />
-              <ThemedText type="semiBold" style={styles.heroDateText}>
-                {dateDetails?.hora_cita}
-              </ThemedText>
+
+            <View style={styles.heroDatePill}>
+              <View style={styles.heroDateItem} className="">
+                <Ionicons name="calendar-outline" size={16} color="#FFFFFF" />
+                <ThemedText type="semiBold" style={styles.heroDateText}>
+                  {formatDateToText(dateDetails?.fecha_cita)}
+                </ThemedText>
+              </View>
+              <View style={styles.heroDateDivider} />
+              <View style={styles.heroDateItem}>
+                <Ionicons name="time-outline" size={16} color="#FFFFFF" />
+                <ThemedText type="semiBold" style={styles.heroDateText}>
+                  {dateDetails?.hora_cita}
+                </ThemedText>
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={styles.content}>
           <Card pressable={false} style={styles.card}>
             <InfoRow
               colors={colors}
@@ -160,34 +152,39 @@ function CitaDetailsView({
             />
           </Card>
 
-          <View style={styles.sectionHeader}>
-            <Ionicons
-              name="bulb-outline"
-              size={18}
-              color={colors.primaryLight}
-            />
-            <ThemedText type="semiBold" color={colors.primaryLight}>
-              Recomendaciones
-            </ThemedText>
-          </View>
+          {recomendaciones.length > 0 ? (
+            <View className="flex gap-4">
+              <View style={styles.sectionHeader}>
+                <Ionicons
+                  name="bulb-outline"
+                  size={18}
+                  color={colors.primaryLight}
+                />
+                <ThemedText type="semiBold" color={colors.primaryLight}>
+                  Recomendaciones
+                </ThemedText>
+              </View>
 
-          <Card pressable={false} style={styles.card}>
-            {recomendaciones.map((text, index) => (
-              <React.Fragment key={text}>
-                {index > 0 && (
-                  <View
-                    style={[
-                      styles.rowDivider,
-                      {
-                        backgroundColor: colors.border || "rgba(0,0,0,0.06)",
-                      },
-                    ]}
-                  />
-                )}
-                <RecoItem colors={colors} text={text} />
-              </React.Fragment>
-            ))}
-          </Card>
+              <Card pressable={false} style={styles.card}>
+                {recomendaciones.map((text, index) => (
+                  <React.Fragment key={text}>
+                    {index > 0 && (
+                      <View
+                        style={[
+                          styles.rowDivider,
+                          {
+                            backgroundColor:
+                              colors.border || "rgba(0,0,0,0.06)",
+                          },
+                        ]}
+                      />
+                    )}
+                    <RecoItem colors={colors} text={text} />
+                  </React.Fragment>
+                ))}
+              </Card>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </Screen>
@@ -252,11 +249,6 @@ function RecoItem({ colors, text }: { colors: any; text: string }) {
 
 const styles = StyleSheet.create({
   hero: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 28,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
     gap: 20,
   },
   heroTopRow: {
@@ -292,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.15)",
     borderRadius: 16,
-    paddingVertical: 12,
+
     paddingHorizontal: 16,
   },
   heroDateItem: {
@@ -312,11 +304,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  content: {
-    flex: 1,
-    padding: 16,
-    gap: 8,
-  },
   card: {
     padding: 8,
     marginBottom: 8,
@@ -352,9 +339,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginTop: 12,
-    marginBottom: 8,
-    paddingHorizontal: 6,
   },
   recoRow: {
     flexDirection: "row",

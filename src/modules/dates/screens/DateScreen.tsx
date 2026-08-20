@@ -9,10 +9,10 @@ import { useTheme } from "../../../context/ThemeContext";
 import CitaCard from "../components/CitaCard";
 import CitaCardSkeleton from "../components/CitaCardSkeleton";
 import EmptyDates from "../components/EmptyDates";
-import { MOCK_CITAS, USE_MOCK_CITAS } from "../mocks/mockCitas";
+import type { Cita } from "../types/date.api.types";
 
 interface DatesScreenProps {
-  dates?: any[];
+  dates?: Cita[];
   isLoading?: boolean;
   isError?: boolean;
   error?: any;
@@ -30,32 +30,22 @@ export default function DatesScreen({
 }: DatesScreenProps) {
   const { colors } = useTheme();
 
-  const sourceDates = useMemo(() => {
-    if (USE_MOCK_CITAS && (!dates || dates.length === 0)) {
-      return MOCK_CITAS;
-    }
-    return dates;
-  }, [dates]);
-
   const processedDates = useMemo(() => {
-    return sourceDates
+    return dates
       .map((cita) => ({
         ...cita,
         _parsedDate: parseDateString(cita?.fecha_cita),
       }))
       .filter((cita) => cita._parsedDate !== null);
-  }, [sourceDates]);
-
-  // Con mocks no mostramos loading vacío de la API.
-  const showLoading = isLoading && !USE_MOCK_CITAS;
+  }, [dates]);
 
   return (
     <Screen fullWidth={true}>
       <View style={styles.container}>
         <View style={styles.content}>
-          {showLoading && <CitaCardSkeleton />}
+          {isLoading && <CitaCardSkeleton />}
 
-          {!showLoading && isError && !USE_MOCK_CITAS && (
+          {!isLoading && isError && (
             <View style={styles.center}>
               <View style={{ gap: 8, alignItems: "center" }}>
                 <ThemedText type="subtitle">Error cargando citas</ThemedText>
@@ -66,7 +56,7 @@ export default function DatesScreen({
             </View>
           )}
 
-          {!showLoading && (!isError || USE_MOCK_CITAS) && (
+          {!isLoading && !isError && (
             <AnimatePresence>
               <MotiView
                 from={{ opacity: 0, translateY: 10 }}
@@ -96,7 +86,7 @@ export default function DatesScreen({
                   showsVerticalScrollIndicator={false}
                   refreshControl={
                     <RefreshControl
-                      refreshing={!!refreshing && !USE_MOCK_CITAS}
+                      refreshing={!!refreshing}
                       onRefresh={onRefresh}
                       tintColor={colors.primary}
                       colors={[colors.primary]}

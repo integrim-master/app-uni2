@@ -89,7 +89,9 @@ function CitaDetailsView({ dateDetails }: { dateDetails?: Cita | null }) {
                 <Badge
                   showIcon={false}
                   text={dateDetails?.categoria || "General"}
-                  variant="warning"
+                  variant={
+                    dateDetails?.categoria === "Estetico" ? "premium" : "info"
+                  }
                   size="xs"
                   layout="horizontal"
                 />

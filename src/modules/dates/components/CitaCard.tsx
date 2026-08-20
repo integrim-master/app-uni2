@@ -15,7 +15,7 @@ export default function CitaCard({
   onPress?: () => void;
 }) {
   const { colors } = useTheme();
-
+  console.log(cita);
   return (
     <Card onPress={onPress} borderColor="transparent" style={styles.card}>
       {/* Encabezado */}
@@ -44,7 +44,7 @@ export default function CitaCard({
 
         <Badge
           text={cita.categoria}
-          variant={cita.categoria === "Estetico" ? "white" : "warning"}
+          variant={cita.categoria === "Estetico" ? "premium" : "info"}
           size="xs"
           showIcon={false}
         />

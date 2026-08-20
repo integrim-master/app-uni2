@@ -7,6 +7,7 @@ import { useUser } from "@/src/modules/user/hooks/useUser";
 
 import { ProfileSkeleton } from "@/src/modules/profile/components/ProfileSkeleton";
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
+import { formatProfilePlaceLabel } from "@/src/modules/profile/utils/getProfileFieldInitial";
 import { router } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -96,16 +97,16 @@ export default function ProfileDetailScreen() {
                   },
                   {
                     title: "Identificación",
-                    subtitle: user?.type_id?.toString() || "N/A",
+                    subtitle: user?.identificacion || "N/A",
                     icon: "card-outline",
                   },
                   {
                     title: "Tipo de identificación",
-                    subtitle: user?.identificacion || "N/A",
+                    subtitle: user?.type_id || "N/A",
                     icon: "id-card-outline",
                   },
                   {
-                    title: "Financiamiento",
+                    title: "Fecha de nacimiento",
                     subtitle: user?.fnacimiento || "N/A",
                     icon: "calendar-outline",
                   },
@@ -117,22 +118,22 @@ export default function ProfileDetailScreen() {
                 items={[
                   {
                     title: "País origen",
-                    subtitle: user?.pais_origen || "N/A",
+                    subtitle: formatProfilePlaceLabel(user?.pais_origen),
                     icon: "flag-outline",
                   },
                   {
                     title: "País residencia",
-                    subtitle: user?.pais_residencia || "N/A",
+                    subtitle: formatProfilePlaceLabel(user?.pais_residencia),
                     icon: "home-outline",
                   },
                   {
                     title: "Provincia",
-                    subtitle: user?.provincia || "N/A",
+                    subtitle: formatProfilePlaceLabel(user?.provincia),
                     icon: "map-outline",
                   },
                   {
                     title: "Ciudad",
-                    subtitle: user?.pais_residencia || "N/A",
+                    subtitle: formatProfilePlaceLabel(user?.ciudad),
                     icon: "business-outline",
                   },
                   {

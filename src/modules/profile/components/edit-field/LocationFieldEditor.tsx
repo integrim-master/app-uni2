@@ -21,7 +21,6 @@ export function LocationFieldEditor({
   const [state, setState] = useState(initial.state);
   const [city, setCity] = useState(initial.city);
   const [error, setError] = useState<string | null>(null);
-  console.log("country", initial);
 
   const {
     countries,

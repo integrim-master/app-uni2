@@ -1,4 +1,5 @@
 import type { UserProfile } from "../types/profile.types";
+import { getProfilePlaceId, getProfilePlaceName } from "../types/profile.types";
 import type { ProfileField } from "./validateProfileField";
 
 export function parseProfileDate(raw?: string | null) {
@@ -19,11 +20,11 @@ export function getProfileTextValue(
     case "telefono":
       return user.telefono ?? "";
     case "pais_origen":
-      return user.pais_origen ?? "";
+      return getProfilePlaceId(user.pais_origen);
     case "pais_residencia":
-      return user.pais_residencia ?? "";
+      return getProfilePlaceId(user.pais_residencia);
     case "ciudad":
-      return user.ciudad ?? "";
+      return getProfilePlaceId(user.ciudad);
     case "postal":
       return user.postal ?? "";
     case "type_id":
@@ -33,11 +34,18 @@ export function getProfileTextValue(
   }
 }
 
+/** Valores iniciales del picker de localización (ids para CustomPicker). */
 export function getProfileLocation(user: UserProfile) {
-  console.log("user", user);
   return {
-    country: user.pais_residencia ?? "",
-    state: user.provincia ?? "",
-    city: user.ciudad ?? "",
+    country: getProfilePlaceId(user.pais_residencia),
+    state: getProfilePlaceId(user.provincia),
+    city: getProfilePlaceId(user.ciudad),
   };
+}
+
+/** Texto legible para listas / subtítulos de menú. */
+export function formatProfilePlaceLabel(
+  places?: UserProfile["pais_origen"] | null,
+): string {
+  return getProfilePlaceName(places) || "N/A";
 }

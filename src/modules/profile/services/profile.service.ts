@@ -1,4 +1,5 @@
 import api from "@/src/api/base";
+import type { UserProfile } from "../types/profile.types";
 
 export type EditProfilePayload = {
   id?: number;
@@ -23,7 +24,7 @@ export const MeService = {
 
   getProfile: async () => {
     try {
-      const response = await api.get(`/wp-json/careme/v1/me/data`);
+      const response = await api.get<UserProfile>(`/wp-json/careme/v1/me/data`);
       return response.data;
     } catch (error: any) {
       console.error("Error en al obtener el perfil:", error);

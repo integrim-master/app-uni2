@@ -18,16 +18,12 @@ export const TreatmentsSection: React.FC<SuggestedTreatmentsProps> = ({
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
         <View style={styles.titles}>
-          <ThemedText
-            color={colors.textAccent}
-            type="subtitle"
-            style={styles.title}
-          >
+          <ThemedText type="subtitle" color={colors.textAccent}>
             Tratamientos sugeridos
           </ThemedText>
-          <ThemedText type="caption" color={colors.textSecondary}>
+          {/* <ThemedText type="caption" color={colors.textSecondary}>
             Pensados para ti
-          </ThemedText>
+          </ThemedText> */}
         </View>
       </View>
       <SuggestedTreatmentsList SuggestedTreatments={SuggestedTreatments} />

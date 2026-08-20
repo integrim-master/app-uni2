@@ -3,6 +3,7 @@ import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
+import { formatProfilePlaceLabel } from "@/src/modules/profile/utils/getProfileFieldInitial";
 import { getEditFieldHref } from "@/src/modules/profile/utils/validateProfileField";
 import React from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
@@ -21,6 +22,14 @@ export default function EditProfileScreen() {
       </Screen>
     );
   }
+
+  const locationLabel = [
+    formatProfilePlaceLabel(user?.ciudad),
+    formatProfilePlaceLabel(user?.provincia),
+    formatProfilePlaceLabel(user?.pais_residencia),
+  ]
+    .filter((part) => part !== "N/A")
+    .join(", ");
 
   return (
     <Screen safeArea={true} leftButton={<BackButton />}>
@@ -42,7 +51,7 @@ export default function EditProfileScreen() {
           />
           <SimpleMenuSection
             title="Tipo de identificación"
-            subtitle={user?.type_id?.toString() || "N/A"}
+            subtitle={user?.type_id || "N/A"}
             rightIcon="chevron-forward"
             icon=""
             link={getEditFieldHref("type_id")}
@@ -57,19 +66,11 @@ export default function EditProfileScreen() {
 
           <SimpleMenuSection
             title="País de origen"
-            subtitle={user?.pais_origen || "N/A"}
+            subtitle={formatProfilePlaceLabel(user?.pais_origen)}
             rightIcon="chevron-forward"
             icon=""
             link={getEditFieldHref("pais_origen")}
           />
-
-          {/* <SimpleMenuSection
-            title="País de residencia"
-            subtitle={user?.pais_residencia || "N/A"}
-            rightIcon="chevron-forward"
-            icon=""
-            link={getEditFieldHref("pais_residencia")}
-          /> */}
 
           <SimpleMenuSection
             title="Teléfono"
@@ -80,16 +81,8 @@ export default function EditProfileScreen() {
           />
 
           <SimpleMenuSection
-            title="Ciudad"
-            subtitle={user?.ciudad || "N/A"}
-            rightIcon="chevron-forward"
-            icon=""
-            link={getEditFieldHref("ciudad")}
-          />
-
-          <SimpleMenuSection
             title="Localizacion"
-            subtitle={user?.provincia || "N/A"}
+            subtitle={locationLabel || "N/A"}
             rightIcon="chevron-forward"
             icon=""
             link={getEditFieldHref("localizacion")}

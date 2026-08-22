@@ -6,7 +6,7 @@ import {
 } from "@/src/types/shared/Benefits.type";
 
 interface ItemUniqueProps {
-  benefitRedemed?: BenefitReedemed;
+  benefitRedemed?: BenefitReedemed | null;
   data: Benefits;
   isPendingRedeem?: boolean;
   activeBenefitId: string | null;
@@ -24,7 +24,7 @@ interface BenefitApiResponse {
   id: string;
   title: string;
   description: string;
-  precio: number | null;
+  precio: string | number | null;
   image: string;
 }
 
@@ -59,6 +59,7 @@ interface BenefitRedemedApiResponse {
 interface BenefitsApiResponse {
   benefits: Benefits[];
   benefits_used: BenefitUsed[];
+  benefit_redeem?: BenefitReedemed | null;
 }
 
 export {

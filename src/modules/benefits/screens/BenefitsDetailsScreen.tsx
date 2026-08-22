@@ -23,6 +23,17 @@ export default function BenefitsDetailsScreen({
 }: Props) {
   const { colors } = useTheme();
 
+  const price = Number(benefit?.precio);
+  const priceLabel =
+    Number.isFinite(price) && price > 0
+      ? `$${price.toLocaleString("es-CO")}`
+      : "Incluido";
+
+  const handleRedeem = () => {
+    if (!benefit?.id || !onRedeem || isLoadingRedeem || sucessRedeem) return;
+    onRedeem(benefit.id, benefit.title);
+  };
+
   return (
     <Screen fullWidth safeArea edges={["bottom"]}>
       <View

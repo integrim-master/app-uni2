@@ -13,7 +13,7 @@ interface MembershipData {
   id?: number;
   benefits: Benefits[];
   benefits_used: BenefitUsed[];
-  benefit_redeem?: BenefitReedemed[];
+  benefit_redeem?: BenefitReedemed | null;
 }
 
 interface BenefitReedemed {
@@ -32,7 +32,7 @@ interface Benefits {
   title: string;
   id: number;
   description: string;
-  precio: number;
+  precio: string | number;
   image: string;
   allowed: number;
   used: number;
@@ -44,7 +44,7 @@ interface BenefitsListProps {
   benefits: Benefits[];
   activeBenefitId: string | null;
   benefitsUsed?: BenefitUsed[];
-  benefitsRedemed?: BenefitReedemed;
+  benefitsRedemed?: BenefitReedemed | null;
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;

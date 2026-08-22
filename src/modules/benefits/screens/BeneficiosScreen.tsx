@@ -5,7 +5,8 @@ import TabBar from "@/src/components/shared/TabBar";
 import ThemedText from "@/src/components/shared/themed-text";
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
-import { Benefits } from "@/src/types/shared/Benefits.type";
+import { ui } from "@/src/themes/ui";
+import { BenefitReedemed, Benefits } from "@/src/types/shared/Benefits.type";
 import { router, useFocusEffect } from "expo-router";
 import { AnimatePresence } from "moti";
 import React, { useState } from "react";
@@ -32,13 +33,13 @@ export default function BeneficiosScreen({
   const { mutate: mutateCancel } = useCancel();
   const { data: user } = useUser();
   const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
-  const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
-    membership?.benefit_redeem,
-  );
+  const [benefitsRedemed, setBenefitsRedemed] =
+    useState<BenefitReedemed | null>(membership?.benefit_redeem ?? null);
 
   useFocusEffect(
     React.useCallback(() => {
-      setBenefitsRedemed(membership?.benefit_redeem);
+      setActiveBenefitId(membership?.benefit_redeem?.id_procedimiento || null);
+      setBenefitsRedemed(membership?.benefit_redeem ?? null);
     }, [membership]),
   );
 

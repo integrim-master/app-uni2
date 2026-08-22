@@ -1,18 +1,8 @@
-import { Benefits, BenefitUsed } from "@/src/types/shared/Benefits.type";
 import { useAuthQuery } from "@/src/modules/auth/hooks/useAuthQuery";
 import { GC_TIME, STALE_TIME } from "@/src/lib/queryClient";
 import { benefitsKeys } from "../queryKeys";
 import { BenefitService } from "../services/benefits.service";
-
-interface BenefitsApiResponse {
-  benefits: Benefits[];
-  benefits_used: BenefitUsed[];
-  benefit_redeem?: {
-    procedimiento: string;
-    id_procedimiento: string;
-    estado: string;
-  }[];
-}
+import { BenefitsApiResponse } from "../types/benefits.types";
 
 export const useBenefitAll = () => {
   return useAuthQuery<BenefitsApiResponse, { status: number; message: string }>({

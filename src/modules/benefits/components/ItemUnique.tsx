@@ -22,7 +22,11 @@ export default function ItemUnique({
   const { colors, isDark } = useTheme();
 
   const isThisBenefitActive = activeBenefitId === String(data.id);
+  console.log("activeBenefitId", activeBenefitId);
+  console.log("data.id", data.id);
   const isAnyBenefitActive = activeBenefitId !== null;
+
+  console.log("isThisBenefitActive", isThisBenefitActive, isAnyBenefitActive);
   const isThisBenefitRedeemedByBackend =
     Number(benefitRedemed?.id_procedimiento) === data.id;
 

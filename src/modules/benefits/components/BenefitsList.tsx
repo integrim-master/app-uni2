@@ -1,6 +1,5 @@
 import Badge from "@/src/components/shared/Badge";
 import {
-  BenefitReedemed,
   Benefits,
   BenefitsListProps,
 } from "@/src/types/shared/Benefits.type";
@@ -62,7 +61,7 @@ export default function BenefitsList({
                 isPendingRedeem={isPendingRedeem}
                 data={item}
                 activeBenefitId={activeBenefitId}
-                benefitRedemed={benefitsRedemed as BenefitReedemed | undefined}
+                benefitRedemed={benefitsRedemed}
                 onPressRedeem={(benefit, action = "aplicar") =>
                   onBenefitRedemed(benefit, action)
                 }

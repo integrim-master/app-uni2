@@ -36,7 +36,6 @@ export default function ItemUnique({
           <ThemedText
             type="titleSm"
             color={colors.textStrong}
-            style={styles.titleSpacing}
             numberOfLines={2}
           >
             {data.title || "Nombre del beneficio"}
@@ -164,15 +163,13 @@ const styles = StyleSheet.create({
   topSection: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 14,
-    gap: 12,
+    marginBottom: ui.spacing.md,
+    gap: ui.spacing.md,
   },
   titleColumn: {
     flex: 1,
     justifyContent: "center",
-  },
-  titleSpacing: {
-    marginBottom: 4,
+    gap: ui.spacing.sm,
   },
   estadoBadge: {
     alignSelf: "flex-start",
@@ -181,14 +178,13 @@ const styles = StyleSheet.create({
   infoPillsWrap: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginTop: 4,
+    gap: ui.spacing.sm,
   },
   perforationWrap: {
     marginVertical: ui.spacing.lg,
   },
   perforationLine: {
-    borderTopWidth: 1.5,
+    borderTopWidth: ui.borders.width,
     borderStyle: "dashed",
     opacity: 0.5,
   },
@@ -200,7 +196,7 @@ const styles = StyleSheet.create({
 
   ctaRow: {
     flexDirection: "column",
-    gap: 10,
+    gap: ui.spacing.md,
     width: "100%",
   },
   verBtn: {
@@ -211,7 +207,5 @@ const styles = StyleSheet.create({
   },
   applyText: {
     color: Colors.cardText,
-    fontSize: 14,
-    fontWeight: "800",
   },
 });

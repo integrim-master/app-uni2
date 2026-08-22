@@ -1,22 +1,27 @@
-import { useEvent } from 'expo';
-import { useVideoPlayer, VideoView } from 'expo-video';
-import { StyleSheet, View } from 'react-native';
+import { useEvent } from "expo";
+import { useVideoPlayer, VideoView } from "expo-video";
+import { StyleSheet, View } from "react-native";
+import { ui } from "@/src/themes/ui";
 
 const videoSource =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+
+const VIDEO_WIDTH = 350;
+const VIDEO_HEIGHT = 275;
 
 export default function VideoScreen() {
-  const player = useVideoPlayer(videoSource, player => {
+  const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
     player.play();
   });
 
-  const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
+  const { isPlaying } = useEvent(player, "playingChange", {
+    isPlaying: player.playing,
+  });
 
   return (
     <View style={styles.contentContainer}>
       <VideoView style={styles.video} player={player} />
- 
     </View>
   );
 }
@@ -24,16 +29,16 @@ export default function VideoScreen() {
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 50,
+    padding: ui.spacing.md,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: ui.spacing.xxl,
   },
   video: {
-    width: 350,
-    height: 275,
+    width: VIDEO_WIDTH,
+    height: VIDEO_HEIGHT,
   },
   controlsContainer: {
-    padding: 10,
+    padding: ui.spacing.md,
   },
 });

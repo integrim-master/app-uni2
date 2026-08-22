@@ -6,6 +6,7 @@ import CardMovies from "@/src/modules/media/components/CardMovies";
 import CircleCard from "@/src/shared/CircleCard";
 import SimpleCarousel from "@/src/shared/simple-carousel";
 import { VideoCard } from "@/src/shared/videoCard";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -200,7 +201,7 @@ export default function MediaScreen() {
               />
               <Pressable
                 onPress={() => setShowModal(false)}
-                style={{ marginTop: 16, alignItems: "center" }}
+                style={{ marginTop: ui.spacing.lg, alignItems: "center" }}
               >
                 <ThemedText type="semiBold" color={colors.primary}>
                   Cerrar
@@ -230,7 +231,7 @@ export default function MediaScreen() {
                 animate={{ opacity: 1, translateY: 0 }}
                 exit={{ opacity: 0, translateY: 20 }}
                 transition={{ type: "timing", duration: 250 }}
-                style={{ marginBottom: 16 }}
+                style={{ marginBottom: ui.spacing.lg }}
               >
                 <ThemedText type="subtitle" color={colors.text}>
                   {selectedItem.title}
@@ -281,16 +282,15 @@ function SheetItem({ icon, text }: any) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  heroSection: { marginBottom: 20 },
-  section: { marginBottom: 24, paddingHorizontal: 16 },
+  heroSection: { marginBottom: ui.spacing.xl },
+  section: { marginBottom: ui.spacing.xl },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: ui.spacing.lg,
   },
-  horizontalList: { gap: 12 },
-
+  horizontalList: { gap: ui.spacing.md },
   modalOverlay: {
     position: "absolute",
     inset: 0,
@@ -300,15 +300,15 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     width: 320,
-    padding: 20,
-    borderRadius: 16,
+    padding: ui.spacing.xl,
+    borderRadius: ui.radii.lg,
   },
-
-  sheet: { flex: 1, padding: 20 },
+  sheet: { flex: 1, padding: ui.spacing.xl },
   sheetItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingVertical: 16,
+    gap: ui.spacing.md,
+    paddingVertical: ui.spacing.lg,
+    minHeight: ui.tapTarget,
   },
 });

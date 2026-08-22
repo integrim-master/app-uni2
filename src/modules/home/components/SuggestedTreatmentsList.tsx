@@ -1,9 +1,10 @@
+import { ui } from "@/src/themes/ui";
 import React, { useMemo } from "react";
 import { FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
 import { SuggestedTreatmentsListProps } from "../types/home.treatments.types";
 import { SuggestedTreatmentCard } from "./SuggestedTreatmentCard";
 
-const GAP = 12;
+const GAP = ui.spacing.md;
 
 export function SuggestedTreatmentsList({
   SuggestedTreatments,
@@ -52,7 +53,7 @@ export function SuggestedTreatmentsList({
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingHorizontal: 4,
-    paddingBottom: 4,
+    paddingHorizontal: ui.spacing.xs,
+    paddingBottom: ui.spacing.xs,
   },
 });

@@ -1,4 +1,5 @@
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import type { Cita } from "../types/date.api.types";
@@ -18,9 +19,7 @@ export default function CitasList({ citas }: { citas: Cita[] }) {
   return (
     <View style={styles.citasContainer}>
       <View style={styles.titleWrap}>
-        <ThemedText type="titleSm">
-          Tus citas ({citas.length})
-        </ThemedText>
+        <ThemedText type="titleSm">Tus citas ({citas.length})</ThemedText>
       </View>
       <FlatList
         data={citas}
@@ -29,6 +28,7 @@ export default function CitasList({ citas }: { citas: Cita[] }) {
           return `cita-${keyBase || index}`;
         }}
         renderItem={({ item }) => <CitaCard cita={item} />}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.citasList}
       />
@@ -38,15 +38,18 @@ export default function CitasList({ citas }: { citas: Cita[] }) {
 
 const styles = StyleSheet.create({
   emptyWrap: {
-    marginTop: 20,
+    marginTop: ui.spacing.lg,
   },
   citasContainer: {
     flex: 1,
   },
   titleWrap: {
-    marginBottom: 12,
+    marginBottom: ui.spacing.md,
   },
   citasList: {
-    paddingBottom: 20,
+    paddingBottom: ui.spacing.xl,
+  },
+  separator: {
+    height: ui.spacing.md,
   },
 });

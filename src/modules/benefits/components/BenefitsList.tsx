@@ -1,4 +1,6 @@
 import Badge from "@/src/components/shared/Badge";
+import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import {
   BenefitReedemed,
   Benefits,
@@ -7,7 +9,6 @@ import {
 import { MotiView } from "moti";
 import React from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
-import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "../../../context/ThemeContext";
 import ItemUnique from "./ItemUnique";
 import ItemUniqueUsed from "./ItemUniqueUsed";
@@ -44,7 +45,7 @@ export default function BenefitsList({
       {filterUsed === "available" ? (
         <>
           {benefitsRedemed && (
-            <View style={{ paddingHorizontal: 16, marginBottom: 8 }}>
+            <View style={styles.banner}>
               <Badge
                 text="Tienes un beneficio por confirmación"
                 fullWidth
@@ -69,7 +70,7 @@ export default function BenefitsList({
                 onPressViewDetails={() => onBenefitViewDetails?.(item)}
               />
             )}
-            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <ThemedText type="body" tone="muted" align="center">
@@ -94,7 +95,7 @@ export default function BenefitsList({
           data={benefitsUsed || []}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <ItemUniqueUsed data={item} />}
-          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          ItemSeparatorComponent={() => <View style={styles.usedSeparator} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <ThemedText type="body" tone="muted" align="center">
@@ -125,15 +126,20 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+  banner: {
+    marginBottom: ui.spacing.sm,
+  },
   contentContainer: {
-    paddingVertical: 16,
+    paddingVertical: ui.spacing.lg,
+  },
+  separator: {
+    height: ui.spacing.lg,
+  },
+  usedSeparator: {
+    height: ui.spacing.md,
   },
   emptyContainer: {
-    padding: 32,
+    padding: ui.spacing.xxl,
     alignItems: "center",
-  },
-  emptyText: {
-    fontSize: 16,
-    textAlign: "center",
   },
 });

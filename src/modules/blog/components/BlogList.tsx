@@ -1,5 +1,6 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
+import { ui } from "@/src/themes/ui";
 
 export default function BlogModuleList({
   data,
@@ -11,9 +12,16 @@ export default function BlogModuleList({
       data={data}
       keyExtractor={(item: any) => item.id.toString()}
       renderItem={renderItem}
-      contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+      contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={ListHeaderComponent}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    padding: ui.spacing.xl,
+    paddingBottom: 100,
+  },
+});

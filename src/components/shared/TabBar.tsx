@@ -1,6 +1,8 @@
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import ThemedText from "./themed-text";
 
 type TabOption = {
   key: string;
@@ -22,29 +24,29 @@ const TabBar: React.FC<TabBarProps> = ({
   const { colors } = useTheme();
   return (
     <View style={[styles.customTabBar, { backgroundColor: colors.card }]}>
-      {options.map((option) => (
-        <Pressable
-          key={option.key}
-          onPress={() => setActiveTab(option.key)}
-          style={[
-            styles.tabItem,
-            {
-              backgroundColor:
-                activeTab === option.key ? colors.primaryLight : colors.card,
-              flex: 1,
-            },
-          ]}
-        >
-          <Text
+      {options.map((option) => {
+        const isActive = activeTab === option.key;
+        return (
+          <Pressable
+            key={option.key}
+            onPress={() => setActiveTab(option.key)}
             style={[
-              styles.tabText,
-              { color: activeTab === option.key ? "#fff" : colors.text },
+              styles.tabItem,
+              {
+                backgroundColor: isActive ? colors.primaryLight : colors.card,
+              },
             ]}
           >
-            {option.label}
-          </Text>
-        </Pressable>
-      ))}
+            <ThemedText
+              type="semiBold"
+              color={isActive ? "#fff" : colors.text}
+              align="center"
+            >
+              {option.label}
+            </ThemedText>
+          </Pressable>
+        );
+      })}
     </View>
   );
 };
@@ -52,27 +54,17 @@ const TabBar: React.FC<TabBarProps> = ({
 const styles = StyleSheet.create({
   customTabBar: {
     flexDirection: "row",
-    borderRadius: 999,
-
+    borderRadius: ui.radii.pill,
     width: "100%",
-    justifyContent: "space-between",
     alignItems: "center",
   },
   tabItem: {
-    paddingVertical: 7,
-    paddingHorizontal: 0,
-    borderRadius: 20,
-    marginHorizontal: 0,
+    flex: 1,
+    paddingVertical: ui.spacing.sm,
+    borderRadius: ui.radii.pill,
     alignItems: "center",
     justifyContent: "center",
-    minWidth: 90,
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-  tabText: {
-    fontWeight: "bold",
-    fontSize: 15,
-    textAlign: "center",
+    minHeight: ui.tapTarget,
   },
 });
 

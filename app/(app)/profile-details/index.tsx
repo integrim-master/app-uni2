@@ -8,6 +8,7 @@ import { useUser } from "@/src/modules/user/hooks/useUser";
 import { ProfileSkeleton } from "@/src/modules/profile/components/ProfileSkeleton";
 import { useInfoProfile } from "@/src/modules/profile/hooks/useMeProfile";
 import { formatProfilePlaceLabel } from "@/src/modules/profile/utils/getProfileFieldInitial";
+import { ui } from "@/src/themes/ui";
 import { router } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -44,11 +45,7 @@ export default function ProfileDetailScreen() {
               <View
                 style={[styles.avatarCircle, { backgroundColor: colors.primary }]}
               >
-                <ThemedText
-                  type="display"
-                  color={colors.cardText}
-                  weight="bold"
-                >
+                <ThemedText type="display" color={colors.cardText}>
                   {user?.nombre?.charAt(0).toUpperCase()}
                 </ThemedText>
               </View>
@@ -152,7 +149,6 @@ export default function ProfileDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-
   overscrollFill: {
     position: "absolute",
     top: 0,
@@ -163,13 +159,12 @@ const styles = StyleSheet.create({
   scroll: {
     backgroundColor: "transparent",
   },
-
   headerContainer: {
     alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 32,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    paddingTop: ui.spacing.xl,
+    paddingBottom: ui.spacing.xxl,
+    borderBottomLeftRadius: ui.radii.xl,
+    borderBottomRightRadius: ui.radii.xl,
   },
   avatarCircle: {
     width: 104,
@@ -181,19 +176,18 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.25)",
   },
   nameBlock: {
-    marginTop: 14,
+    marginTop: ui.spacing.md,
     alignItems: "center",
-    gap: 2,
+    gap: ui.spacing.xs,
   },
   editBtn: {
-    marginTop: 18,
+    marginTop: ui.spacing.lg,
     alignSelf: "center",
   },
-
   sectionWrapper: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 20,
-    gap: 20,
+    paddingHorizontal: ui.spacing.lg,
+    paddingTop: ui.spacing.xl,
+    paddingBottom: ui.spacing.xl,
+    gap: ui.spacing.xl,
   },
 });

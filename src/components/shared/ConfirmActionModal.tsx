@@ -6,6 +6,7 @@
  * - Sheets de lista/filtros → @gorhom/bottom-sheet
  */
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import React, { ReactNode } from "react";
@@ -81,7 +82,7 @@ export default function ConfirmActionModal({
             <MaterialIcons name={iconName as any} size={22} color={accent} />
           </View>
 
-          <ThemedText type="title" color={colors.text} style={styles.title}>
+          <ThemedText type="title" align="center" style={styles.title}>
             {title}
           </ThemedText>
 
@@ -89,7 +90,8 @@ export default function ConfirmActionModal({
             typeof description === "string" ? (
               <ThemedText
                 type="body"
-                color={colors.textSecondary}
+                tone="secondary"
+                align="center"
                 style={styles.description}
               >
                 {description}
@@ -131,50 +133,42 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 28,
+    paddingHorizontal: ui.spacing.xl,
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.55)",
   },
   sheet: {
-    borderRadius: 28,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 22,
-    paddingTop: 22,
-    paddingBottom: 18,
+    borderRadius: ui.radii.xl,
+    borderWidth: ui.borders.hairline,
+    padding: ui.spacing.xl,
   },
   iconBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: ui.tapTarget,
+    height: ui.tapTarget,
+    borderRadius: ui.radii.md,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 14,
+    marginBottom: ui.spacing.lg,
     alignSelf: "center",
   },
   title: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 8,
-    letterSpacing: -0.3,
-    textAlign: "center",
+    marginBottom: ui.spacing.sm,
   },
   description: {
-    lineHeight: 22,
-    marginBottom: 8,
-    textAlign: "center",
+    marginBottom: ui.spacing.sm,
   },
   descriptionSlot: {
     width: "100%",
-    marginBottom: 8,
+    marginBottom: ui.spacing.sm,
     alignItems: "center",
   },
   actions: {
-    marginTop: 20,
+    marginTop: ui.spacing.lg,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: ui.spacing.sm,
   },
   actionBtn: {
     flex: 1,

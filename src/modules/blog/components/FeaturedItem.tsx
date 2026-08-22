@@ -1,6 +1,7 @@
 import Badge from "@/src/components/shared/Badge";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Image } from "expo-image";
 import React from "react";
 import {
@@ -11,6 +12,8 @@ import {
   ViewStyle,
 } from "react-native";
 import type { BlogPost } from "../types/blog.types";
+
+const FEATURED_HEIGHT = 400;
 
 type Props = {
   item: BlogPost;
@@ -40,16 +43,11 @@ export default function FeaturedItem({ item, onPress, style }: Props) {
             variant="white"
             size="small"
             showIcon={false}
-            style={{ marginBottom: 12 }}
+            style={styles.badge}
           />
 
-          <ThemedText style={[styles.title, { color: colors.text }]}>
-            {item.title}
-          </ThemedText>
-          <ThemedText
-            style={[styles.summary, { color: colors.textSecondary }]}
-            numberOfLines={2}
-          >
+          <ThemedText type="display">{item.title}</ThemedText>
+          <ThemedText type="body" tone="secondary" numberOfLines={2} style={styles.summary}>
             {item.summary}
           </ThemedText>
         </View>
@@ -60,9 +58,9 @@ export default function FeaturedItem({ item, onPress, style }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 400,
+    height: FEATURED_HEIGHT,
     overflow: "hidden",
-    borderRadius: 40,
+    borderRadius: ui.radii.xl,
   },
   image: {
     width: "100%",
@@ -75,22 +73,12 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     justifyContent: "flex-end",
-    padding: 20,
+    padding: ui.spacing.xl,
   },
-  badgeWrapper: {
-    alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "700",
-    lineHeight: 34,
+  badge: {
+    marginBottom: ui.spacing.md,
   },
   summary: {
-    fontSize: 14,
-    marginTop: 10,
+    marginTop: ui.spacing.md,
   },
 });

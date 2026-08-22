@@ -1,11 +1,15 @@
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import LottieView from "lottie-react-native";
 import { AnimatePresence, MotiView } from "moti";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { useTheme } from "../../../context/ThemeContext";
+
+const LOTTIE_SIZE = 140;
+const PLACEHOLDER_SIZE = 180;
 
 const SendPhoto = () => {
   const { colors } = useTheme();
@@ -44,11 +48,11 @@ const SendPhoto = () => {
             source={require("@/assets/animations/uploading.json")}
             autoPlay
             loop
-            style={{ width: 140, height: 140 }}
+            style={styles.lottie}
           />
         </View>
 
-        <View className="w-full justify-start items-start">
+        <View style={styles.messagesBlock}>
           <View style={styles.messageWrapper}>
             <AnimatePresence exitBeforeEnter>
               <MotiView
@@ -58,10 +62,7 @@ const SendPhoto = () => {
                 exit={{ opacity: 0, translateY: -15 }}
                 transition={{ type: "timing", duration: 500 }}
               >
-                <ThemedText
-                  type="subtitle"
-                  style={{ textAlign: "center", fontSize: 20 }}
-                >
+                <ThemedText type="title" align="center">
                   {messages[index]}
                 </ThemedText>
               </MotiView>
@@ -92,27 +93,33 @@ const SendPhoto = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
     flex: 1,
     justifyContent: "space-around",
     alignItems: "center",
-    padding: 40,
+    padding: ui.spacing.xxl,
   },
   placeholderAnim: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: PLACEHOLDER_SIZE,
+    height: PLACEHOLDER_SIZE,
+    borderRadius: PLACEHOLDER_SIZE / 2,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: ui.spacing.xxl,
+  },
+  lottie: {
+    width: LOTTIE_SIZE,
+    height: LOTTIE_SIZE,
+  },
+  messagesBlock: {
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   },
   messageWrapper: {
     height: 40,
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: ui.spacing.xl,
   },
   progressContainer: {
     height: 6,

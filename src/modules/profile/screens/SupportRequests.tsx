@@ -1,7 +1,8 @@
-import EmptySvg from '@/assets/svg/Empty.svg';
-import ThemedText from '@/src/components/shared/themed-text';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import EmptySvg from "@/assets/svg/Empty.svg";
+import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
 const SupportRequests: React.FC = () => {
   return (
@@ -11,7 +12,7 @@ const SupportRequests: React.FC = () => {
         <ThemedText type="title" tone="primary" align="center">
           ¡Sin solicitudes!
         </ThemedText>
-        <ThemedText type="subtitle" tone="muted" align="center">
+        <ThemedText type="body" tone="muted" align="center">
           Aquí aparecerán tus solicitudes de soporte
         </ThemedText>
       </View>
@@ -22,13 +23,14 @@ const SupportRequests: React.FC = () => {
 const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: 40,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop: ui.spacing.xxl,
   },
   copy: {
-    gap: 4,
-    alignItems: 'center',
+    gap: ui.spacing.sm,
+    alignItems: "center",
+    paddingHorizontal: ui.spacing.lg,
   },
 });
 

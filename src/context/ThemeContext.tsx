@@ -9,6 +9,11 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  // useEffect(() => {
+  //   // RN también puede seguir el sistema; forzar dark para controles nativos.
+  //   Appearance.setColorScheme("dark");
+  // }, []);
+
   return (
     <ThemeContext.Provider value={{ colors: AppColors, isDark: true }}>
       {children}

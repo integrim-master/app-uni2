@@ -45,6 +45,20 @@ const FONT: Record<TextWeight, string> = {
   extrabold: "PlusJakartaSans_800ExtraBold",
 };
 
+/** Tamaños del type scale. Usar en TextInput/botones; no reinventar fontSize. */
+export const TYPE_SIZE: Record<TextType, number> = {
+  display: 28,
+  title: 22,
+  titleSm: 18,
+  subtitle: 17,
+  body: 15,
+  semiBold: 15,
+  caption: 13,
+  label: 12,
+  micro: 10,
+  link: 15,
+};
+
 const TYPE_WEIGHT: Record<TextType, TextWeight> = {
   display: "extrabold",
   title: "extrabold",
@@ -139,55 +153,55 @@ const styles = StyleSheet.create({
   },
 
   display: {
-    fontSize: 28,
+    fontSize: TYPE_SIZE.display,
     lineHeight: 34,
     letterSpacing: -0.3,
   },
 
   title: {
-    fontSize: 22,
+    fontSize: TYPE_SIZE.title,
     lineHeight: 28,
   },
 
   titleSm: {
-    fontSize: 18,
+    fontSize: TYPE_SIZE.titleSm,
     lineHeight: 24,
   },
 
   subtitle: {
-    fontSize: 17,
+    fontSize: TYPE_SIZE.subtitle,
     lineHeight: 24,
   },
 
   body: {
-    fontSize: 15,
+    fontSize: TYPE_SIZE.body,
     lineHeight: 22,
   },
 
   semiBold: {
-    fontSize: 15,
+    fontSize: TYPE_SIZE.semiBold,
     lineHeight: 22,
   },
 
   caption: {
-    fontSize: 13,
+    fontSize: TYPE_SIZE.caption,
     lineHeight: 18,
   },
 
   label: {
-    fontSize: 12,
+    fontSize: TYPE_SIZE.label,
     lineHeight: 16,
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
 
   micro: {
-    fontSize: 10,
+    fontSize: TYPE_SIZE.micro,
     lineHeight: 14,
   },
 
   link: {
-    fontSize: 15,
+    fontSize: TYPE_SIZE.link,
     lineHeight: 22,
     textDecorationLine: "underline",
   },

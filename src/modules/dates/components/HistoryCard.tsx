@@ -1,7 +1,8 @@
+import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
+import { StyleSheet, View } from "react-native";
 import { Cita } from "../types/date.api.types";
 
 interface HistoryCardProps {
@@ -9,31 +10,17 @@ interface HistoryCardProps {
 }
 
 export default function HistoryCard({ cita }: HistoryCardProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={styles.historyCardWrap}>
-      <View
-        style={[
-          styles.historyCard,
-          { borderColor: colors.border, backgroundColor: colors.card },
-        ]}
-      >
-        <View style={styles.historyContent}>
-          <View style={styles.leftBlock}>
-            <View style={{ flex: 1, gap: 6 }}>
-              <ThemedText type="semiBold" numberOfLines={1}>
-                {cita.Procedimiento}
-              </ThemedText>
-              <ThemedText type="caption" tone="muted">
-                {cita.profesional} · {formatDate(cita.fecha_cita)} ·{" "}
-                {cita.hora_cita}
-              </ThemedText>
-            </View>
-          </View>
-        </View>
+    <Card pressable={false} style={styles.card}>
+      <View style={styles.copy}>
+        <ThemedText type="titleSm" numberOfLines={1}>
+          {cita.Procedimiento}
+        </ThemedText>
+        <ThemedText type="caption" tone="muted">
+          {cita.profesional} · {formatDate(cita.fecha_cita)} · {cita.hora_cita}
+        </ThemedText>
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -51,33 +38,10 @@ function formatDate(d: string) {
 }
 
 const styles = StyleSheet.create({
-  historyCardWrap: { marginBottom: 14 },
-  historyCard: {
-    borderRadius: 18,
-    padding: 14,
-    borderWidth: 1,
-    ...PlatformSelectShadow(),
+  card: {
+    padding: ui.spacing.lg,
   },
-  historyContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  leftBlock: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    paddingRight: 12,
+  copy: {
+    gap: ui.spacing.sm,
   },
 });
-
-function PlatformSelectShadow() {
-  if (Platform.OS === "ios") {
-    return {
-      shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: 0.16,
-      shadowRadius: 20,
-    };
-  }
-  return {};
-}

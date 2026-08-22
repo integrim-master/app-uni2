@@ -1,4 +1,5 @@
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import React from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import EmptyDates from "../components/EmptyDates";
@@ -24,7 +25,8 @@ export default function HistoryScreen({
         data={citas}
         keyExtractor={(i) => `hist-${i.id}`}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 64 }}
+        contentContainerStyle={styles.listContent}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => <HistoryCard cita={item} />}
         ListEmptyComponent={
           <EmptyDates
@@ -46,4 +48,12 @@ export default function HistoryScreen({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  listContent: {
+    paddingHorizontal: ui.spacing.lg,
+    paddingTop: ui.spacing.lg,
+    paddingBottom: ui.spacing.xxl,
+  },
+  separator: {
+    height: ui.spacing.md,
+  },
 });

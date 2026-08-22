@@ -119,7 +119,7 @@ export const DiagnosticsServices = {
     imageId,
     userId,
   }: CreateDiagnosticParams): Promise<CreateDiagnosticResult> => {
-    const response = await api.post("/wp-json/facecheck/v1/analisis", {
+    const response = await api.post("/wp-json/careme/v1/facecheck/analisis", {
       diagnostico,
       procedimientos,
       identificacion: userId,
@@ -133,12 +133,13 @@ export const DiagnosticsServices = {
   }: GetLastDiagnosticParams): Promise<LastDiagnosticResult> => {
     try {
       const response = await api.get(
-        `/wp-json/facecheck/v1/ultimo-informe?identificacion=${userId}`,
+        `/wp-json/careme/v1/facecheck/analisis/informe?identificacion=${userId}`,
       );
+      console.log("response getLastDiagnostic", response, userId);
       return { success: true, data: response.data };
     } catch (error: any) {
       if (error?.status === 404) {
-        return { success: false, message: "No se encontró diagnóstico" };
+        return { success: false, message: "No se encontró diagnósticos" };
       }
       return {
         success: false,

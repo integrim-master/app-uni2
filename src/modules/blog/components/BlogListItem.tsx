@@ -1,9 +1,12 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Image } from "expo-image";
 import React from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import type { BlogPost } from "../types/blog.types";
+
+const THUMB = 90;
 
 type Props = {
   item: BlogPost;
@@ -13,34 +16,25 @@ type Props = {
 export default function BlogListItem({ item, onPress }: Props) {
   const { colors } = useTheme();
   return (
-    <Pressable
-      onPress={onPress}
-      style={{ marginBottom: 16, paddingHorizontal: 8 }}
-    >
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <Pressable onPress={onPress} style={styles.rowPress}>
+      <View style={styles.row}>
         <Image
           source={{ uri: item.image }}
-          style={{ width: 90, height: 90, borderRadius: 24 }}
+          style={styles.thumb}
           contentFit="cover"
         />
-        <View style={{ flex: 1, marginLeft: 16 }}>
+        <View style={styles.copy}>
           <ThemedText
-            style={{
-              color: colors.secondary,
-              fontSize: 11,
-              fontWeight: "700",
-              marginBottom: 4,
-            }}
+            type="label"
+            color={colors.secondary}
+            style={styles.category}
           >
-            {item.category.toUpperCase()}
+            {item.category}
           </ThemedText>
-          <ThemedText
-            style={{ fontSize: 17, fontWeight: "600", marginBottom: 4 }}
-            numberOfLines={2}
-          >
+          <ThemedText type="subtitle" numberOfLines={2} style={styles.title}>
             {item.title}
           </ThemedText>
-          <ThemedText style={{ color: colors.textSecondary, fontSize: 12 }}>
+          <ThemedText type="caption" tone="secondary">
             {item.date} • 5 min lectura
           </ThemedText>
         </View>
@@ -48,3 +42,30 @@ export default function BlogListItem({ item, onPress }: Props) {
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  rowPress: {
+    marginBottom: ui.spacing.lg,
+    paddingHorizontal: ui.spacing.sm,
+    minHeight: ui.tapTarget,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  thumb: {
+    width: THUMB,
+    height: THUMB,
+    borderRadius: ui.radii.xl,
+  },
+  copy: {
+    flex: 1,
+    marginLeft: ui.spacing.lg,
+  },
+  category: {
+    marginBottom: ui.spacing.xs,
+  },
+  title: {
+    marginBottom: ui.spacing.xs,
+  },
+});

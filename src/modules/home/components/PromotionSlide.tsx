@@ -63,28 +63,19 @@ export function PromotionSlide({ item, width, height, style }: Props) {
           <View
             style={[styles.chip, { backgroundColor: colors.primary + "E6" }]}
           >
-            <ThemedText
-              type="caption"
-              style={[styles.chipText, { color: colors.cardText }]}
-            >
+            <ThemedText type="label" color={colors.cardText}>
               Promo
             </ThemedText>
           </View>
           {!!item.fecha_fin && (
-            <ThemedText type="caption" style={styles.validText}>
+            <ThemedText type="caption" color="rgba(255,255,255,0.75)">
               Hasta {item.fecha_fin}
             </ThemedText>
           )}
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <ThemedText type="subtitle" style={styles.title} numberOfLines={2}>
+        <View style={styles.titleRow}>
+          <ThemedText type="titleSm" tone="inverse" numberOfLines={2}>
             {item.title}
           </ThemedText>
           <Ionicons
@@ -102,45 +93,28 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: ui.radii.xl,
     overflow: "hidden",
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: ui.borders.hairline,
   },
   content: {
     flex: 1,
     justifyContent: "flex-end",
-    padding: 16,
-    gap: 8,
+    padding: ui.spacing.lg,
+    gap: ui.spacing.sm,
   },
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 2,
+    gap: ui.spacing.sm,
   },
   chip: {
-    paddingHorizontal: 8,
-
+    paddingHorizontal: ui.spacing.sm,
+    paddingVertical: ui.spacing.xs,
     borderRadius: ui.radii.pill,
   },
-  chipText: {
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 0.4,
-    textTransform: "uppercase",
-  },
-  validText: {
-    color: "rgba(255,255,255,0.75)",
-    fontSize: 11,
-  },
-  title: {
-    color: "#FFFFFF",
-    fontWeight: "800",
-    fontSize: 18,
-    lineHeight: 22,
-  },
-  ctaRow: {
+  titleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginTop: 2,
+    justifyContent: "space-between",
+    gap: ui.spacing.sm,
   },
 });

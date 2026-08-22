@@ -1,5 +1,6 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { formatRelativeDate } from "@/src/utils/dateUtils";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
@@ -60,8 +61,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
       activeOpacity={0.7}
     >
       <View
-        style={styles.iconContainer}
-        className="rounded-md bg-gray-300/10 p-1"
+        style={[
+          styles.iconContainer,
+          { backgroundColor: "rgba(209,213,219,0.1)" },
+        ]}
       >
         <MaterialIcons
           name={getIconName(notification.type_notification)}
@@ -80,7 +83,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
           <ThemedText type="semiBold" style={styles.title} numberOfLines={1}>
             {notification.title}
           </ThemedText>
-          <ThemedText type="caption" color={colors.textSecondary}>
+          <ThemedText type="caption" tone="secondary">
             {formatRelativeDate(
               notification.sent_at
                 ? new Date(notification.sent_at.replace(" ", "T"))
@@ -89,12 +92,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
           </ThemedText>
         </View>
 
-        <ThemedText
-          type="body"
-          color={colors.textSecondary}
-          numberOfLines={2}
-          style={styles.message}
-        >
+        <ThemedText type="body" tone="secondary" numberOfLines={2}>
           {notification.body}
         </ThemedText>
       </View>
@@ -105,25 +103,27 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
-    padding: 16,
-    borderBottomWidth: 1,
+    padding: ui.spacing.lg,
+    borderBottomWidth: ui.borders.width,
+    minHeight: ui.tapTarget,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: ui.tapTarget,
+    height: ui.tapTarget,
+    borderRadius: ui.radii.md,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    marginRight: ui.spacing.md,
     position: "relative",
+    padding: ui.spacing.xs,
   },
   unreadBadge: {
     position: "absolute",
     top: 0,
     right: 0,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: ui.spacing.md,
+    height: ui.spacing.md,
+    borderRadius: ui.radii.pill,
     borderWidth: 2,
     borderColor: "white",
   },
@@ -134,13 +134,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: ui.spacing.xs,
   },
   title: {
     flex: 1,
-    marginRight: 8,
-  },
-  message: {
-    lineHeight: 20,
+    marginRight: ui.spacing.sm,
   },
 });

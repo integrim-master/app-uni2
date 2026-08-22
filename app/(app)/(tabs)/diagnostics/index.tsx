@@ -34,7 +34,9 @@ export default function DiagnosticsIndex() {
 
 function DiagnosticsContent({ userId }: { userId: string }) {
   const { data: lastDiagnostic } = useLastDiagnosticSuspense(userId);
+  console.log("lastDiagnostic", lastDiagnostic, userId);
   const diagnostic = lastDiagnostic?.data ?? null;
+  console.log(diagnostic);
 
   if (diagnostic) {
     return (
@@ -50,7 +52,7 @@ function DiagnosticsContent({ userId }: { userId: string }) {
   }
 
   return (
-    <Screen  safeArea={true}>
+    <Screen safeArea={true}>
       <StepOne />
     </Screen>
   );

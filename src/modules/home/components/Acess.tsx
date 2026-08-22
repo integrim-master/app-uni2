@@ -1,4 +1,5 @@
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { Link } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
@@ -14,7 +15,7 @@ export function AccesoDirecto({
 
   return (
     <Link asChild href={`/(tabs)/${routPage}`}>
-      <Pressable className="">
+      <Pressable>
         {({ pressed }) => (
           <View
             style={[
@@ -42,7 +43,7 @@ export function AccesoDirecto({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    borderWidth: 1,
+    borderWidth: ui.borders.width,
     width: 174,
     height: 80,
     justifyContent: "center",
@@ -55,13 +56,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 2,
     shadowRadius: 0.4,
     elevation: 1,
-    borderRadius: 12,
-    paddingHorizontal: 40,
-    paddingVertical: 8,
-    gap: 8,
+    borderRadius: ui.radii.md,
+    paddingHorizontal: ui.spacing.xxl,
+    paddingVertical: ui.spacing.sm,
+    gap: ui.spacing.sm,
   },
   iconContainer: {
-    borderRadius: 9999,
+    borderRadius: ui.radii.pill,
     justifyContent: "center",
     alignItems: "center",
   },

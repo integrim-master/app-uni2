@@ -4,6 +4,9 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import { useState } from "react";
 import { ImageBackground, Pressable, StyleSheet, View } from "react-native";
 import ThemedText from "../components/shared/themed-text";
+import { ui } from "../themes/ui";
+
+const THUMB_HEIGHT = 200;
 
 export function VideoCard({ video, isActive, colors }: any) {
   const [isMuted, setIsMuted] = useState(false);
@@ -39,7 +42,9 @@ export function VideoCard({ video, isActive, colors }: any) {
 
         <View style={styles.durationBadge}>
           <Ionicons name="time" size={12} color="#fff" />
-          <ThemedText style={styles.durationText}>{video.duration}</ThemedText>
+          <ThemedText type="caption" weight="bold" tone="inverse">
+            {video.duration}
+          </ThemedText>
         </View>
 
         <View style={styles.muteButton}>
@@ -48,6 +53,7 @@ export function VideoCard({ video, isActive, colors }: any) {
               player.muted = !player.muted;
               setIsMuted(!isMuted);
             }}
+            style={styles.muteHit}
           >
             <Ionicons
               name={isMuted ? "volume-mute" : "volume-high"}
@@ -59,34 +65,34 @@ export function VideoCard({ video, isActive, colors }: any) {
       </View>
 
       <View style={styles.videoInfo}>
-        <ThemedText numberOfLines={2} color={colors.text}>
+        <ThemedText type="titleSm" numberOfLines={2}>
           {video.title}
         </ThemedText>
 
-        <ThemedText
-          numberOfLines={2}
-          style={[styles.videoDescription, { color: colors.textSecondary }]}
-        >
+        <ThemedText type="body" tone="secondary" numberOfLines={2} style={styles.videoDescription}>
           {video.description}
         </ThemedText>
 
         <View style={styles.metaContainer}>
           <Ionicons name="eye-outline" size={14} color={colors.text} />
-          <ThemedText color={colors.textSecondary}>{video.views}</ThemedText>
-          <ThemedText color={colors.text}>• {video.date}</ThemedText>
+          <ThemedText type="caption" tone="secondary">
+            {video.views}
+          </ThemedText>
+          <ThemedText type="caption">• {video.date}</ThemedText>
         </View>
       </View>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   videoCard: {
-    borderRadius: 20,
+    borderRadius: ui.radii.xl,
     overflow: "hidden",
     elevation: 5,
   },
   thumbnailContainer: {
-    height: 200,
+    height: THUMB_HEIGHT,
     backgroundColor: "#000",
   },
   thumbnail: {
@@ -98,45 +104,36 @@ const styles = StyleSheet.create({
     bottom: 12,
     right: 12,
     backgroundColor: "rgba(0,0,0,0.85)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
+    paddingHorizontal: ui.spacing.md,
+    paddingVertical: ui.spacing.sm,
+    borderRadius: ui.radii.sm,
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: ui.spacing.xs,
   },
   muteButton: {
     position: "absolute",
     top: 12,
     right: 12,
     backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 20,
-    padding: 8,
+    borderRadius: ui.radii.pill,
+    padding: ui.spacing.sm,
   },
-  durationText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "700",
+  muteHit: {
+    minWidth: ui.tapTarget,
+    minHeight: ui.tapTarget,
+    alignItems: "center",
+    justifyContent: "center",
   },
   videoInfo: {
-    padding: 16,
-  },
-  videoTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 6,
+    padding: ui.spacing.lg,
   },
   videoDescription: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 10,
+    marginBottom: ui.spacing.md,
   },
   metaContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-  },
-  metaText: {
-    fontSize: 13,
+    gap: ui.spacing.sm,
   },
 });

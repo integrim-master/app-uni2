@@ -13,7 +13,8 @@ import ConfirmActionModal from "@/src/components/shared/ConfirmActionModal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
-import { ScrollView, View } from "react-native";
+import { ui } from "@/src/themes/ui";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { ProfileHeader } from "../components/ProfileHeader";
 import { useProfileScreen } from "../hooks/useProfileScreen";
 
@@ -32,35 +33,32 @@ export function ProfileScreen() {
   return (
     <Screen>
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-1 justify-between py-4">
-          <View>
-            <ProfileHeader userName={userName} onPress={goToProfileDetails} />
-            <SimpleMenuSection
-              title="Contactar asesor"
-              subtitle="Soporte y ayuda"
-              icon="chatbubble-outline"
-              rightIcon="chevron-forward"
-              onPress={contactAdvisor}
-            />
-            <SimpleMenuSection
-              title="Tratamiento de datos"
-              subtitle="Ver política de datos"
-              icon="document-text-outline"
-              rightIcon="chevron-forward"
-              onPress={goToPrivacy}
-            />
-            sss
-          </View>
-
-          <PrimaryButton
-            title="Cerrar sesión"
-            variant="warning"
-            onPress={() => setShowLogoutConfirm(true)}
+        <View>
+          <ProfileHeader userName={userName} onPress={goToProfileDetails} />
+          <SimpleMenuSection
+            title="Contactar asesor"
+            subtitle="Soporte y ayuda"
+            icon="chatbubble-outline"
+            rightIcon="chevron-forward"
+            onPress={contactAdvisor}
+          />
+          <SimpleMenuSection
+            title="Tratamiento de datos"
+            subtitle="Ver política de datos"
+            icon="document-text-outline"
+            rightIcon="chevron-forward"
+            onPress={goToPrivacy}
           />
         </View>
+
+        <PrimaryButton
+          title="Cerrar sesión"
+          variant="warning"
+          onPress={() => setShowLogoutConfirm(true)}
+        />
       </ScrollView>
 
       <ConfirmActionModal
@@ -76,3 +74,11 @@ export function ProfileScreen() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  scroll: {
+    flexGrow: 1,
+    justifyContent: "space-between",
+    paddingVertical: ui.spacing.lg,
+  },
+});

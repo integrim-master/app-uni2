@@ -1,5 +1,6 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import React from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -40,7 +41,7 @@ export const PromotionsCarousel = ({
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <ThemedText type="subtitle" color={colors.textAccent}>
+        <ThemedText type="subtitle" tone="accent">
           Promociones exclusivas
         </ThemedText>
       </View>
@@ -92,7 +93,7 @@ export const PromotionsCarousel = ({
           }}
           activeDotStyle={{
             backgroundColor: colors.primary,
-            width: 16,
+            width: ui.spacing.lg,
             height: 6,
             borderRadius: 4,
           }}
@@ -105,18 +106,13 @@ export const PromotionsCarousel = ({
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 8,
-    marginBottom: 20,
+    marginTop: ui.spacing.xl,
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 6,
-    marginBottom: 14,
-  },
-  title: {
-    fontWeight: "700",
+    marginBottom: ui.spacing.md,
   },
   slideWrap: {
     flex: 1,
@@ -124,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   dots: {
-    gap: 6,
-    marginTop: 12,
+    gap: ui.spacing.sm,
+    marginTop: ui.spacing.md,
   },
 });

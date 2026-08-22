@@ -1,3 +1,4 @@
+import { ui } from "@/src/themes/ui";
 import { Link } from "expo-router";
 import React, { ReactNode } from "react";
 import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
@@ -5,7 +6,6 @@ import { useTheme } from "../../../context/ThemeContext";
 
 interface CardProps {
   href?: string;
-  className?: string;
   style?: ViewStyle;
   children?: ReactNode;
   onPress?: () => void;
@@ -16,7 +16,6 @@ interface CardProps {
 
 export function Card({
   href,
-  className,
   style,
   children,
   onPress,
@@ -27,7 +26,7 @@ export function Card({
   const { colors } = useTheme();
 
   const cardContent = (
-    <Pressable onPress={onPress} className={className}>
+    <Pressable onPress={onPress}>
       {({ pressed }) => (
         <View
           style={[
@@ -60,7 +59,7 @@ export function Card({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    borderWidth: 1,
+    borderWidth: ui.borders.width,
     width: 174,
     height: 80,
     justifyContent: "center",
@@ -73,9 +72,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 2,
     elevation: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    gap: 8,
+    borderRadius: ui.radii.md,
+    paddingHorizontal: ui.spacing.sm,
+    paddingVertical: ui.spacing.sm,
+    gap: ui.spacing.sm,
   },
 });

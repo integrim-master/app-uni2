@@ -1,6 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import { MenuItem } from "../../modules/profile/components/MenuItem";
+import { ui } from "../../themes/ui";
+import ThemedText from "./themed-text";
 
 interface MenuSectionProps {
   title: string;
@@ -35,9 +37,9 @@ export function MenuSection({
           { backgroundColor: colors.card, borderColor: resolvedBorderColor },
         ]}
       >
-        <Text style={[styles.sectionTitle, { color: colors.textAccent }]}>
+        <ThemedText type="titleSm" tone="accent" style={styles.sectionTitle}>
           {title}
-        </Text>
+        </ThemedText>
         {items.map((item, index) =>
           renderItem ? (
             renderItem(item, index, index === items.length - 1)
@@ -59,22 +61,16 @@ export function MenuSection({
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 20,
+    marginBottom: ui.spacing.xl,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    paddingTop: 16,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingTop: ui.spacing.lg,
+    paddingHorizontal: ui.spacing.lg,
+    paddingBottom: ui.spacing.sm,
   },
   menuGroup: {
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: ui.radii.lg,
+    borderWidth: ui.borders.width,
     overflow: "hidden",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.9,
-    shadowRadius: 1,
-    elevation: 1.2,
   },
 });

@@ -2,10 +2,11 @@ import Badge from "@/src/components/shared/Badge";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Image } from "expo-image";
 import { MotiView, View } from "moti";
 import React from "react";
-import { Dimensions, ScrollView } from "react-native";
+import { Dimensions, ScrollView, StyleSheet } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -43,63 +44,36 @@ export default function BlogDetail() {
             style={{ width: width, height: 350 }}
             contentFit="cover"
           />
-
-          <View
-            className="absolute bottom-0 w-full h-20"
-            style={{ backgroundColor: "transparent" }}
-          />
         </MotiView>
 
         <MotiView
           from={{ opacity: 0, translateY: 30 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: "timing", duration: 600, delay: 200 }}
-          className="px-6 -mt-8 bg-white"
-          style={{
-            borderTopLeftRadius: 32,
-            borderTopRightRadius: 32,
-            backgroundColor: colors.gradientCard[0],
-            paddingTop: 32,
-          }}
+          style={[styles.sheet, { backgroundColor: colors.background }]}
         >
-          <Badge text="Bienestar" style={{ marginBottom: 12 }} />
+          <Badge text="Bienestar" style={styles.badge} />
 
-          <ThemedText
-            type="title"
-            style={{ fontSize: 28, lineHeight: 34, marginBottom: 20 }}
-          >
+          <ThemedText type="display" style={styles.title}>
             {post.title}
           </ThemedText>
 
-          <View
-            className="flex-row items-center mb-8 pb-8 border-b"
-            style={{ borderColor: colors.border + "50" }}
-          >
-            <View className="w-10 h-10 rounded-full bg-slate-200 mr-3 overflow-hidden">
+          <View style={[styles.metaRow, { borderColor: colors.border }]}>
+            <View style={styles.avatar}>
               <Image
                 source="https://i.pravatar.cc/150?u=maria"
-                style={{ width: "100%", height: "100%" }}
+                style={styles.avatarImage}
               />
             </View>
-            <View>
-              <ThemedText style={{ fontWeight: "600", fontSize: 14 }}>
-                categoria
-              </ThemedText>
-              <ThemedText style={{ color: colors.textSecondary, fontSize: 12 }}>
+            <View style={styles.metaCopy}>
+              <ThemedText type="semiBold">{post.author}</ThemedText>
+              <ThemedText type="caption" tone="secondary">
                 {post.date} • {post.role}
               </ThemedText>
             </View>
           </View>
 
-          <ThemedText
-            style={{
-              fontSize: 17,
-              lineHeight: 28,
-              color: colors.text,
-              opacity: 0.8,
-              marginBottom: 40,
-            }}
-          >
+          <ThemedText type="body" tone="secondary" style={styles.body}>
             {post.content}
           </ThemedText>
         </MotiView>
@@ -107,3 +81,46 @@ export default function BlogDetail() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  sheet: {
+    marginTop: -ui.spacing.xl,
+    paddingHorizontal: ui.spacing.xl,
+    paddingTop: ui.spacing.xxl,
+    paddingBottom: ui.spacing.xxl,
+    borderTopLeftRadius: ui.radii.xl,
+    borderTopRightRadius: ui.radii.xl,
+  },
+  badge: {
+    marginBottom: ui.spacing.md,
+  },
+  title: {
+    marginBottom: ui.spacing.xl,
+  },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: ui.spacing.xl,
+    paddingBottom: ui.spacing.xl,
+    borderBottomWidth: ui.borders.width,
+    gap: ui.spacing.md,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: ui.radii.pill,
+    backgroundColor: "#E2E8F0",
+    overflow: "hidden",
+  },
+  avatarImage: {
+    width: "100%",
+    height: "100%",
+  },
+  metaCopy: {
+    flex: 1,
+    gap: ui.spacing.xs,
+  },
+  body: {
+    marginBottom: ui.spacing.xxl,
+  },
+});

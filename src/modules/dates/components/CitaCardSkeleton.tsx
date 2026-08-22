@@ -1,4 +1,5 @@
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { LinearGradient } from "expo-linear-gradient";
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
@@ -29,17 +30,17 @@ export default function CitaCardSkeleton() {
             style={[styles.card, { borderColor: colors.border || "#e5e5e5" }]}
           >
             <View style={styles.content}>
-              <Skeleton width={80} height={18} radius={12} />
-              <View style={{ marginTop: 8 }}>
-                <Skeleton width="90%" height={20} radius={6} />
-              </View>
-              <View style={{ marginTop: 6 }}>
-                <Skeleton width="60%" height={14} radius={6} />
+              <View style={styles.header}>
+                <View style={styles.titleColumn}>
+                  <Skeleton width="90%" height={20} radius={ui.radii.sm} />
+                  <Skeleton width="60%" height={14} radius={ui.radii.sm} />
+                </View>
+                <Skeleton width={80} height={18} radius={ui.radii.md} />
               </View>
 
-              <View style={styles.row}>
-                <Skeleton width={80} height={14} radius={6} />
-                <Skeleton width={60} height={16} radius={6} />
+              <View style={styles.footer}>
+                <Skeleton width={80} height={14} radius={ui.radii.sm} />
+                <Skeleton width={60} height={14} radius={ui.radii.sm} />
               </View>
             </View>
           </LinearGradient>
@@ -50,22 +51,31 @@ export default function CitaCardSkeleton() {
 }
 
 const styles = StyleSheet.create({
-  container: { paddingVertical: 8 },
+  container: {
+    gap: ui.spacing.md,
+  },
   card: {
-    marginHorizontal: 12,
-    marginVertical: 8,
-    borderRadius: 16,
-    padding: 12,
-    borderWidth: 1,
-    minHeight: 110,
+    borderRadius: ui.radii.xl,
+    padding: ui.spacing.xl,
+    borderWidth: ui.borders.width,
   },
   content: {
     width: "100%",
+    gap: ui.spacing.lg,
   },
-  row: {
-    marginTop: 8,
+  header: {
     flexDirection: "row",
+    alignItems: "flex-start",
     justifyContent: "space-between",
+    gap: ui.spacing.md,
+  },
+  titleColumn: {
+    flex: 1,
+    gap: ui.spacing.sm,
+  },
+  footer: {
+    flexDirection: "row",
     alignItems: "center",
+    gap: ui.spacing.md,
   },
 });

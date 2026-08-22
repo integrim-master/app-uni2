@@ -37,7 +37,7 @@ export function Screen({
       collapsable={false}
       style={[
         styles.container,
-        { paddingHorizontal: fullWidth ? 0 : ui.spacing.xl },
+        { paddingHorizontal: fullWidth ? 0 : ui.spacing.lg },
         { backgroundColor: colors.background },
       ]}
     >

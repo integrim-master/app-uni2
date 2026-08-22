@@ -5,9 +5,10 @@ import { useBenefit } from "@/src/modules/benefits/hooks/useBenefits";
 import { useRedemed } from "@/src/modules/benefits/hooks/useRedem";
 import BenefitsDetailsScreen from "@/src/modules/benefits/screens/BenefitsDetailsScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
+import { ui } from "@/src/themes/ui";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function BenefitDetailsRoute() {
   const { id_benefits } = useLocalSearchParams<{ id_benefits: string }>();
@@ -41,11 +42,11 @@ export default function BenefitDetailsRoute() {
   if (isError) {
     return (
       <Screen>
-        <View className="flex-1 justify-center items-center px-6">
-          <ThemedText type="title" className="mb-4 text-center">
+        <View style={styles.errorWrap}>
+          <ThemedText type="title" align="center">
             Error al cargar el beneficio
           </ThemedText>
-          <ThemedText color={colors.danger}>
+          <ThemedText type="body" color={colors.danger} align="center">
             {error?.message || "Ha ocurrido un error inesperado"}
           </ThemedText>
         </View>
@@ -63,3 +64,12 @@ export default function BenefitDetailsRoute() {
     />
   );
 }
+
+const styles = StyleSheet.create({
+  errorWrap: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: ui.spacing.sm,
+  },
+});

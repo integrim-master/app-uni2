@@ -74,20 +74,11 @@ export function SuggestedTreatmentCard({ title, image, link, width }: Props) {
             { height: BODY_HEIGHT, backgroundColor: colors.backgroundSurface },
           ]}
         >
-          <ThemedText
-            type="semiBold"
-            color={colors.text}
-            style={styles.title}
-            numberOfLines={2}
-          >
+          <ThemedText type="semiBold" numberOfLines={2}>
             {title}
           </ThemedText>
 
-          <ThemedText
-            type="caption"
-            color={colors.primaryLight}
-            style={styles.cta}
-          >
+          <ThemedText type="caption" tone="primary">
             Ver más
           </ThemedText>
         </View>
@@ -109,17 +100,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   body: {
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    paddingBottom: 14,
+    paddingHorizontal: ui.spacing.md,
+    paddingTop: ui.spacing.md,
+    paddingBottom: ui.spacing.md,
     justifyContent: "space-between",
-  },
-  title: {
-    fontSize: 15,
-    lineHeight: 19,
-    fontWeight: "600",
-  },
-  cta: {
-    fontSize: 12,
   },
 });

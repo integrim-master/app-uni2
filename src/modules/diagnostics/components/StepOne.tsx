@@ -1,5 +1,6 @@
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
@@ -13,6 +14,8 @@ const TIPS = [
   { icon: "wb-sunny", text: "Busca un lugar bien iluminado" },
   { icon: "camera", text: "Mantén tu rostro centrado" },
 ] as const;
+
+const AVATAR = 200;
 
 export default function StepOne() {
   const { colors } = useTheme();
@@ -28,22 +31,16 @@ export default function StepOne() {
         />
       </View>
 
-      <ThemedText
-        type="title"
-        style={[styles.title, { color: colors.primary }]}
-      >
+      <ThemedText type="title" color={colors.primary} align="center" style={styles.title}>
         Bienvenido al diagnóstico
       </ThemedText>
 
-      <ThemedText style={[styles.description, { color: colors.textSecondary }]}>
+      <ThemedText type="body" tone="secondary" align="center" style={styles.description}>
         Para mejores resultados, retira gafas, gorra o cualquier cosa que
         obstruya tu rostro.
       </ThemedText>
 
-      <ThemedText
-        type="semiBold"
-        style={[styles.subtitle, { color: colors.text }]}
-      >
+      <ThemedText type="semiBold" style={styles.subtitle}>
         Tips para mejorar el diagnóstico
       </ThemedText>
 
@@ -58,9 +55,7 @@ export default function StepOne() {
             >
               <MaterialIcons name={tip.icon} size={22} color={colors.primary} />
             </View>
-            <ThemedText
-              style={[styles.tipText, { color: colors.textSecondary }]}
-            >
+            <ThemedText type="body" tone="secondary" style={styles.tipText}>
               {tip.text}
             </ThemedText>
           </View>
@@ -80,17 +75,16 @@ export default function StepOne() {
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-
     alignItems: "center",
-    marginVertical: 24,
+    marginVertical: ui.spacing.xl,
   },
   animationWrapper: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: AVATAR,
+    height: AVATAR,
+    borderRadius: AVATAR / 2,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 24,
+    marginBottom: ui.spacing.xl,
     borderWidth: 2,
   },
   animation: {
@@ -98,42 +92,40 @@ const styles = StyleSheet.create({
     height: 220,
   },
   title: {
-    textAlign: "center",
-    marginBottom: 10,
+    marginBottom: ui.spacing.md,
   },
   description: {
-    textAlign: "center",
-    marginBottom: 18,
+    marginBottom: ui.spacing.lg,
   },
   subtitle: {
     alignSelf: "flex-start",
-    marginBottom: 14,
-    marginTop: 8,
+    marginBottom: ui.spacing.md,
+    marginTop: ui.spacing.sm,
   },
   tipsContainer: {
     width: "100%",
-    gap: 14,
-    marginTop: 8,
+    gap: ui.spacing.md,
+    marginTop: ui.spacing.sm,
   },
   tipItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingVertical: 6,
+    gap: ui.spacing.md,
+    paddingVertical: ui.spacing.sm,
   },
   tipIconWrapper: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: ui.spacing.xxl,
+    height: ui.spacing.xxl,
+    borderRadius: ui.radii.pill,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
+    marginRight: ui.spacing.sm,
   },
   tipText: {
     flex: 1,
   },
   cta: {
     width: "100%",
-    marginTop: 28,
+    marginTop: ui.spacing.xxl,
   },
 });

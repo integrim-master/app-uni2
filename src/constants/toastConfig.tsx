@@ -1,3 +1,5 @@
+import { TYPE_SIZE } from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { BaseToastProps, ToastConfig } from "react-native-toast-message";
@@ -28,9 +30,9 @@ const InfoIcon = () => (
 
 const iconStyles = StyleSheet.create({
   circle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: ui.spacing.xxl,
+    height: ui.spacing.xxl,
+    borderRadius: ui.radii.lg,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -92,29 +94,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#1A1A1A",
-    borderRadius: 16,
-    borderLeftWidth: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    borderRadius: ui.radii.lg,
+    borderLeftWidth: ui.spacing.xs,
+    paddingHorizontal: ui.spacing.lg,
+    paddingVertical: ui.spacing.md,
+    gap: ui.spacing.md,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: ui.spacing.sm },
     shadowOpacity: 0.25,
-    shadowRadius: 16,
+    shadowRadius: ui.spacing.lg,
     elevation: 12,
   },
   textContainer: {
     flex: 1,
-    gap: 2,
+    gap: ui.spacing.xs,
   },
   title: {
-    fontSize: 15,
+    fontSize: TYPE_SIZE.body,
     fontWeight: "700",
     color: "#F9FAFB",
-    letterSpacing: 0.2,
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: TYPE_SIZE.caption,
     fontWeight: "400",
     color: "#9CA3AF",
     lineHeight: 18,

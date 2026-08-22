@@ -9,13 +9,13 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ui } from "@/src/themes/ui";
 
 export default function Suggest() {
   const { colors } = useTheme();
   return (
     <Screen>
-      <SafeAreaView className="flex-1 ">
+      <View style={styles.flex}>
         <BackButton />
         <View style={styles.imageWrapper}>
           <ImageBackground
@@ -62,12 +62,13 @@ export default function Suggest() {
             </Pressable>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
   imageWrapper: {
     width: "100%",
     height: 260,
@@ -81,38 +82,34 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.45)",
   },
   titleWrapper: {
-    paddingHorizontal: 20,
-    paddingBottom: 28,
-    gap: 4,
+    paddingHorizontal: ui.spacing.lg,
+    paddingBottom: ui.spacing.xl,
+    gap: ui.spacing.sm,
   },
   copyBlock: {
-    gap: 12,
-    marginBottom: 28,
+    gap: ui.spacing.md,
+    marginBottom: ui.spacing.xl,
   },
   card: {
-    marginTop: -24,
-    borderTopLeftRadius: 26,
-    borderTopRightRadius: 26,
-    padding: 20,
-    paddingBottom: 40,
+    marginTop: -ui.spacing.xl,
+    borderTopLeftRadius: ui.radii.xl,
+    borderTopRightRadius: ui.radii.xl,
+    padding: ui.spacing.xl,
+    paddingBottom: ui.spacing.xxl,
     flex: 1,
-    shadowColor: "#000",
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 10,
   },
   buttonsRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: ui.spacing.md,
   },
   whatsappBtn: {
     flex: 1,
     flexDirection: "row",
-    paddingVertical: 12,
-    borderRadius: 12,
+    minHeight: ui.tapTarget,
+    paddingVertical: ui.spacing.md,
+    borderRadius: ui.radii.md,
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
-    elevation: 2,
+    gap: ui.spacing.sm,
   },
 });

@@ -1,4 +1,6 @@
+import { TYPE_SIZE } from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -76,5 +78,9 @@ export function TextFieldEditor({ user, field, isPending, onSave }: Props) {
 }
 
 const styles = StyleSheet.create({
-  textInput: { fontSize: 24, paddingVertical: 12, borderBottomWidth: 2 },
+  textInput: {
+    fontSize: TYPE_SIZE.title,
+    paddingVertical: ui.spacing.md,
+    borderBottomWidth: ui.borders.width,
+  },
 });

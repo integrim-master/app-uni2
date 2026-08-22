@@ -8,7 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
 import React from "react";
-import { FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import UpcomingAppointmentsSkeleton from "./UpcomingAppointmentsSkeleton";
 
 const MONTHS_SHORT = [
@@ -45,18 +45,10 @@ function DateStamp({ fecha }: { fecha?: string }) {
         },
       ]}
     >
-      <ThemedText
-        type="caption"
-        color={colors.textAccent}
-        style={styles.stampMonth}
-      >
+      <ThemedText type="label" color={colors.textAccent}>
         {parsed ? MONTHS_SHORT[parsed.getMonth()] : "—"}
       </ThemedText>
-      <ThemedText
-        type="title"
-        color={colors.textStrong}
-        style={styles.stampDay}
-      >
+      <ThemedText type="title" color={colors.textStrong}>
         {parsed ? String(parsed.getDate()) : "--"}
       </ThemedText>
     </View>
@@ -66,7 +58,6 @@ function DateStamp({ fecha }: { fecha?: string }) {
 export default function UpcomingAppointments({ dates, isLoading }: Props) {
   const router = useRouter();
   const { colors } = useTheme();
-  const { width } = useWindowDimensions();
 
   if (isLoading) return <UpcomingAppointmentsSkeleton />;
   if (!Array.isArray(dates) || dates.length === 0) return null;
@@ -78,13 +69,14 @@ export default function UpcomingAppointments({ dates, isLoading }: Props) {
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: "timing", duration: 350 }}
       >
-        <View className="flex gap-2 ">
-          <ThemedText type="subtitle" color={colors.textAccent}>
+        <View style={styles.block}>
+          <ThemedText type="subtitle" tone="accent">
             Tus próximas citas
           </ThemedText>
 
           <FlatList
             data={dates.slice(0, 1)}
+            className="w-full "
             horizontal
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => (
@@ -124,7 +116,7 @@ export default function UpcomingAppointments({ dates, isLoading }: Props) {
                           size={14}
                           color={colors.textAccent}
                         />
-                        <ThemedText type="caption" color={colors.textSecondary}>
+                        <ThemedText type="caption" tone="secondary">
                           {item.hora_cita}
                         </ThemedText>
                       </View>
@@ -146,40 +138,28 @@ export default function UpcomingAppointments({ dates, isLoading }: Props) {
 
 const styles = StyleSheet.create({
   section: {
-    marginTop: 10,
+    marginTop: ui.spacing.xl,
   },
-  sectionTitle: {
-    marginTop: 10,
-    marginBottom: 16,
-    fontWeight: "600",
+  block: {
+    gap: ui.spacing.md,
   },
   card: {
     flexDirection: "row",
     alignItems: "center",
     padding: ui.spacing.lg,
-    gap: 14,
+    gap: ui.spacing.md,
   },
   stamp: {
     width: 56,
-    borderRadius: 14,
-    borderWidth: 1,
-    paddingVertical: 8,
+    borderRadius: ui.radii.md,
+    borderWidth: ui.borders.width,
+    paddingVertical: ui.spacing.sm,
     alignItems: "center",
     justifyContent: "center",
   },
-  stampMonth: {
-    letterSpacing: 1,
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  stampDay: {
-    fontSize: 22,
-    lineHeight: 26,
-    fontWeight: "700",
-  },
   body: {
     flex: 1,
-    gap: 8,
+    gap: ui.spacing.sm,
   },
   title: {
     textTransform: "capitalize",
@@ -187,9 +167,9 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: ui.spacing.sm,
   },
   separator: {
-    width: 10,
+    width: ui.spacing.sm,
   },
 });

@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import ThemedText from "@/src/components/shared/themed-text";
-import { AppColors as Colors } from "@/src/themes/colors";
+import { ui } from "@/src/themes/ui";
 import { Link } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 
@@ -12,25 +12,19 @@ const SuggestionItem = ({ title }: { title: string }) => {
     <Link
       href={"home/suggest"}
       style={[
-        styles.suggestionItemContainer,
+        styles.chip,
         {
           backgroundColor: colors.card,
-          borderWidth: isDark ? 1 : 0,
+          borderWidth: isDark ? ui.borders.width : 0,
           borderColor: colors.border,
         },
       ]}
       asChild
     >
       <Pressable>
-        <View style={styles.contentContainer}>
-          <Ionicons
-            name="calendar"
-            size={18}
-            style={[styles.icon, { color: colors.primaryLight }]}
-          />
-          <ThemedText style={[styles.itemText, { color: colors.text }]}>
-            {title}
-          </ThemedText>
+        <View style={styles.content}>
+          <Ionicons name="calendar" size={18} color={colors.primaryLight} />
+          <ThemedText type="caption">{title}</ThemedText>
         </View>
       </Pressable>
     </Link>
@@ -38,28 +32,19 @@ const SuggestionItem = ({ title }: { title: string }) => {
 };
 
 const styles = StyleSheet.create({
-  suggestionItemContainer: {
-    marginHorizontal: 6,
-    height: 30,
-    display: "flex",
+  chip: {
+    marginHorizontal: ui.spacing.xs,
+    minHeight: ui.tapTarget,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 12,
-    marginBottom: 2,
-    borderRadius: 20,
-    shadowColor: "white",
-    borderColor: Colors.primaryLight,
-    borderWidth: 1,
+    paddingHorizontal: ui.spacing.md,
+    borderRadius: ui.radii.xl,
   },
-  contentContainer: {
+  content: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: ui.spacing.sm,
   },
-  icon: {
-    fontWeight: "bold",
-  },
-  itemText: {},
 });
 
 export default SuggestionItem;

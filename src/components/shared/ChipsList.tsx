@@ -29,7 +29,10 @@ export default function ChipsList({ chips }: ChipsListProps) {
           ]}
         >
           <MaterialIcons name="spa" size={16} color={colors.primary} />
-          <Text style={[styles.chipText, { color: colors.textSecondary }]}> {c.label} </Text>
+          <Text style={[styles.chipText, { color: colors.textSecondary }]}>
+            {" "}
+            {c.label}{" "}
+          </Text>
         </View>
       ))}
     </View>
@@ -40,17 +43,17 @@ const styles = StyleSheet.create({
   chipsWrap: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
-    marginBottom: 24,
+    gap: ui.spacing.sm,
+    marginBottom: ui.spacing.xl,
   },
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    paddingVertical: ui.spacing.sm,
+    paddingHorizontal: ui.spacing.md,
     borderRadius: ui.radii.lg,
     borderWidth: ui.borders.width,
-    gap: 8,
+    gap: ui.spacing.sm,
   },
   chipText: {
     fontSize: 14,

@@ -10,6 +10,8 @@ interface ProfileHeaderProps {
   onPress?: () => void;
 }
 
+const AVATAR = 56;
+
 export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -22,7 +24,7 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
         styles.profileSection,
         {
           backgroundColor: colors.primaryLight,
-          paddingTop: insets.top + 20,
+          paddingTop: insets.top + ui.spacing.lg,
         },
       ]}
     >
@@ -35,7 +37,7 @@ export function ProfileHeader({ userName, onPress }: ProfileHeaderProps) {
             },
           ]}
         >
-          <ThemedText type="title" color={colors.cardText} weight="bold">
+          <ThemedText type="title" color={colors.cardText}>
             {userInitial}
           </ThemedText>
         </View>
@@ -58,24 +60,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: ui.spacing.sm,
-    paddingBottom: ui.spacing.xs,
-    marginBottom: ui.spacing.xs,
+    paddingHorizontal: ui.spacing.lg,
+    paddingBottom: ui.spacing.lg,
+    marginBottom: ui.spacing.sm,
   },
   profileContent: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
+    gap: ui.spacing.lg,
   },
   profileImage: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    marginRight: 18,
+    width: AVATAR,
+    height: AVATAR,
+    borderRadius: AVATAR / 2,
     justifyContent: "center",
     alignItems: "center",
   },
   profileTextContainer: {
     flex: 1,
+    gap: ui.spacing.xs,
   },
 });

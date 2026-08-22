@@ -8,6 +8,7 @@ import CitaDetailsSkeleton from "@/src/modules/dates/components/CitaDetailsSkele
 import { useDatesDetailsSuspense } from "@/src/modules/dates/hooks/useDatesById";
 import type { Cita } from "@/src/modules/dates/types/date.api.types";
 import { useUser } from "@/src/modules/user/hooks/useUser";
+import { ui } from "@/src/themes/ui";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, type ErrorBoundaryProps } from "expo-router";
@@ -26,8 +27,8 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 
 function DetailsLoading() {
   return (
-    <Screen fullWidth safeArea edges={["bottom"]}>
-      <View className="flex-1 gap-10">
+    <Screen safeArea edges={["bottom"]}>
+      <View style={styles.loadingWrap}>
         <CitaDetailsSkeleton />
       </View>
     </Screen>
@@ -64,26 +65,13 @@ function CitaDetailsView({ dateDetails }: { dateDetails?: Cita | null }) {
     <Screen safeArea edges={["bottom"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 0 }}
+        contentContainerStyle={styles.scrollContent}
       >
-        <View className="flex gap-10">
+        <View style={styles.sections}>
           <View style={styles.hero}>
-            {/* <View style={styles.heroTopRow}>
-              <View style={styles.heroIcon}>
-                <Ionicons name="calendar" color="#FFFFFF" size={26} />
-              </View>
-              <Badge
-                showIcon={false}
-                text={dateDetails?.categoria || "General"}
-                variant="warning"
-                size="small"
-                layout="horizontal"
-              />
-            </View> */}
-
             <View style={styles.heroTextBlock}>
-              <View className="flex flex-row w-full justify-between items-center mb-2">
-                <ThemedText type="caption" style={styles.heroLabel}>
+              <View style={styles.heroTopRow}>
+                <ThemedText type="label" tone="muted">
                   CITA AGENDADA
                 </ThemedText>
                 <Badge
@@ -96,22 +84,43 @@ function CitaDetailsView({ dateDetails }: { dateDetails?: Cita | null }) {
                   layout="horizontal"
                 />
               </View>
-              <ThemedText type="title" style={styles.heroTitle}>
+              <ThemedText type="title" color={colors.textStrong}>
                 {dateDetails?.Procedimiento}
               </ThemedText>
             </View>
 
-            <View style={styles.heroDatePill}>
-              <View style={styles.heroDateItem} className="">
-                <Ionicons name="calendar-outline" size={16} color="#FFFFFF" />
-                <ThemedText type="semiBold" style={styles.heroDateText}>
+            <View
+              style={[
+                styles.heroDatePill,
+                {
+                  backgroundColor: colors.primaryLight + "22",
+                  borderColor: colors.primaryLight + "55",
+                },
+              ]}
+            >
+              <View style={styles.heroDateItem}>
+                <Ionicons
+                  name="calendar-outline"
+                  size={16}
+                  color={colors.textAccent}
+                />
+                <ThemedText type="semiBold" color={colors.textAccent}>
                   {formatDateToText(dateDetails?.fecha_cita)}
                 </ThemedText>
               </View>
-              <View style={styles.heroDateDivider} />
+              <View
+                style={[
+                  styles.heroDateDivider,
+                  { backgroundColor: colors.border },
+                ]}
+              />
               <View style={styles.heroDateItem}>
-                <Ionicons name="time-outline" size={16} color="#FFFFFF" />
-                <ThemedText type="semiBold" style={styles.heroDateText}>
+                <Ionicons
+                  name="time-outline"
+                  size={16}
+                  color={colors.textAccent}
+                />
+                <ThemedText type="semiBold" color={colors.textAccent}>
                   {dateDetails?.hora_cita}
                 </ThemedText>
               </View>
@@ -153,7 +162,7 @@ function CitaDetailsView({ dateDetails }: { dateDetails?: Cita | null }) {
           </Card>
 
           {recomendaciones.length > 0 ? (
-            <View className="flex gap-4">
+            <View style={styles.recoSection}>
               <View style={styles.sectionHeader}>
                 <Ionicons
                   name="bulb-outline"
@@ -236,11 +245,7 @@ function RecoItem({ colors, text }: { colors: any; text: string }) {
       <View style={[styles.recoDot, { backgroundColor: colors.primaryLight }]}>
         <Ionicons name="checkmark" size={13} color="#FFFFFF" />
       </View>
-      <ThemedText
-        type="body"
-        color={colors.textSecondary}
-        style={styles.recoText}
-      >
+      <ThemedText type="body" color={colors.textSecondary} style={styles.recoText}>
         {text}
       </ThemedText>
     </View>
@@ -248,115 +253,95 @@ function RecoItem({ colors, text }: { colors: any; text: string }) {
 }
 
 const styles = StyleSheet.create({
+  loadingWrap: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 0,
+  },
+  sections: {
+    gap: ui.spacing.xxl,
+  },
   hero: {
-    gap: 20,
+    gap: ui.spacing.xl,
   },
   heroTopRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  heroIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+    gap: ui.spacing.md,
   },
   heroTextBlock: {
-    gap: 4,
-  },
-  heroLabel: {
-    color: "rgba(255,255,255,0.8)",
-    letterSpacing: 1.5,
-    fontWeight: "600",
-  },
-  heroTitle: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "700",
-    lineHeight: 30,
-    letterSpacing: -0.3,
+    gap: ui.spacing.sm,
   },
   heroDatePill: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 16,
-
-    paddingHorizontal: 16,
+    borderRadius: ui.radii.lg,
+    borderWidth: ui.borders.width,
+    paddingHorizontal: ui.spacing.lg,
+    minHeight: ui.tapTarget,
   },
   heroDateItem: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: ui.spacing.sm,
   },
   heroDateDivider: {
-    width: StyleSheet.hairlineWidth,
-    height: 20,
-    backgroundColor: "rgba(255,255,255,0.35)",
-    marginHorizontal: 12,
+    width: ui.borders.hairline,
+    height: ui.spacing.lg,
+    marginHorizontal: ui.spacing.md,
   },
-  heroDateText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-  },
-
   card: {
-    padding: 8,
-    marginBottom: 8,
+    padding: ui.spacing.lg,
   },
-
   infoRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    gap: ui.spacing.md,
+    paddingVertical: ui.spacing.md,
   },
   infoIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
+    width: ui.tapTarget,
+    height: ui.tapTarget,
+    borderRadius: ui.radii.md,
     justifyContent: "center",
     alignItems: "center",
   },
   infoTextWrap: {
     flex: 1,
-    gap: 2,
+    gap: ui.spacing.xs,
   },
   capitalize: {
     textTransform: "capitalize",
   },
   rowDivider: {
-    height: StyleSheet.hairlineWidth,
-    marginHorizontal: 10,
+    height: ui.borders.hairline,
   },
-
+  recoSection: {
+    gap: ui.spacing.lg,
+  },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: ui.spacing.sm,
   },
   recoRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    gap: ui.spacing.md,
+    paddingVertical: ui.spacing.md,
   },
   recoDot: {
     width: 22,
     height: 22,
-    borderRadius: 11,
+    borderRadius: ui.radii.pill,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 1,
+    marginTop: ui.spacing.xs,
   },
   recoText: {
     flex: 1,
-    lineHeight: 21,
   },
 });

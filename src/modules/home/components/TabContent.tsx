@@ -1,4 +1,5 @@
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { AccesoDirecto } from "./Acess";
@@ -17,7 +18,7 @@ export const TabContent: React.FC<TabContentProps> = ({
     switch (activeTab) {
       case "first":
         return (
-          <View className="" style={styles.accessContainer}>
+          <View style={styles.accessContainer}>
             {dataButtons.map((item, index) => (
               <AccesoDirecto
                 key={index}
@@ -33,19 +34,17 @@ export const TabContent: React.FC<TabContentProps> = ({
         );
       case "second":
         return (
-          <View style={styles.emptyContainerTwo}>
+          <View style={styles.listContainer}>
             {dataButtons.slice(0, 3).map((item, index) => (
               <Card
                 key={index}
-                style={{ width: "80%", marginBottom: 12 }}
+                style={styles.listCard}
                 href={item.routPage ? `/(tabs)/${item.routPage}` : undefined}
               >
-                <View className="flex-row items-start justify-start p-4">
-                  <View style={{ flex: 1 }}>
-                    <ThemedText type="titleSm" weight="semibold">
-                      {item.item}
-                    </ThemedText>
-                  </View>
+                <View style={styles.listCardInner}>
+                  <ThemedText type="titleSm" weight="semibold">
+                    {item.item}
+                  </ThemedText>
                 </View>
               </Card>
             ))}
@@ -62,7 +61,7 @@ export const TabContent: React.FC<TabContentProps> = ({
 const styles = StyleSheet.create({
   contentView: {
     flex: 1,
-    marginBottom: 10,
+    marginBottom: ui.spacing.sm,
   },
   accessContainer: {
     justifyContent: "center",
@@ -70,22 +69,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     flexWrap: "wrap",
-    gap: 10,
-    marginTop: 10,
-    padding: 10,
-    borderRadius: 16,
+    gap: ui.spacing.sm,
+    marginTop: ui.spacing.sm,
+    padding: ui.spacing.sm,
+    borderRadius: ui.radii.lg,
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 16,
-  },
-  emptyContainerTwo: {
+  listContainer: {
     flex: 1,
     justifyContent: "center",
     width: "100%",
     alignItems: "center",
-    borderRadius: 16,
+    borderRadius: ui.radii.lg,
+    gap: ui.spacing.md,
+  },
+  listCard: {
+    width: "80%",
+  },
+  listCardInner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: ui.spacing.lg,
   },
 });

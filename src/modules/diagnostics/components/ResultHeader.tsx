@@ -1,4 +1,5 @@
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { MotiView } from "moti";
@@ -58,7 +59,11 @@ export default function ResultHeader({ colors, imageUri }: Props) {
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: "center", marginBottom: 30, gap: 4 },
+  header: {
+    alignItems: "center",
+    marginBottom: ui.spacing.xxl,
+    gap: ui.spacing.xs,
+  },
   ovalWrapper: {
     width: width * 0.75,
     height: width * 0.95,
@@ -66,7 +71,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderWidth: 1,
     padding: 10,
-    marginBottom: 40,
+    marginBottom: ui.spacing.xxl,
     justifyContent: "center",
     alignItems: "center",
   },

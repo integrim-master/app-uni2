@@ -5,6 +5,7 @@ import TabBar from "@/src/components/shared/TabBar";
 import ThemedText from "@/src/components/shared/themed-text";
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
+import { ui } from "@/src/themes/ui";
 import { Benefits } from "@/src/types/shared/Benefits.type";
 import { router, useFocusEffect } from "expo-router";
 import { AnimatePresence } from "moti";
@@ -116,16 +117,8 @@ export default function BeneficiosScreen({
   if (loading || !benefits) {
     return (
       <Screen>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 16,
-            backgroundColor: "transparent",
-          }}
-        >
-          <View style={{ width: "100%", flex: 1 }}>
+        <SafeAreaView style={styles.loadingSafe}>
+          <View style={styles.loadingInner}>
             <BenefitsListSkeleton />
           </View>
         </SafeAreaView>
@@ -135,7 +128,7 @@ export default function BeneficiosScreen({
 
   return (
     <Screen>
-      <View style={{ paddingVertical: 10 }}>
+      <View style={styles.tabWrap}>
         <TabBar
           options={[
             { key: "disponibles", label: "Disponibles" },
@@ -148,7 +141,7 @@ export default function BeneficiosScreen({
         />
       </View>
 
-      <View style={{ flex: 1, position: "relative" }}>
+      <View style={styles.listWrap}>
         <AnimatePresence exitBeforeEnter>
           {activeTab === "disponibles" && (
             <BenefitsList
@@ -177,19 +170,20 @@ export default function BeneficiosScreen({
                     height={240}
                     style={styles.emptyImage}
                   />
-                  <ThemedText
-                    type="title"
-                    style={[styles.emptyTitle, { color: colors.primaryLight }]}
-                  >
-                    No hay beneficios canjeados
-                  </ThemedText>
+                  <View style={styles.emptyCopy}>
+                    <ThemedText type="title" tone="primary" align="center">
+                      No hay beneficios canjeados
+                    </ThemedText>
 
-                  <ThemedText
-                    style={[styles.emptyBody, { color: colors.textSecondary }]}
-                  >
-                    Cuando canjees un beneficio, aparecerá aquí para que lo
-                    revises y lo uses.
-                  </ThemedText>
+                    <ThemedText
+                      type="body"
+                      color={colors.textSecondary}
+                      align="center"
+                    >
+                      Cuando canjees un beneficio, aparecerá aquí para que lo
+                      revises y lo uses.
+                    </ThemedText>
+                  </View>
                 </View>
               ) : (
                 <BenefitsList
@@ -215,89 +209,33 @@ export default function BeneficiosScreen({
 }
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.05)",
-  },
-  searchFilterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  searchContainer: {
+  loadingSafe: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    gap: 8,
-  },
-  searchIcon: {
-    fontSize: 20,
-    fontWeight: "400",
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    padding: 0,
-  },
-  filterButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
   },
-  filterIcon: {
-    fontSize: 20,
-    color: "#fff",
-  },
-  bottomSheetContent: {
-    flex: 1,
-    padding: 20,
-  },
-  bottomSheetTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-
-  absoluteFill: {
-    position: "absolute",
-    inset: 0,
-    flex: 1,
+  loadingInner: {
     width: "100%",
-    marginTop: 10,
+    flex: 1,
   },
-
+  tabWrap: {
+    paddingVertical: ui.spacing.md,
+  },
+  listWrap: {
+    flex: 1,
+    position: "relative",
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: 40,
+    paddingTop: ui.spacing.xxl,
   },
   emptyImage: {},
-  emptyTitle: {
-    textAlign: "center",
-    marginBottom: 6,
-  },
-  emptySubtitle: {
-    textAlign: "center",
-    marginBottom: 4,
-  },
-  emptyBody: {
-    textAlign: "center",
-    marginTop: 2,
-    marginBottom: 2,
-    paddingHorizontal: 16,
-  },
-
-  noCitasText: {
-    fontSize: 16,
-    textAlign: "center",
+  emptyCopy: {
+    gap: ui.spacing.sm,
+    alignItems: "center",
+    paddingHorizontal: ui.spacing.lg,
   },
 });

@@ -50,7 +50,7 @@ function DiagnosticsContent({ userId }: { userId: string }) {
   }
 
   return (
-    <Screen  safeArea={true}>
+    <Screen safeArea={true}>
       <StepOne />
     </Screen>
   );

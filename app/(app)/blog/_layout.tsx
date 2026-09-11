@@ -10,10 +10,13 @@ export default function BlogLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        headerTitleAlign: "center",
-        headerTintColor: colors.primary,
-        headerShadowVisible: false,
-        headerBackButtonDisplayMode: "minimal",
+        headerStyle: {
+          backgroundColor: "transparent",
+        },
+        // headerTitleAlign: "center",
+        // headerTintColor: colors.primary,
+        // headerShadowVisible: false,
+        // headerBackButtonDisplayMode: "minimal",
       }}
     >
       <Stack.Screen
@@ -22,9 +25,7 @@ export default function BlogLayout() {
           headerShown: true,
           title: "",
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: "transparent",
-          },
+
           headerLeft: () => <BackButton />,
         }}
       />

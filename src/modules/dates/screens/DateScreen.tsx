@@ -1,5 +1,6 @@
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { parseDateString } from "@/src/utils/dateUtils";
 import { router } from "expo-router";
 import { AnimatePresence, MotiView } from "moti";
@@ -40,14 +41,14 @@ export default function DatesScreen({
   }, [dates]);
 
   return (
-    <Screen fullWidth={true}>
+    <Screen>
       <View style={styles.container}>
         <View style={styles.content}>
           {isLoading && <CitaCardSkeleton />}
 
           {!isLoading && isError && (
             <View style={styles.center}>
-              <View style={{ gap: 8, alignItems: "center" }}>
+              <View style={styles.errorCopy}>
                 <ThemedText type="subtitle">Error cargando citas</ThemedText>
                 <ThemedText type="caption" tone="muted" align="center">
                   {String(error?.message ?? error ?? "")}
@@ -66,7 +67,9 @@ export default function DatesScreen({
                 <FlatList
                   data={processedDates}
                   keyExtractor={(item, index) => `cita-${item.id ?? index}`}
-                  ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+                  ItemSeparatorComponent={() => (
+                    <View style={styles.separator} />
+                  )}
                   renderItem={({ item }) => (
                     <CitaCard
                       cita={item}
@@ -113,14 +116,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    paddingHorizontal: 6,
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingTop: ui.spacing.lg,
+    paddingBottom: ui.spacing.xl,
+  },
+  separator: {
+    height: ui.spacing.md,
   },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: ui.spacing.lg,
+  },
+  errorCopy: {
+    gap: ui.spacing.sm,
+    alignItems: "center",
   },
 });

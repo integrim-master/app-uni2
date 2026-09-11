@@ -1,4 +1,5 @@
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 
@@ -81,14 +82,14 @@ export const NotificationsSkeletonList: React.FC = () => {
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
-    padding: 16,
-    borderBottomWidth: 1,
+    padding: ui.spacing.lg,
+    borderBottomWidth: ui.borders.width,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
+    width: ui.tapTarget,
+    height: ui.tapTarget,
+    borderRadius: ui.radii.pill,
+    marginRight: ui.spacing.md,
   },
   content: {
     flex: 1,
@@ -97,27 +98,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: ui.spacing.sm,
   },
   titleSkeleton: {
-    height: 16,
+    height: ui.spacing.lg,
     width: "60%",
-    borderRadius: 4,
+    borderRadius: ui.radii.sm,
   },
   dateSkeleton: {
-    height: 12,
+    height: ui.spacing.md,
     width: 60,
-    borderRadius: 4,
+    borderRadius: ui.radii.sm,
   },
   messageSkeleton: {
-    height: 14,
+    height: ui.spacing.md,
     width: "90%",
-    borderRadius: 4,
-    marginBottom: 6,
+    borderRadius: ui.radii.sm,
+    marginBottom: ui.spacing.sm,
   },
   messageSkeletonShort: {
-    height: 14,
+    height: ui.spacing.md,
     width: "70%",
-    borderRadius: 4,
+    borderRadius: ui.radii.sm,
   },
 });

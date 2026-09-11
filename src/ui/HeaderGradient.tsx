@@ -1,12 +1,14 @@
 import { BackButton } from "@/src/components/shared/BackButton";
+import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
   Platform,
   StatusBar,
   StyleProp,
-  Text,
+  StyleSheet,
   View,
   ViewStyle,
 } from "react-native";
@@ -25,37 +27,18 @@ export default function HeaderGradient({ title, back, style }: Props) {
       colors={colors.gradientBackground}
       start={{ x: 0, y: 10 }}
       end={{ x: 90, y: 10 }}
-      style={{
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
-      }}
+      style={styles.gradient}
     >
-      <View
-        style={[
-          {
-            height: 56,
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-          },
-          style,
-        ]}
-      >
+      <View style={[styles.bar, style]}>
         {back ? (
-          <View
-            style={{
-              position: "absolute",
-              left: 12,
-              justifyContent: "center",
-              height: 56,
-            }}
-          >
+          <View style={styles.backWrap}>
             <BackButton />
           </View>
         ) : null}
         {typeof title === "string" ? (
-          <Text style={{ color: "white", fontSize: 18, fontWeight: "600" }}>
+          <ThemedText type="titleSm" tone="inverse">
             {title}
-          </Text>
+          </ThemedText>
         ) : (
           (title ?? null)
         )}
@@ -63,3 +46,21 @@ export default function HeaderGradient({ title, back, style }: Props) {
     </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  gradient: {
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 50,
+  },
+  bar: {
+    height: 56,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  backWrap: {
+    position: "absolute",
+    left: ui.spacing.md,
+    justifyContent: "center",
+    height: 56,
+  },
+});

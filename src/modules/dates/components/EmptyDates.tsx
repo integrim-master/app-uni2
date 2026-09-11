@@ -1,5 +1,6 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -26,7 +27,7 @@ export default function EmptyDates({
         <ThemedText type="titleSm" tone="primary" align="center">
           {title}
         </ThemedText>
-        <ThemedText type="caption" align="center">
+        <ThemedText type="body" align="center">
           {subtitle}
         </ThemedText>
       </View>
@@ -49,17 +50,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
-    gap: 12,
+    paddingHorizontal: ui.spacing.xl,
+    gap: ui.spacing.lg,
   },
   copy: {
-    gap: 6,
+    gap: ui.spacing.sm,
     alignItems: "center",
   },
   button: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 8,
+    paddingHorizontal: ui.spacing.lg,
+    paddingVertical: ui.spacing.md,
+    borderRadius: ui.radii.md,
+    marginTop: ui.spacing.sm,
+    minHeight: ui.tapTarget,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

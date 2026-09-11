@@ -11,13 +11,14 @@ import { useSendDiagnosticPhoto } from "@/src/modules/diagnostics/hooks/useSendD
 import ErrorScreen from "@/src/modules/diagnostics/screens/ErrorScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useIsFocused } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { useIsFocused, useNavigation } from "expo-router";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
 import { Camera, useCameraPermission } from "react-native-vision-camera";
 
 export default function CameraScreen() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   const { token } = useAuth();
   const { data: userInfo } = useUser();
   const userId = userInfo?.user_id;
@@ -50,6 +51,24 @@ export default function CameraScreen() {
     validationError,
     clearValidationError,
   } = useSendDiagnosticPhoto(userId, token);
+
+  const isSending = isAnalyzing || isProcessing;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: !isSending,
+      gestureEnabled: !isSending,
+    });
+  }, [navigation, isSending]);
+
+  useEffect(() => {
+    if (!isSending) return;
+
+    return navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type === "REPLACE") return;
+      e.preventDefault();
+    });
+  }, [navigation, isSending]);
 
   useEffect(() => {
     if (!hasPermission || photoUri || !isFaceAligned || capturing) return;
@@ -86,7 +105,7 @@ export default function CameraScreen() {
     );
   }
 
-  if (isAnalyzing || isProcessing) return <SendPhoto />;
+  if (isSending) return <SendPhoto />;
 
   if (validationError) {
     return (
@@ -118,7 +137,7 @@ export default function CameraScreen() {
       : "Coloca tu rostro dentro del óvalo";
 
   return (
-    <Screen fullWidth safeArea={true}>
+    <Screen fullWidth safeArea>
       <View style={styles.headings}>
         <ThemedText
           type="display"

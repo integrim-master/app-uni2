@@ -7,7 +7,10 @@ import { Image, StyleSheet, View } from "react-native";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { TreatmentCardProps } from "../types/diagnostics.types";
+
+const CARD_HEIGHT = 160;
 
 export default function TreatmentCard({
   title,
@@ -58,7 +61,7 @@ export default function TreatmentCard({
 
         <ThemedText
           type="semiBold"
-          color="#FFFFFF"
+          tone="inverse"
           style={styles.title}
           numberOfLines={2}
         >
@@ -72,7 +75,7 @@ export default function TreatmentCard({
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    height: 160,
+    height: CARD_HEIGHT,
     padding: 0,
     overflow: "hidden",
   },
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: "space-between",
-    padding: 12,
+    padding: ui.spacing.md,
     zIndex: 10,
   },
   topRow: {
@@ -96,9 +99,9 @@ const styles = StyleSheet.create({
   },
   iconWrap: {
     backgroundColor: "rgba(0,0,0,0.35)",
-    padding: 6,
-    borderRadius: 20,
-    borderWidth: 1,
+    padding: ui.spacing.sm,
+    borderRadius: ui.radii.pill,
+    borderWidth: ui.borders.width,
     borderColor: "rgba(255,255,255,0.15)",
   },
   title: {

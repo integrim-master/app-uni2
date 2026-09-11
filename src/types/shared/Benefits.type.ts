@@ -34,6 +34,7 @@ interface Benefits {
   description: string;
   precio: string | number;
   image: string;
+  active: boolean;
   allowed: number;
   used: number;
   remaining: number;

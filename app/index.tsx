@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { MotiView } from "moti";
 import React, { useEffect } from "react";
+import { ui } from "@/src/themes/ui";
 import { Image, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -54,7 +55,7 @@ export default function WelcomeScreen() {
           styles.contentWrapper,
           {
             paddingTop: insets.top,
-            paddingBottom: Math.max(insets.bottom, 20),
+            paddingBottom: Math.max(insets.bottom, ui.spacing.xl),
           },
         ]}
       >
@@ -86,11 +87,10 @@ export default function WelcomeScreen() {
           transition={{ type: "spring", duration: 1000, delay: 1200 }}
           style={styles.footer}
         >
-          <View className="w-full">
+          <View style={styles.cta}>
             <PrimaryButton
               title="Entrar"
               onPress={() => router.push("/login")}
-              textStyle={{ color: "#000", fontWeight: "800" }}
             />
           </View>
           <MotiView
@@ -143,10 +143,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: ui.spacing.xxl,
   },
   logoWrapper: {
-    marginBottom: 24,
+    marginBottom: ui.spacing.xl,
     shadowColor: GOLD,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -162,15 +162,17 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: GOLD,
     borderRadius: 2,
-    marginBottom: 20,
+    marginBottom: ui.spacing.xl,
     opacity: 0.9,
   },
-
   footer: {
     width: "100%",
-    paddingHorizontal: 28,
-    paddingBottom: 20,
+    paddingHorizontal: ui.spacing.xl,
+    paddingBottom: ui.spacing.xl,
     alignItems: "center",
-    gap: 16,
+    gap: ui.spacing.lg,
+  },
+  cta: {
+    width: "100%",
   },
 });

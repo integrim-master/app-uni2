@@ -2,6 +2,7 @@ import { Screen } from '@/src/components/shared/Screen';
 import TabBar from "@/src/components/shared/TabBar";
 import SupportHistory from "@/src/modules/profile/screens/SupportHistory";
 import SupportRequests from "@/src/modules/profile/screens/SupportRequests";
+import { ui } from "@/src/themes/ui";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    paddingVertical: ui.spacing.lg,
   },
 });
 

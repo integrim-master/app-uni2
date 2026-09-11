@@ -2,6 +2,7 @@ import { BackButton } from "@/src/components/shared/BackButton";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import React from "react";
 import {
   KeyboardAvoidingView,
@@ -34,13 +35,15 @@ export function EditFieldLayout({
         style={styles.flex}
         keyboardVerticalOffset={70}
       >
-        <View className="flex-1 mt-4 p-6">
-          <View className="flex-1">
-            <View style={styles.headerTitleWrap}>
-              <ThemedText type="display" accessibilityRole="header">
-                {title}
-              </ThemedText>
-            </View>
+        <View style={styles.body}>
+          <View style={styles.flex}>
+            <ThemedText
+              type="display"
+              accessibilityRole="header"
+              style={styles.headerTitle}
+            >
+              {title}
+            </ThemedText>
             {children}
             {error ? (
               <ThemedText
@@ -69,7 +72,18 @@ export function EditFieldLayout({
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  headerTitleWrap: { marginBottom: 32 },
-  error: { marginTop: 8 },
-  saveWrap: { marginBottom: Platform.OS === "ios" ? 40 : 20 },
+  body: {
+    flex: 1,
+    paddingTop: ui.spacing.lg,
+    paddingBottom: ui.spacing.lg,
+  },
+  headerTitle: {
+    marginBottom: ui.spacing.xl,
+  },
+  error: {
+    marginTop: ui.spacing.sm,
+  },
+  saveWrap: {
+    marginBottom: Platform.OS === "ios" ? ui.spacing.xl : ui.spacing.lg,
+  },
 });

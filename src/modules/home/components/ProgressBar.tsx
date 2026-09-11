@@ -1,5 +1,6 @@
+import { ui } from "@/src/themes/ui";
 import React from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 interface ProgressBarProps {
   value: number;
@@ -17,21 +18,19 @@ export function ProgressBar({
   const percentage = Math.min((value / total) * 100, 100);
 
   return (
-    <View
-      style={{
-        height: 6,
-        borderRadius: 999,
-        backgroundColor: background,
-        overflow: "hidden",
-      }}
-    >
-      <View
-        style={{
-          height: "100%",
-          width: `${percentage}%`,
-          backgroundColor: fill,
-        }}
-      />
+    <View style={[styles.track, { backgroundColor: background }]}>
+      <View style={[styles.fill, { width: `${percentage}%`, backgroundColor: fill }]} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  track: {
+    height: ui.spacing.xs,
+    borderRadius: ui.radii.pill,
+    overflow: "hidden",
+  },
+  fill: {
+    height: "100%",
+  },
+});

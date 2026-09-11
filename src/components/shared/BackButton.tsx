@@ -34,8 +34,8 @@ export function BackButton({ to, icon, iconName }: BackButtonProps) {
 
 const styles = StyleSheet.create({
   button: {
-    width: 40,
-    height: 40,
+    width: ui.tapTarget,
+    height: ui.tapTarget,
     borderRadius: ui.radii.lg,
     justifyContent: "center",
     alignItems: "center",

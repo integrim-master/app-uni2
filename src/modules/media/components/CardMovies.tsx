@@ -1,10 +1,13 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { CardMoviesProps } from "../types/movie";
+
+const CARD_WIDTH = 230;
+const CARD_HEIGHT = 140;
 
 export default function CardMovies({
   item,
@@ -14,7 +17,7 @@ export default function CardMovies({
   const { colors } = useTheme();
 
   const handlePress = () => {
-    onPress ? onPress() : router.push("/video" as any);
+    onPress?.();
   };
 
   return (
@@ -25,20 +28,12 @@ export default function CardMovies({
       </Pressable>
 
       <View style={styles.categoryTextContainer}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <ThemedText type="subtitle" color={colors.text}>
-            {item.title}
-          </ThemedText>
+        <View style={styles.titleRow}>
+          <ThemedText type="subtitle">{item.title}</ThemedText>
           <Pressable
             style={styles.playButton}
             onPress={() => onOpenOptions?.(item)}
-            hitSlop={10}
+            hitSlop={ui.spacing.md}
           >
             <Ionicons
               name="ellipsis-vertical"
@@ -48,7 +43,7 @@ export default function CardMovies({
           </Pressable>
         </View>
 
-        <ThemedText type="caption" color={colors.textSecondary}>
+        <ThemedText type="caption" tone="secondary">
           Faciales | 2h 22min
         </ThemedText>
       </View>
@@ -58,38 +53,32 @@ export default function CardMovies({
 
 const styles = StyleSheet.create({
   categoryCard: {
-    width: 230,
-    height: 140,
-    borderRadius: 16,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+    borderRadius: ui.radii.lg,
     overflow: "hidden",
   },
-
   categoryImage: {
     width: "100%",
     height: "100%",
   },
-
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.35)",
   },
-
   playButton: {
-    borderRadius: 99,
+    borderRadius: ui.radii.pill,
     alignItems: "center",
     justifyContent: "center",
+    minWidth: ui.tapTarget,
+    minHeight: ui.tapTarget,
   },
-
   categoryTextContainer: {
-    marginTop: 8,
+    marginTop: ui.spacing.sm,
   },
-
-  categoryTitle: {
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  categorySubtitle: {
-    fontSize: 11,
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });

@@ -2,10 +2,11 @@ import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import BenefitsListSkeleton from "@/src/modules/benefits/components/BenefitsListSkeleton";
+import { ui } from "@/src/themes/ui";
 import type { Benefits } from "@/src/types/shared/Benefits.type";
 import { MotiView } from "moti";
 import React from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 interface BenefitsPreviewProps {
   benefits: Benefits[];
@@ -42,69 +43,74 @@ export default function BenefitsPreview({
       from={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "timing", duration: 600 }}
-      className="w-full mt-10 mb-4 rounded-2xl overflow-hidden"
+      style={styles.section}
     >
-      
-        {/* <View className="flex-row w-full items-center justify-between">
-          <ThemedText
-            type="subtitle"
-            color={colors.textStrong}
-            className="font-bold mb-4"
-          >
-            Tus beneficios
-          </ThemedText>
-          <ThemedText type="caption" color={colors.textSecondary}>
-            {totalRemaining} disponibles
-          </ThemedText>
-        </View> */}
-
-        {isEmpty ? (
-          <View
-            className="rounded-xl p-3"
-            style={{
+      {isEmpty ? (
+        <View
+          style={[
+            styles.emptyCard,
+            {
               backgroundColor: colors.backgroundSecondary,
-              borderWidth: 1,
               borderColor: "rgba(226, 177, 85, 0.18)",
-            }}
-          >
-            <ThemedText type="body" color={colors.text}>
-              No tienes beneficios disponibles ahora mismo.
-            </ThemedText>
-          </View>
-        ) : (
-          <View className="w-full " style={{ gap: 10 }}>
-            {items.map((b) => (
-              <View
-                key={String(b.id)}
-                className="rounded-xl p-3"
-                style={{
-                  backgroundColor: colors.backgroundSurface,
-                 
-                }}
-              >
-                <ThemedText
-                  type="semiBold"
-                  numberOfLines={1}
-                  style={{ color: colors.text }}
-                >
-                  {b.title}
-                </ThemedText>
-                <ThemedText type="caption" color={colors.textSecondary}>
-                  Te quedan {b.remaining}
-                </ThemedText>
-              </View>
-            ))}
-          </View>
-        )}
+            },
+          ]}
+        >
+          <ThemedText type="body">
+            No tienes beneficios disponibles ahora mismo.
+          </ThemedText>
+        </View>
+      ) : (
+        <View className="flex-col gap-4">
+          <ThemedText type="subtitle" tone="accent">
+            Beneficios disponibles
+          </ThemedText>
+          {items.map((b) => (
+            <View
+              key={String(b.id)}
+              style={[
+                styles.itemCard,
+                { backgroundColor: colors.backgroundSurface },
+              ]}
+            >
+              <ThemedText type="semiBold" numberOfLines={1}>
+                {b.title}
+              </ThemedText>
+              <ThemedText type="caption" tone="secondary">
+                Te quedan {b.remaining}
+              </ThemedText>
+            </View>
+          ))}
+        </View>
+      )}
 
-        <PrimaryButton
-          variant="primary"
-          title="Ver todos mis beneficios"
-          onPress={onPressAll}
-          size="sm"
-          style={{ marginTop: 6 }}
-        />
-     
+      <PrimaryButton
+        variant="primary"
+        title="Ver todos mis beneficios"
+        onPress={onPressAll}
+        size="sm"
+      />
     </MotiView>
   );
 }
+
+const styles = StyleSheet.create({
+  section: {
+    width: "100%",
+    marginTop: ui.spacing.xl,
+    gap: ui.spacing.lg,
+  },
+  list: {
+    width: "100%",
+    gap: ui.spacing.sm,
+  },
+  itemCard: {
+    borderRadius: ui.radii.md,
+    padding: ui.spacing.md,
+    gap: ui.spacing.sm,
+  },
+  emptyCard: {
+    borderRadius: ui.radii.md,
+    padding: ui.spacing.md,
+    borderWidth: ui.borders.width,
+  },
+});

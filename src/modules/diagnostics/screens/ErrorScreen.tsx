@@ -1,13 +1,14 @@
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import React from "react";
-import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 
-const { height } = Dimensions.get("window");
+const PHOTO_SIZE = 180;
 
 type ErrorViewProps = {
   message: string;
@@ -77,14 +78,10 @@ export default function ErrorScreen({
           animate={{ opacity: 1, translateY: 0 }}
           style={styles.headerContainer}
         >
-          <ThemedText
-            color={colors.primaryLight}
-            type="title"
-            style={styles.title}
-          >
+          <ThemedText type="display" tone="primary" align="center" style={styles.title}>
             Análisis Fallido
           </ThemedText>
-          <ThemedText color={colors.dangerLight} style={styles.messageText}>
+          <ThemedText type="body" color={colors.dangerLight} align="center" style={styles.messageText}>
             {message}
           </ThemedText>
         </MotiView>
@@ -105,7 +102,7 @@ export default function ErrorScreen({
           transition={{ delay: 300 }}
           style={[styles.tipsContainer]}
         >
-          <ThemedText style={styles.tipsTitle}>
+          <ThemedText type="subtitle" style={styles.tipsTitle}>
             Consejos para una mejor foto:
           </ThemedText>
 
@@ -129,7 +126,9 @@ export default function ErrorScreen({
                   color={colors.primary}
                 />
               </View>
-              <ThemedText style={styles.tipText}>{tip.text}</ThemedText>
+              <ThemedText type="body" style={styles.tipText}>
+                {tip.text}
+              </ThemedText>
             </MotiView>
           ))}
         </MotiView>
@@ -145,18 +144,17 @@ const styles = StyleSheet.create({
   scrollContent: {
     alignItems: "center",
     justifyContent: "center",
-
     height: "100%",
-    paddingTop: 40,
-    paddingHorizontal: 24,
+    paddingTop: ui.spacing.xxl,
+    paddingHorizontal: ui.spacing.xl,
     paddingBottom: 120,
   },
   photoContainer: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: PHOTO_SIZE,
+    height: PHOTO_SIZE,
+    borderRadius: PHOTO_SIZE / 2,
     overflow: "hidden",
-    marginBottom: 24,
+    marginBottom: ui.spacing.xl,
     borderWidth: 4,
     borderColor: "#ff444430",
   },
@@ -176,54 +174,45 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: "40%",
     backgroundColor: "#ff4444",
-    borderRadius: 12,
-    padding: 4,
+    borderRadius: ui.radii.md,
+    padding: ui.spacing.xs,
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: ui.spacing.xl,
   },
   title: {
-    fontSize: 28,
-    textAlign: "center",
-    marginBottom: 8,
+    marginBottom: ui.spacing.sm,
   },
   messageText: {
-    fontSize: 16,
-    textAlign: "center",
     opacity: 0.6,
-    paddingHorizontal: 10,
+    paddingHorizontal: ui.spacing.md,
   },
   tipsContainer: {
     width: "100%",
-    padding: 20,
+    padding: ui.spacing.xl,
   },
   tipsTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    marginBottom: 16,
-    marginLeft: 4,
+    marginBottom: ui.spacing.lg,
+    marginLeft: ui.spacing.xs,
   },
   tipItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 14,
+    marginBottom: ui.spacing.md,
   },
   tipIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: ui.spacing.xxl,
+    height: ui.spacing.xxl,
+    borderRadius: ui.radii.pill,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: ui.spacing.md,
   },
   tipText: {
     flex: 1,
-    fontSize: 14,
-    lineHeight: 20,
     opacity: 0.8,
   },
-
   buttonWidth: {
     width: "100%",
   },

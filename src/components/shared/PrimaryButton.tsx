@@ -10,6 +10,7 @@ import {
   TextStyle,
   ViewStyle,
 } from "react-native";
+import { TYPE_SIZE } from "@/src/components/shared/themed-text";
 import { useTheme } from "../../context/ThemeContext";
 import { ui } from "../../themes/ui";
 
@@ -51,9 +52,21 @@ const PrimaryButton = ({
   };
 
   const sizes = {
-    sm: { paddingVertical: 8, paddingHorizontal: 14, fontSize: 14 },
-    md: { paddingVertical: 14, paddingHorizontal: 20, fontSize: 16 },
-    lg: { paddingVertical: 18, paddingHorizontal: 24, fontSize: 18 },
+    sm: {
+      paddingVertical: ui.spacing.sm,
+      paddingHorizontal: ui.spacing.md,
+      fontSize: TYPE_SIZE.caption,
+    },
+    md: {
+      paddingVertical: ui.spacing.md,
+      paddingHorizontal: ui.spacing.xl,
+      fontSize: TYPE_SIZE.body,
+    },
+    lg: {
+      paddingVertical: ui.spacing.lg,
+      paddingHorizontal: ui.spacing.xl,
+      fontSize: TYPE_SIZE.titleSm,
+    },
   } as const;
 
   const variantConfig = {
@@ -65,7 +78,7 @@ const PrimaryButton = ({
     secondary: {
       background: colors.backgroundElevated,
       borderColor: colors.border,
-      borderWidth: 1,
+      borderWidth: ui.borders.width,
       pressed: "rgba(0,0,0,0.08)",
       text: colors.textAccent,
     },
@@ -142,6 +155,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   icon: {
-    marginLeft: 8,
+    marginLeft: ui.spacing.sm,
   },
 });

@@ -1,5 +1,6 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import React from "react";
@@ -13,11 +14,11 @@ interface FavoriteCardProps {
   isAnimating?: boolean;
 }
 
-export const FavoriteCard: React.FC<FavoriteCardProps> = ({ 
-  item, 
-  onPress, 
+export const FavoriteCard: React.FC<FavoriteCardProps> = ({
+  item,
+  onPress,
   onToggleFavorite,
-  isAnimating = false 
+  isAnimating = false,
 }) => {
   const { colors } = useTheme();
 
@@ -47,41 +48,35 @@ export const FavoriteCard: React.FC<FavoriteCardProps> = ({
             ]}
           >
             <MaterialIcons
-              name={
-                item.category === "beneficios"
-                  ? "card-giftcard"
-                  : "spa"
-              }
+              name={item.category === "beneficios" ? "card-giftcard" : "spa"}
               size={24}
               color={
-                item.category === "beneficios"
-                  ? colors.primary
-                  : colors.success
+                item.category === "beneficios" ? colors.primary : colors.success
               }
             />
           </View>
           <View style={styles.cardInfo}>
             <ThemedText type="semiBold">{item.title}</ThemedText>
-            <ThemedText type="caption" color={colors.textSecondary}>
+            <ThemedText type="caption" tone="secondary">
               {item.description}
             </ThemedText>
           </View>
         </View>
-        
-        <Pressable onPress={onToggleFavorite}>
+
+        <Pressable onPress={onToggleFavorite} style={styles.heartHit}>
           <MotiView
             animate={{
               scale: isAnimating ? [1, 1.3, 1] : 1,
             }}
             transition={{
-              type: 'timing',
+              type: "timing",
               duration: 400,
             }}
           >
-            <MaterialIcons 
-              name={item.isFavorite ? "favorite" : "favorite-border"} 
-              size={28} 
-              color={item.isFavorite ? colors.danger : colors.textSecondary} 
+            <MaterialIcons
+              name={item.isFavorite ? "favorite" : "favorite-border"}
+              size={28}
+              color={item.isFavorite ? colors.danger : colors.textSecondary}
             />
           </MotiView>
         </Pressable>
@@ -92,9 +87,9 @@ export const FavoriteCard: React.FC<FavoriteCardProps> = ({
 
 const styles = StyleSheet.create({
   favoriteCard: {
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 16,
+    borderRadius: ui.radii.md,
+    borderWidth: ui.borders.width,
+    padding: ui.spacing.lg,
   },
   cardContent: {
     flexDirection: "row",
@@ -104,18 +99,24 @@ const styles = StyleSheet.create({
   cardLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: ui.spacing.md,
     flex: 1,
   },
   iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: ui.tapTarget,
+    height: ui.tapTarget,
+    borderRadius: ui.radii.pill,
     alignItems: "center",
     justifyContent: "center",
   },
   cardInfo: {
     flex: 1,
-    gap: 4,
+    gap: ui.spacing.xs,
+  },
+  heartHit: {
+    minWidth: ui.tapTarget,
+    minHeight: ui.tapTarget,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

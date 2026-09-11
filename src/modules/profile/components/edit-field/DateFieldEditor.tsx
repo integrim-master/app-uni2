@@ -1,5 +1,6 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -134,15 +135,15 @@ export function DateFieldEditor({
 
 const styles = StyleSheet.create({
   inputBorder: {
-    borderBottomWidth: 2,
-    marginBottom: 20,
-    paddingVertical: 15,
+    borderBottomWidth: ui.borders.width,
+    marginBottom: ui.spacing.xl,
+    paddingVertical: ui.spacing.lg,
   },
-  datePickerWrap: { marginTop: 8 },
+  datePickerWrap: { marginTop: ui.spacing.sm },
   dateToolbar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: ui.spacing.sm,
   },
 });

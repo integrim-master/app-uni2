@@ -18,9 +18,10 @@ export default function BenefitDetailsLayout() {
         options={{
           headerShown: true,
           title: "",
+          headerTransparent: true,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: colors.background,
+            backgroundColor: "transparent",
           },
           headerLeft: () => <BackButton />,
         }}

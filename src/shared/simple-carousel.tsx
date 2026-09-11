@@ -12,6 +12,7 @@ import { useSharedValue } from "react-native-reanimated";
 import Carousel, { Pagination } from "react-native-reanimated-carousel";
 import ThemedText from "../components/shared/themed-text";
 import { useTheme } from "../context/ThemeContext";
+import { ui } from "../themes/ui";
 
 type Slide = {
   id: string;
@@ -83,28 +84,19 @@ export default function SimpleCarousel({
             <View style={styles.overlay}>
               <View style={styles.contentWrapper}>
                 <View style={styles.actions}>
-                  <View style={{ flex: 1, gap: 8, maxWidth: 300 }}>
-                    <ThemedText
-                      type="title"
-                      numberOfLines={3}
-                      color={colors.text}
-                    >
+                  <View style={styles.titleBlock}>
+                    <ThemedText type="title" numberOfLines={3}>
                       {item.title}
                     </ThemedText>
-                    <ThemedText color={colors.text}>Facial</ThemedText>
+                    <ThemedText>Facial</ThemedText>
                   </View>
 
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      gap: 4,
-                      alignItems: "flex-end",
-                    }}
-                  >
+                  <View style={styles.iconActions}>
                     <Pressable
                       onPress={() => {
                         openInfoModal?.(item);
                       }}
+                      style={styles.iconHit}
                     >
                       <Ionicons
                         name="information-circle-outline"
@@ -112,7 +104,7 @@ export default function SimpleCarousel({
                         color={colors.text}
                       />
                     </Pressable>
-                    <Pressable>
+                    <Pressable style={styles.iconHit}>
                       <Ionicons name="add" size={20} color={colors.text} />
                     </Pressable>
                   </View>
@@ -157,8 +149,6 @@ function HeroButton({
   label: string;
   primary?: boolean;
 }) {
-  const { colors } = useTheme();
-
   return (
     <Pressable
       style={({ pressed }) => [
@@ -177,7 +167,8 @@ function HeroButton({
           color={primary ? "#000" : "#fff"}
         />
         <ThemedText
-          style={[styles.heroButtonText, { color: primary ? "#000" : "#fff" }]}
+          type="semiBold"
+          color={primary ? "#000" : "#fff"}
         >
           {label}
         </ThemedText>
@@ -190,25 +181,21 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
   },
-
   slide: {
     width: "100%",
     height: "100%",
   },
-
   image: {
     width: "100%",
     height: "100%",
     position: "absolute",
   },
-
   gradient: {
     position: "absolute",
     bottom: 0,
     width: "100%",
     height: "70%",
   },
-
   vignette: {
     position: "absolute",
     top: 0,
@@ -216,61 +203,66 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-
   overlay: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 20,
-    paddingBottom: 48,
+    paddingHorizontal: ui.spacing.xl,
+    paddingBottom: ui.spacing.xxl,
   },
-
   contentWrapper: {
     maxWidth: 600,
   },
-
   actions: {
     flexDirection: "row",
-    gap: 12,
+    gap: ui.spacing.md,
     width: "100%",
     justifyContent: "space-between",
     alignContent: "center",
-    marginTop: 24,
+    marginTop: ui.spacing.xl,
   },
-
+  titleBlock: {
+    flex: 1,
+    gap: ui.spacing.sm,
+    maxWidth: 300,
+  },
+  iconActions: {
+    flexDirection: "row",
+    gap: ui.spacing.xs,
+    alignItems: "flex-end",
+  },
+  iconHit: {
+    minWidth: ui.tapTarget,
+    minHeight: ui.tapTarget,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   heroButton: {
-    borderRadius: 8,
+    borderRadius: ui.radii.sm,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowRadius: ui.spacing.sm,
     elevation: 5,
   },
-
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    gap: ui.spacing.md,
+    paddingHorizontal: ui.spacing.xl,
+    paddingVertical: ui.spacing.md,
     minWidth: 140,
+    minHeight: ui.tapTarget,
     justifyContent: "center",
   },
-
-  heroButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    letterSpacing: 0.3,
-  },
-
   pagination: {
     position: "absolute",
-    bottom: 16,
+    bottom: ui.spacing.lg,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    gap: 8,
+    gap: ui.spacing.sm,
   },
 });

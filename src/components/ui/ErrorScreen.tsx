@@ -1,6 +1,7 @@
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -44,16 +45,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: ui.spacing.xxl,
     backgroundColor: "#FFF5F5",
   },
   copy: {
-    marginTop: 16,
-    gap: 12,
+    marginTop: ui.spacing.lg,
+    gap: ui.spacing.md,
     alignItems: "center",
   },
   retryWrap: {
-    marginTop: 24,
+    marginTop: ui.spacing.xl,
     width: "100%",
     maxWidth: 280,
   },

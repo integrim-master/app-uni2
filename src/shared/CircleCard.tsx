@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import ThemedText from "../components/shared/themed-text";
-import { useTheme } from "../context/ThemeContext";
+import { ui } from "../themes/ui";
 
 interface CircleCardProps {
   image: any;
@@ -18,53 +18,52 @@ const CircleCard: React.FC<CircleCardProps> = ({
   onPress,
   size = CIRCLE_SIZE,
 }) => {
-  const { colors } = useTheme();
-
-  const styles = (circleSize: number) =>
-    StyleSheet.create({
-      trendCircleCard: {
-        alignItems: "center",
-        width: circleSize + 20,
-      },
-      trendCircle: {
-        width: circleSize,
-        height: circleSize,
-        borderRadius: circleSize / 2,
-        overflow: "hidden",
-        backgroundColor: "#000",
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      trendCircleImage: {
-        width: "100%",
-        height: "100%",
-      },
-      circleOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(0,0,0,0.25)",
-      },
-      trendCircleTitle: {
-        marginTop: 8,
-        fontSize: 12,
-        fontWeight: "700",
-        textAlign: "center",
-      },
-    });
-
   return (
-    <Pressable style={styles(size).trendCircleCard} onPress={onPress}>
-      <View style={styles(size).trendCircle}>
-        <Image source={image} style={styles(size).trendCircleImage} />
-        <View style={styles(size).circleOverlay} />
-      </View>
-      <ThemedText
-        numberOfLines={2}
-        style={[styles(size).trendCircleTitle, { color: colors.text }]}
+    <Pressable
+      style={[styles.trendCircleCard, { width: size + ui.spacing.xl }]}
+      onPress={onPress}
+    >
+      <View
+        style={[
+          styles.trendCircle,
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+          },
+        ]}
       >
+        <Image source={image} style={styles.trendCircleImage} />
+        <View style={styles.circleOverlay} />
+      </View>
+      <ThemedText type="caption" weight="bold" align="center" numberOfLines={2} style={styles.trendCircleTitle}>
         {title}
       </ThemedText>
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  trendCircleCard: {
+    alignItems: "center",
+  },
+  trendCircle: {
+    overflow: "hidden",
+    backgroundColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  trendCircleImage: {
+    width: "100%",
+    height: "100%",
+  },
+  circleOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  trendCircleTitle: {
+    marginTop: ui.spacing.sm,
+  },
+});
 
 export default CircleCard;

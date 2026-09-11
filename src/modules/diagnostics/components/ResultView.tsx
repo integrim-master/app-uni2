@@ -4,6 +4,7 @@ import { Screen } from "@/src/components/shared/Screen";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useTreatments } from "@/src/modules/user/hooks/useTreatments";
+import { ui } from "@/src/themes/ui";
 import { normalizeString } from "@/src/utils/stringUtils";
 import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
@@ -70,10 +71,7 @@ export default function ResultView({
           No se recibió información del diagnóstico
         </ThemedText>
         <Pressable
-          style={[
-            styles.button,
-            { backgroundColor: colors.primary, marginTop: 20 },
-          ]}
+          style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={onReset}
         >
           <ThemedText type="semiBold" tone="inverse">
@@ -91,14 +89,14 @@ export default function ResultView({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[
             styles.container,
-            { paddingBottom: insets.bottom + 10 },
+            { paddingBottom: insets.bottom + ui.spacing.md },
           ]}
         >
           <ResultHeader colors={colors} imageUri={imageUri} />
 
           <View style={styles.resultsSection}>
             <View style={styles.sectionRow}>
-              <ThemedText type="subtitle" color={colors.primaryLight}>
+              <ThemedText type="subtitle" tone="primary">
                 Evaluación Clínica
               </ThemedText>
 
@@ -136,23 +134,13 @@ export default function ResultView({
 
           {procChips.some((c) => c.link) && (
             <View style={styles.treatmentsSection}>
-              <ThemedText
-                type="titleSm"
-                color={colors.primaryLight}
-                style={{
-                  marginBottom: 10,
-                }}
-              >
+              <ThemedText type="titleSm" tone="primary" style={styles.sectionTitle}>
                 Tratamientos Recomendados
               </ThemedText>
-              <View className="w-full flex-row flex-wrap justify-between p-2">
+              <View style={styles.chipsWrap}>
                 {procChips
-                  // .filter((c) => c.link)
                   .map((c) => (
-                    <View
-                      key={c.key}
-                      style={{ width: "48%", marginBottom: 16 }}
-                    >
+                    <View key={c.key} style={styles.chipCell}>
                       <TreatmentCard
                         title={c.label}
                         image={c.image}
@@ -174,17 +162,42 @@ export default function ResultView({
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 15, paddingTop: 20 },
-  center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  resultsSection: { marginBottom: 20 },
+  container: {
+    paddingHorizontal: ui.spacing.lg,
+    paddingTop: ui.spacing.xl,
+  },
+  resultsSection: { marginBottom: ui.spacing.xl },
   sectionRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: ui.spacing.xl,
   },
-  counterBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
-  treatmentsSection: { marginTop: 10 },
-
-  button: { paddingVertical: 18, paddingHorizontal: 24, borderRadius: 18 },
+  counterBadge: {
+    paddingHorizontal: ui.spacing.md,
+    paddingVertical: ui.spacing.xs,
+    borderRadius: ui.radii.md,
+  },
+  treatmentsSection: { marginTop: ui.spacing.md },
+  sectionTitle: { marginBottom: ui.spacing.md },
+  chipsWrap: {
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    padding: ui.spacing.sm,
+  },
+  chipCell: {
+    width: "48%",
+    marginBottom: ui.spacing.lg,
+  },
+  button: {
+    marginTop: ui.spacing.xl,
+    paddingVertical: ui.spacing.lg,
+    paddingHorizontal: ui.spacing.xl,
+    borderRadius: ui.radii.lg,
+    minHeight: ui.tapTarget,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

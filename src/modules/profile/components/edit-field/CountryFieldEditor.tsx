@@ -1,5 +1,7 @@
 import CustomPicker from "@/src/components/shared/CustomPicker";
 import ThemedText from "@/src/components/shared/themed-text";
+import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import React, { useMemo, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { useCountries } from "../../hooks/useCountries";
@@ -19,6 +21,7 @@ export function CountryFieldEditor({
   isPending,
   onSave,
 }: Props) {
+  const { colors } = useTheme();
   const { countries, isLoading, error: loadError } = useCountries();
   const [value, setValue] = useState(() => getProfileTextValue(user, field));
   const [error, setError] = useState<string | null>(null);
@@ -41,13 +44,18 @@ export function CountryFieldEditor({
       onSave={handleSave}
     >
       {isLoading ? (
-        <ActivityIndicator />
+        <View style={styles.loading} accessibilityLabel="Cargando países">
+          <ActivityIndicator color={colors.primary} />
+          <ThemedText type="caption" tone="secondary">
+            Cargando países…
+          </ThemedText>
+        </View>
       ) : loadError ? (
         <ThemedText type="caption" tone="danger">
           No se pudieron cargar los países. Intenta de nuevo.
         </ThemedText>
       ) : (
-        <View style={styles.pickerWrap} accessibilityLabel="Selector de país">
+        <View accessibilityLabel="Selector de país">
           <CustomPicker
             label="País"
             selectedValue={value}
@@ -64,5 +72,10 @@ export function CountryFieldEditor({
 }
 
 const styles = StyleSheet.create({
-  pickerWrap: { marginBottom: 8 },
+  loading: {
+    minHeight: ui.tapTarget,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: ui.spacing.sm,
+  },
 });

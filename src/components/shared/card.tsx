@@ -3,6 +3,7 @@ import { Link } from "expo-router";
 import React, { ReactNode } from "react";
 import { Platform, Pressable, StyleSheet, View, ViewStyle } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
+import { ui } from "../../themes/ui";
 
 interface CardProps {
   href?: string;
@@ -86,9 +87,9 @@ export function Card({
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1,
-    borderRadius: 24,
-    padding: 20,
+    borderWidth: ui.borders.width,
+    borderRadius: ui.radii.xl,
+    padding: ui.spacing.xl,
     overflow: "visible",
 
     ...Platform.select({
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.08,
-        shadowRadius: 16,
+        shadowRadius: ui.spacing.lg,
       },
     }),
   },

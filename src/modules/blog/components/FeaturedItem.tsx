@@ -1,7 +1,9 @@
 import Badge from "@/src/components/shared/Badge";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
   Pressable,
@@ -12,6 +14,8 @@ import {
 } from "react-native";
 import type { BlogPost } from "../types/blog.types";
 
+const FEATURED_HEIGHT = 380;
+
 type Props = {
   item: BlogPost;
   onPress?: () => void;
@@ -19,39 +23,51 @@ type Props = {
 };
 
 export default function FeaturedItem({ item, onPress, style }: Props) {
+  const categoryName = item.category?.[0]?.name;
   const { colors } = useTheme();
-
   return (
     <Pressable onPress={onPress} style={style as any}>
-      <View style={[styles.container, { backgroundColor: colors.card }]}>
-        <Image
-          source={{ uri: item.image }}
-          style={styles.image}
-          contentFit="cover"
-        />
-        <View
-          style={[
-            styles.overlay,
-            { backgroundColor: colors.backgroundSurface + "80" },
-          ]}
-        >
-          <Badge
-            text={item.category}
-            variant="white"
-            size="small"
-            showIcon={false}
-            style={{ marginBottom: 12 }}
+      <View style={styles.container}>
+        {item.image ? (
+          <Image
+            source={{ uri: item.image }}
+            style={styles.image}
+            contentFit="cover"
           />
-
-          <ThemedText style={[styles.title, { color: colors.text }]}>
+        ) : (
+          <View style={[styles.image, styles.imageFallback]} />
+        )}
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.75)"]}
+          style={StyleSheet.absoluteFillObject}
+        />
+        <View style={styles.overlay}>
+          {categoryName ? (
+            <Badge
+              text={categoryName}
+              variant="white"
+              size="xs"
+              showIcon={false}
+            />
+          ) : null}
+          <ThemedText type="title" color={colors.textStrong} numberOfLines={4}>
             {item.title}
           </ThemedText>
-          <ThemedText
-            style={[styles.summary, { color: colors.textSecondary }]}
-            numberOfLines={2}
-          >
-            {item.summary}
-          </ThemedText>
+          {/* {item.summary ? (
+            <ThemedText
+              type="body"
+              tone="inverse"
+              numberOfLines={2}
+              style={styles.summary}
+            >
+              {item.summary}
+            </ThemedText>
+          ) : null} */}
+          {/* {item.date ? (
+            <ThemedText type="caption" tone="inverse" style={styles.date}>
+              {item.date}
+            </ThemedText>
+          ) : null} */}
         </View>
       </View>
     </Pressable>
@@ -60,37 +76,34 @@ export default function FeaturedItem({ item, onPress, style }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 400,
+    height: FEATURED_HEIGHT,
     overflow: "hidden",
-    borderRadius: 40,
+    borderRadius: ui.radii.xl,
   },
   image: {
     width: "100%",
     height: "100%",
   },
+  imageFallback: {
+    backgroundColor: "#CBD5E1",
+  },
   overlay: {
     position: "absolute",
     left: 0,
     right: 0,
-    top: 0,
     bottom: 0,
-    justifyContent: "flex-end",
-    padding: 20,
+    padding: ui.spacing.xl,
   },
-  badgeWrapper: {
+  badge: {
+    marginBottom: ui.spacing.md,
     alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "700",
-    lineHeight: 34,
   },
   summary: {
-    fontSize: 14,
-    marginTop: 10,
+    marginTop: ui.spacing.md,
+    opacity: 0.9,
+  },
+  date: {
+    marginTop: ui.spacing.sm,
+    opacity: 0.8,
   },
 });

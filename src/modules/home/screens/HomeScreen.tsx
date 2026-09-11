@@ -43,7 +43,7 @@ const HomeScreen: React.FC<Props> = ({
       style={styles.scroll}
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ paddingBottom: ui.spacing.lg }}
+      contentContainerStyle={styles.content}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -73,46 +73,8 @@ const styles = StyleSheet.create({
   scroll: {
     flex: 1,
   },
-
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 32,
-    backgroundColor: "#FFF5F5",
-  },
-
-  errorTitle: {
-    marginTop: 16,
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#C62828",
-    textAlign: "center",
-  },
-
-  errorMessage: {
-    marginTop: 12,
-    fontSize: 16,
-    color: "#8E0000",
-    textAlign: "center",
-    lineHeight: 22,
-  },
-
-  tabSection: {
-    alignItems: "center",
-  },
-
-  sectionTitle: {
-    marginTop: 10,
-    marginBottom: 20,
-    fontWeight: "600",
-  },
-
-  benefitsSection: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 20,
-    borderRadius: ui.radii.lg,
+  content: {
+    paddingBottom: ui.spacing.xl,
   },
 });
 

@@ -1,5 +1,6 @@
 import Badge from "@/src/components/shared/Badge";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -57,7 +58,7 @@ export default function CitaCard({
             size={15}
             color={colors.textSecondary}
           />
-          <ThemedText type="semiBold" color={colors.textSecondary}>
+          <ThemedText type="caption" color={colors.textSecondary}>
             {cita.fecha_cita}
           </ThemedText>
         </View>
@@ -70,7 +71,7 @@ export default function CitaCard({
             size={15}
             color={colors.textSecondary}
           />
-          <ThemedText type="semiBold" color={colors.textSecondary}>
+          <ThemedText type="caption" color={colors.textSecondary}>
             {cita.hora_cita}
           </ThemedText>
         </View>
@@ -85,21 +86,18 @@ export default function CitaCard({
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 16,
-    padding: 18,
     flexDirection: "column",
-    gap: 16,
-    borderRadius: 18,
+    gap: ui.spacing.lg,
   },
   header: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    gap: 12,
+    gap: ui.spacing.md,
   },
   titleColumn: {
     flex: 1,
-    gap: 6,
+    gap: ui.spacing.sm,
   },
   title: {
     textTransform: "capitalize",
@@ -107,21 +105,21 @@ const styles = StyleSheet.create({
   location: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: ui.spacing.xs,
   },
   footer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: ui.spacing.md,
   },
   metaItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: ui.spacing.sm,
   },
   divider: {
-    width: 1,
-    height: 14,
+    width: ui.borders.width,
+    height: ui.spacing.md,
     opacity: 0.6,
   },
   spacer: {

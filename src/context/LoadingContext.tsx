@@ -1,3 +1,5 @@
+import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { BlurTargetView, BlurView } from "expo-blur";
 import LottieView from "lottie-react-native";
 import React, {
@@ -11,7 +13,6 @@ import {
   ImageSourcePropType,
   Platform,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 
@@ -81,15 +82,19 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
               style={StyleSheet.absoluteFill}
             />
 
-            <View className="flex-1 items-center justify-center gap-4 p-4">
-              <View className="size-80">
+            <View style={styles.center}>
+              <View style={styles.lottieWrap}>
                 <LottieView
                   source={require("@/assets/animations/loader.json")}
                   autoPlay
                   loop
                   style={styles.lottie}
                 />
-                {message ? <Text style={styles.message}>{message}</Text> : null}
+                {message ? (
+                  <ThemedText type="caption" tone="inverse" align="center">
+                    {message}
+                  </ThemedText>
+                ) : null}
               </View>
             </View>
           </View>
@@ -121,8 +126,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 32,
-    gap: 16,
+    paddingHorizontal: ui.spacing.xxl,
+    gap: ui.spacing.lg,
   },
   lottieWrap: {
     width: 280,
@@ -131,12 +136,5 @@ const styles = StyleSheet.create({
   lottie: {
     width: "100%",
     height: "100%",
-  },
-  message: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.9)",
-    textAlign: "center",
-    letterSpacing: 0.4,
   },
 });

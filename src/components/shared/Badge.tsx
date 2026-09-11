@@ -2,6 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
+import { ui } from "../../themes/ui";
 import ThemedText from "./themed-text";
 
 type BadgeVariant =
@@ -80,35 +81,31 @@ export default function Badge({
     switch (size) {
       case "xs":
         return {
-          paddingHorizontal: 6,
-          paddingVertical: 2,
-          fontSize: 9,
+          paddingHorizontal: ui.spacing.xs,
+          paddingVertical: ui.spacing.xs,
           iconSize: 10,
-          gap: 3,
+          gap: ui.spacing.xs,
         };
       case "small":
         return {
-          paddingHorizontal: 8,
-          paddingVertical: 3,
-          fontSize: 10,
+          paddingHorizontal: ui.spacing.sm,
+          paddingVertical: ui.spacing.xs,
           iconSize: 12,
-          gap: 4,
+          gap: ui.spacing.xs,
         };
       case "large":
         return {
-          paddingHorizontal: 16,
-          paddingVertical: 8,
-          fontSize: 13,
+          paddingHorizontal: ui.spacing.lg,
+          paddingVertical: ui.spacing.sm,
           iconSize: 16,
-          gap: 8,
+          gap: ui.spacing.sm,
         };
       default:
         return {
-          paddingHorizontal: 12,
-          paddingVertical: 5,
-          fontSize: 11,
+          paddingHorizontal: ui.spacing.md,
+          paddingVertical: ui.spacing.xs,
           iconSize: 14,
-          gap: 6,
+          gap: ui.spacing.xs,
         };
     }
   };
@@ -153,23 +150,14 @@ export default function Badge({
         style,
       ]}
     >
-      {displayIcon && (
+      {displayIcon ? (
         <MaterialIcons
           name={displayIcon}
           size={sizeStyles.iconSize}
           color={variantColors.text}
         />
-      )}
-      <ThemedText
-        style={[
-          styles.badgeText,
-          {
-            fontSize: sizeStyles.fontSize,
-            color: variantColors.text,
-            textAlign: "center",
-          },
-        ]}
-      >
+      ) : null}
+      <ThemedText type="label" color={variantColors.text} align="center">
         {text}
       </ThemedText>
     </View>
@@ -178,15 +166,9 @@ export default function Badge({
 
 const styles = StyleSheet.create({
   badge: {
-    borderWidth: 0.8,
-    borderRadius: 9,
+    borderWidth: ui.borders.hairline,
+    borderRadius: ui.radii.xl,
     alignItems: "center",
     justifyContent: "center",
-  },
-  badgeText: {
-    fontFamily: "Roboto-Medium",
-    fontWeight: "600",
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
   },
 });

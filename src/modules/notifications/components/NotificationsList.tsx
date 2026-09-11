@@ -1,6 +1,7 @@
 import EmptySvgPush from "@/assets/svg/Push.svg";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import React, { useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import { NotificationsResponse } from "../types/notifications.types";
@@ -42,14 +43,10 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <EmptySvgPush width={280} height={280} style={styles.emptyImage} />
-      <ThemedText
-        type="subtitle"
-        color={colors.primaryLight}
-        style={styles.emptyTitle}
-      >
+      <ThemedText type="subtitle" tone="primary" align="center" style={styles.emptyTitle}>
         Sin notificaciones aún
       </ThemedText>
-      <ThemedText color={colors.textSecondary} style={styles.emptyText}>
+      <ThemedText type="body" tone="secondary" align="center">
         Cuando recibas novedades, las verás en este espacio.
       </ThemedText>
     </View>
@@ -85,7 +82,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingVertical: 8,
+    paddingVertical: ui.spacing.sm,
   },
   skeletonContainer: {
     flex: 1,
@@ -94,17 +91,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: ui.spacing.xl,
   },
   emptyImage: {
-    marginBottom: 24,
+    marginBottom: ui.spacing.xl,
   },
   emptyTitle: {
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  emptyText: {
-    textAlign: "center",
-    fontSize: 16,
+    marginBottom: ui.spacing.sm,
   },
 });

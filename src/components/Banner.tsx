@@ -3,6 +3,7 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import React from "react";
 import { Image, Modal, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ui } from "@/src/themes/ui";
 import { BannerMedia } from "../modules/banner/types/banner.type";
 
 interface BannerProps {
@@ -44,8 +45,8 @@ export const BannerModal = ({ bannerData, visible, onClose }: BannerProps) => {
           />
         )}
 
-        <View style={[styles.header, { top: insets.top + 10 }]}>
-          <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={15}>
+        <View style={[styles.header, { top: insets.top + ui.spacing.sm }]}>
+          <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={ui.spacing.md}>
             <MaterialIcons name="close" size={24} color="#FFF" />
           </Pressable>
         </View>
@@ -74,17 +75,17 @@ const styles = StyleSheet.create({
   },
   header: {
     position: "absolute",
-    right: 20,
+    right: ui.spacing.lg,
     zIndex: 50,
   },
   closeBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: ui.tapTarget,
+    height: ui.tapTarget,
+    borderRadius: ui.radii.pill,
     backgroundColor: "rgba(0,0,0,0.4)",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
+    borderWidth: ui.borders.width,
     borderColor: "rgba(255,255,255,0.2)",
   },
   footer: {

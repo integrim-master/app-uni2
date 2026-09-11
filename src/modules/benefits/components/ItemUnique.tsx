@@ -13,7 +13,6 @@ import { ItemUniqueProps } from "../types/benefits.types";
 
 export default function ItemUnique({
   data,
-  benefitRedemed,
   activeBenefitId,
   isPendingRedeem,
   onPressRedeem,
@@ -21,16 +20,17 @@ export default function ItemUnique({
 }: ItemUniqueProps) {
   const { colors, isDark } = useTheme();
 
+  // `data.active` es la fuente de verdad que envía el backend: indica que
+  // ESTE beneficio fue reclamado y está esperando confirmación.
+  // `isThisBenefitActive` (por `activeBenefitId`) solo se usa como respaldo
+  // optimista mientras la mutación de "aplicar" está en vuelo y todavía no
+  // se refresca la data del backend.
   const isThisBenefitActive = activeBenefitId === String(data.id);
   console.log("activeBenefitId", activeBenefitId);
   console.log("data.id", data.id);
   const isAnyBenefitActive = activeBenefitId !== null;
 
-  console.log("isThisBenefitActive", isThisBenefitActive, isAnyBenefitActive);
-  const isThisBenefitRedeemedByBackend =
-    Number(benefitRedemed?.id_procedimiento) === data.id;
-
-  const isActive = isThisBenefitActive || isThisBenefitRedeemedByBackend;
+  const isActive = data.active || isThisBenefitActive;
   const borderColor = isActive ? colors.primary : colors.border;
 
   return (
@@ -40,7 +40,6 @@ export default function ItemUnique({
           <ThemedText
             type="titleSm"
             color={colors.textStrong}
-            style={styles.titleSpacing}
             numberOfLines={2}
           >
             {data.title || "Nombre del beneficio"}
@@ -53,49 +52,30 @@ export default function ItemUnique({
             {data.description}
           </ThemedText>
         </View>
-
-        {/* <Badge
-          text={
-            data.remaining > 0
-              ? `Restantes: ${data.remaining ?? 0}`
-              : `Usado${data.used > 1 ? "s" : ""}: ${data.used}`
-          }
-          icon={"circle"}
-          variant={data.remaining > 0 ? "success" : "default"}
-          style={styles.estadoBadge}
-        /> */}
       </View>
 
-      {data ? (
-        <View style={styles.infoPillsWrap}>
+      <View className="flex flex-row  gap-2">
+        <Badge
+          text={`${data.remaining ?? 0} disponibles`}
+          icon="inventory"
+          variant={(data.remaining ?? 0) > 0 ? "success" : "neutral"}
+          size="xs"
+        />
+        {/* <Badge
+          text="Válido hasta 31 Dic 2026"
+          icon="event"
+          variant="neutral"
+          size="xs"
+        /> */}
+        {isActive && (
           <Badge
-            text={String(data.precio || 0)}
-            icon="attach-money"
-            variant="neutral"
-            size="small"
+            size="xs"
+            text={BENEFIT_STATUS_LABELS.EN_ESPERA}
+            icon="hourglass-empty"
+            variant="warning"
           />
-          {isActive && benefitRedemed?.estado && (
-            <Badge
-              size="small"
-              text={
-                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                  ? BENEFIT_STATUS_LABELS.EN_ESPERA
-                  : BENEFIT_STATUS_LABELS.CANJEADO
-              }
-              icon={
-                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                  ? "hourglass-empty"
-                  : "check-circle"
-              }
-              variant={
-                benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                  ? "warning"
-                  : "success"
-              }
-            />
-          )}
-        </View>
-      ) : null}
+        )}
+      </View>
       <View style={styles.perforationWrap}>
         <View
           style={[
@@ -138,27 +118,6 @@ export default function ItemUnique({
             }
           />
         </View>
-
-        {/* {isActive && benefitRedemed?.estado && (
-          <Badge
-            text={
-              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                ? BENEFIT_STATUS_LABELS.EN_ESPERA
-                : BENEFIT_STATUS_LABELS.CANJEADO
-            }
-            icon={
-              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                ? "hourglass-empty"
-                : "check-circle"
-            }
-            variant={
-              benefitRedemed.estado === BENEFIT_STATUS_LABELS.EN_ESPERA
-                ? "warning"
-                : "success"
-            }
-            style={styles.pendingBadge}
-          />
-        )} */}
       </View>
     </Card>
   );
@@ -168,31 +127,25 @@ const styles = StyleSheet.create({
   topSection: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 14,
-    gap: 12,
+    marginBottom: ui.spacing.md,
+    gap: ui.spacing.md,
   },
   titleColumn: {
     flex: 1,
     justifyContent: "center",
+    gap: ui.spacing.sm,
   },
-  titleSpacing: {
-    marginBottom: 4,
-  },
-  estadoBadge: {
-    alignSelf: "flex-start",
-  },
-
   infoPillsWrap: {
     flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
-    gap: 8,
-    marginTop: 4,
+    gap: ui.spacing.sm,
   },
   perforationWrap: {
     marginVertical: ui.spacing.lg,
   },
   perforationLine: {
-    borderTopWidth: 1.5,
+    borderTopWidth: ui.borders.width,
     borderStyle: "dashed",
     opacity: 0.5,
   },
@@ -204,7 +157,7 @@ const styles = StyleSheet.create({
 
   ctaRow: {
     flexDirection: "column",
-    gap: 10,
+    gap: ui.spacing.md,
     width: "100%",
   },
   verBtn: {
@@ -215,7 +168,5 @@ const styles = StyleSheet.create({
   },
   applyText: {
     color: Colors.cardText,
-    fontSize: 14,
-    fontWeight: "800",
   },
 });

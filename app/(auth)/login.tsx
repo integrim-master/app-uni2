@@ -1,20 +1,22 @@
 import ConfirmActionModal from "@/src/components/shared/ConfirmActionModal";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
-import ThemedText from "@/src/components/shared/themed-text";
+import ThemedText, { TYPE_SIZE } from "@/src/components/shared/themed-text";
 import { useAuth } from "@/src/context/AuthContext";
 import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useTerms } from "@/src/modules/login/hooks/useTerms";
+import { ui } from "@/src/themes/ui";
 import React, { useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
   TextInput,
-  View
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -103,23 +105,19 @@ const Login = () => {
         }}
         description={
           <>
-            <ThemedText
-              type="caption"
-              style={{ marginBottom: 20, textAlign: "center" }}
-            >
+            <ThemedText type="caption" align="center" style={styles.modalCopy}>
               Para continuar, debes aceptar nuestra política de privacidad. Por
               favor, revisa los términos y condiciones en el siguiente link.
             </ThemedText>
 
             <ThemedText
               type="link"
-              style={{ marginBottom: 20, textAlign: "center" }}
+              align="center"
+              style={styles.modalCopy}
               onPress={() => {
-                import("react-native").then(({ Linking }) => {
-                  Linking.openURL(
-                    "https://careme360.com/wp-content/uploads/2026/01/POLITICA-DE-TRATAMIENTO-DE-DATOS-CARE-ME-1.pdf",
-                  );
-                });
+                Linking.openURL(
+                  "https://careme360.com/wp-content/uploads/2026/01/POLITICA-DE-TRATAMIENTO-DE-DATOS-CARE-ME-1.pdf",
+                );
               }}
             >
               Ver Política de Privacidad
@@ -130,11 +128,11 @@ const Login = () => {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        style={styles.flex}
       >
         <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          style={styles.flex}
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
@@ -149,22 +147,17 @@ const Login = () => {
             <View
               style={[styles.formContainer, { backgroundColor: colors.card }]}
             >
-              <View style={{ marginBottom: 24, alignItems: "center" }}>
-                <ThemedText
-                  type="title"
-                  style={[styles.welcomeText, { color: colors.text }]}
-                >
+              <View style={styles.welcomeBlock}>
+                <ThemedText type="title" style={styles.welcomeText}>
                   Bienvenido
                 </ThemedText>
-                <ThemedText
-                  style={[styles.subtitleText, { color: colors.textSecondary }]}
-                >
+                <ThemedText type="body" tone="secondary">
                   Inicia sesión en tu cuenta
                 </ThemedText>
               </View>
 
               <View style={styles.inputWrapper}>
-                <ThemedText style={[styles.label, { color: colors.text }]}>
+                <ThemedText type="label" style={styles.label}>
                   Usuario o Email
                 </ThemedText>
                 <TextInput
@@ -186,7 +179,7 @@ const Login = () => {
               </View>
 
               <View style={styles.inputWrapper}>
-                <ThemedText style={[styles.label, { color: colors.text }]}>
+                <ThemedText type="label" style={styles.label}>
                   Contraseña
                 </ThemedText>
                 <TextInput
@@ -207,14 +200,6 @@ const Login = () => {
                   secureTextEntry
                 />
               </View>
-              {/* 
-              <Pressable style={styles.forgotPassword}>
-                <ThemedText
-                  style={[styles.forgotPasswordText, { color: colors.primary }]}
-                >
-                  ¿Olvidaste tu contraseña?
-                </ThemedText>
-              </Pressable> */}
 
               <PrimaryButton
                 title="Iniciar Sesión"
@@ -222,10 +207,6 @@ const Login = () => {
                   void handleLogin();
                 }}
                 loading={Boolean(isAuthTransitioning)}
-              />
-
-              <View
-                style={[styles.divider, { backgroundColor: colors.border }]}
               />
             </View>
           </View>
@@ -239,51 +220,55 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+  flex: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
   container: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingVertical: ui.spacing.lg,
   },
   header: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: ui.spacing.xxl,
   },
   logo: {
     width: 200,
     height: 80,
-    marginBottom: 16,
+    marginBottom: ui.spacing.lg,
+  },
+  welcomeBlock: {
+    marginBottom: ui.spacing.xl,
+    alignItems: "center",
   },
   welcomeText: {
-    marginBottom: 8,
+    marginBottom: ui.spacing.sm,
   },
-  subtitleText: {},
   formContainer: {
-    borderRadius: 10,
-    padding: 28,
-    gap: 16,
+    borderRadius: ui.radii.lg,
+    padding: ui.spacing.xl,
+    gap: ui.spacing.lg,
   },
   inputWrapper: {
-    marginBottom: 18,
+    gap: ui.spacing.sm,
   },
   label: {
-    marginBottom: 8,
+    marginBottom: 0,
   },
   input: {
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 15,
-    fontWeight: "500",
-    borderWidth: 1,
+    borderRadius: ui.radii.md,
+    paddingHorizontal: ui.spacing.lg,
+    paddingVertical: ui.spacing.md,
+    fontSize: TYPE_SIZE.body,
+    borderWidth: ui.borders.width,
+    minHeight: ui.tapTarget,
   },
-  forgotPassword: {
-    alignSelf: "center",
-  },
-  forgotPasswordText: {},
-  divider: {
-    height: 1,
-    marginVertical: 16,
+  modalCopy: {
+    marginBottom: ui.spacing.xl,
   },
 });
 

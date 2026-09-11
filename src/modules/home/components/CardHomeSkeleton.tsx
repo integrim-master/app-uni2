@@ -1,7 +1,8 @@
+import { ui } from "@/src/themes/ui";
 import { LinearGradient } from "expo-linear-gradient";
 import { Skeleton } from "moti/skeleton";
 import React from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTheme } from "../../../context/ThemeContext";
 
 interface CardHomeSkeletonProps {
@@ -16,74 +17,89 @@ export function CardHomeSkeleton({ isBlack }: CardHomeSkeletonProps) {
     : ["rgba(0,0,0,0.08)", "rgba(0,0,0,0.14)"];
 
   return (
-    <View style={{ shadowColor: colors.primaryLight, borderRadius: 24 }}>
-      <View className="rounded-2xl overflow-hidden">
+    <View style={[styles.wrap, { shadowColor: colors.primaryLight }]}>
+      <View style={styles.card}>
         <LinearGradient
           colors={colors.gradientCard as any}
-          style={{ padding: 20, gap: 16 }}
+          style={styles.inner}
         >
-          <View className="flex-row justify-between items-center">
+          <View style={styles.headerRow}>
             <Skeleton
               width={80}
               height={22}
-              radius={8}
+              radius={ui.radii.sm}
               colors={skeletonColors}
             />
             <Skeleton
               width={140}
               height={28}
-              radius={8}
+              radius={ui.radii.sm}
               colors={skeletonColors}
             />
           </View>
 
           <Skeleton
-            width={140}
-            height={14}
-            radius={6}
+            width={ui.tapTarget}
+            height={ui.spacing.xxl}
+            radius={ui.radii.sm}
             colors={skeletonColors}
           />
 
-          <View className="gap-2">
-            <View className="flex-row justify-between">
+          <View style={styles.stats}>
+            <View style={styles.statsRow}>
               <Skeleton
                 width={160}
                 height={14}
-                radius={6}
+                radius={ui.radii.sm}
                 colors={skeletonColors}
               />
               <Skeleton
                 width={50}
                 height={14}
-                radius={6}
+                radius={ui.radii.sm}
                 colors={skeletonColors}
               />
             </View>
 
             <Skeleton
               width="100%"
-              height={6}
-              radius={999}
+              height={ui.spacing.xs}
+              radius={ui.radii.pill}
               colors={skeletonColors}
             />
           </View>
         </LinearGradient>
-
-        <View
-          style={{
-            backgroundColor: colors.card,
-            padding: 12,
-            alignItems: "center",
-          }}
-        >
-          <Skeleton
-            width={220}
-            height={14}
-            radius={6}
-            colors={skeletonColors}
-          />
-        </View>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrap: {
+    width: "100%",
+    borderRadius: ui.radii.xl,
+  },
+  card: {
+    width: "100%",
+    aspectRatio: 5 / 3,
+    borderRadius: ui.radii.xl,
+    overflow: "hidden",
+  },
+  inner: {
+    flex: 1,
+    justifyContent: "space-between",
+    padding: ui.spacing.xl,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  stats: {
+    gap: ui.spacing.sm,
+  },
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+});

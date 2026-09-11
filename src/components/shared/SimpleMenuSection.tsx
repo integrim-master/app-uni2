@@ -1,7 +1,13 @@
 import { useTheme } from "@/src/context/ThemeContext";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Linking, TouchableOpacity, View } from "react-native";
+import {
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import ThemedText from "./themed-text";
 
 interface SimpleMenuSectionItem {
@@ -61,10 +67,9 @@ export const SimpleMenuSection = ({
         key={idx}
         activeOpacity={item.onPress || item.link ? 0.7 : 1}
         onPress={handlePress}
-        style={{ borderColor: colors.border }}
-        className="flex w-full  justify-between px-4 items-center flex-row gap-4 py-4"
+        style={[styles.row, { borderColor: colors.border }]}
       >
-        <View className="flex flex-row gap-4 items-center">
+        <View style={styles.rowLeft}>
           {item.icon !== "" && (
             <Ionicons
               name={item.icon as any}
@@ -72,46 +77,38 @@ export const SimpleMenuSection = ({
               color={colors.textSecondary}
             />
           )}
-          <View className="flex flex-col">
+          <View style={styles.copy}>
             <ThemedText
               type="subtitle"
               color={item.textColor || resolvedTextColor}
             >
               {item.title}
             </ThemedText>
-            {item.subtitle && (
-              <ThemedText type="caption" color={colors.textSecondary}>
+            {item.subtitle ? (
+              <ThemedText type="caption" tone="secondary">
                 {item.subtitle}
               </ThemedText>
-            )}
+            ) : null}
           </View>
         </View>
-        {item.rightIcon && (
+        {item.rightIcon ? (
           <Ionicons
             name={item.rightIcon as any}
             size={20}
             color={colors.textSecondary}
           />
-        )}
+        ) : null}
       </TouchableOpacity>
     );
   };
 
   return (
     <>
-      {sectionTitle && (
-        <ThemedText
-          type="subtitle"
-          color={colors.primaryLight}
-          style={{
-            marginBottom: 8,
-            fontWeight: "800",
-            marginTop: 16,
-          }}
-        >
+      {sectionTitle ? (
+        <ThemedText type="label" tone="primary" style={styles.sectionTitle}>
           {sectionTitle}
         </ThemedText>
-      )}
+      ) : null}
       {items && items.length > 0
         ? items.map(renderItem)
         : renderItem(
@@ -129,3 +126,28 @@ export const SimpleMenuSection = ({
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  row: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: ui.spacing.md,
+    gap: ui.spacing.md,
+  },
+  rowLeft: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: ui.spacing.md,
+  },
+  copy: {
+    flex: 1,
+    gap: ui.spacing.xs,
+  },
+  sectionTitle: {
+    marginBottom: ui.spacing.sm,
+    marginTop: ui.spacing.lg,
+  },
+});

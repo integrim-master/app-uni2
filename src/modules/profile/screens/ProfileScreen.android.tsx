@@ -12,7 +12,8 @@ import { Screen } from "@/src/components/shared/Screen";
 import { SimpleMenuSection } from "@/src/components/shared/SimpleMenuSection";
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
-import { ScrollView, View } from "react-native";
+import { ui } from "@/src/themes/ui";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProfileHeader } from "../components/ProfileHeader";
 import { useProfileScreen } from "../hooks/useProfileScreen";
@@ -35,27 +36,22 @@ export function ProfileScreen() {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: insets.bottom + 24,
+          paddingBottom: insets.bottom + ui.spacing.xl,
         }}
         showsVerticalScrollIndicator={false}
       >
         <ProfileHeader userName={userName} onPress={goToProfileDetails} />
 
-        <View className="flex-1 px-4 pt-6">
-          <ThemedText
-            type="caption"
-            color={colors.textMuted}
-            style={{ marginLeft: 4, marginBottom: 8, letterSpacing: 0.4 }}
-          >
-            GENERAL
+        <View style={styles.body}>
+          <ThemedText type="label" tone="muted" style={styles.sectionLabel}>
+            General
           </ThemedText>
 
           <View
-            style={{
-              backgroundColor: colors.backgroundElevated,
-              borderRadius: 16,
-              overflow: "hidden",
-            }}
+            style={[
+              styles.group,
+              { backgroundColor: colors.backgroundElevated },
+            ]}
           >
             <SimpleMenuSection
               title="Contactar asesor"
@@ -65,11 +61,7 @@ export function ProfileScreen() {
               onPress={contactAdvisor}
             />
             <View
-              style={{
-                height: 1,
-                backgroundColor: colors.border,
-                marginLeft: 56,
-              }}
+              style={[styles.divider, { backgroundColor: colors.border }]}
             />
             <SimpleMenuSection
               title="Tratamiento de datos"
@@ -81,7 +73,7 @@ export function ProfileScreen() {
           </View>
         </View>
 
-        <View className="px-4 pt-8">
+        <View style={styles.logoutWrap}>
           <PrimaryButton
             title="Cerrar sesión"
             variant="primary"
@@ -103,3 +95,27 @@ export function ProfileScreen() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  body: {
+    flex: 1,
+    paddingHorizontal: ui.spacing.lg,
+    paddingTop: ui.spacing.xl,
+  },
+  sectionLabel: {
+    marginBottom: ui.spacing.sm,
+  },
+  group: {
+    borderRadius: ui.radii.lg,
+    overflow: "hidden",
+    paddingHorizontal: ui.spacing.lg,
+  },
+  divider: {
+    height: ui.borders.width,
+    marginLeft: 48,
+  },
+  logoutWrap: {
+    paddingHorizontal: ui.spacing.lg,
+    paddingTop: ui.spacing.xl,
+  },
+});

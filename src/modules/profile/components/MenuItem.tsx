@@ -1,7 +1,7 @@
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
 
 export type MenuItemProps = {
   icon?: string;
@@ -20,53 +20,38 @@ export function MenuItem({
   label,
   color,
   textColor,
-  isLast,
   title,
   onPress,
 }: MenuItemProps) {
-  const { colors } = useTheme();
   const Container = onPress ? Pressable : View;
   return (
     <Container
       {...(onPress ? { onPress } : {})}
-      style={[
-        styles.menuItem,
-        isLast && styles.menuItemLast,
-        {
-          backgroundColor: "transparent",
-          borderColor: "transparent",
-          borderWidth: 0,
-          borderRadius: 0,
-          marginBottom: 0,
-        },
-      ]}
+      style={styles.menuItem}
     >
       <View style={styles.menuContent}>
-        {icon && (
+        {icon ? (
           <Ionicons
             name={icon as any}
             size={24}
             color={color}
             style={styles.menuIcon}
           />
-        )}
-        <View className="">
-          {title && (
-            <ThemedText
-              type="caption"
-              weight="bold"
-              color={colors.secondaryDark}
-              style={{ opacity: 0.7, marginBottom: 2 }}
-            >
+        ) : null}
+        <View style={styles.copy}>
+          {title ? (
+            <ThemedText type="caption" tone="muted">
               {title}
             </ThemedText>
-          )}
-          <ThemedText type="body" weight="medium" color={textColor}>
+          ) : null}
+          <ThemedText type="body" color={textColor}>
             {label}
           </ThemedText>
         </View>
       </View>
-      {onPress && <Ionicons name="chevron-forward" size={20} color={color} />}
+      {onPress ? (
+        <Ionicons name="chevron-forward" size={20} color={color} />
+      ) : null}
     </Container>
   );
 }
@@ -76,16 +61,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
-  },
-  menuItemLast: {
-    borderBottomWidth: 0,
+    padding: ui.spacing.lg,
+    minHeight: ui.tapTarget,
   },
   menuContent: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
   },
+  copy: {
+    flex: 1,
+    gap: ui.spacing.xs,
+  },
   menuIcon: {
-    marginRight: 16,
+    marginRight: ui.spacing.lg,
   },
 });

@@ -1,6 +1,7 @@
 import Badge from "@/src/components/shared/Badge";
 import { Card } from "@/src/components/shared/card";
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { BenefitUsed } from "@/src/types/shared/Benefits.type";
 import { formatDateToText } from "@/src/utils/stringUtils";
 import React from "react";
@@ -50,11 +51,11 @@ const styles = StyleSheet.create({
   topSection: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 12,
+    gap: ui.spacing.md,
   },
   titleColumn: {
     flex: 1,
     justifyContent: "center",
-    gap: 4,
+    gap: ui.spacing.sm,
   },
 });

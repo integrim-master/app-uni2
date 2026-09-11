@@ -1,4 +1,5 @@
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { MotiView } from "moti";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -25,7 +26,7 @@ export default function DiagnosticCard({
     >
       <View style={styles.row}></View>
       <ThemedText type="subtitle">{title}</ThemedText>
-      <ThemedText style={styles.diagDesc} color={colors.textSecondary}>
+      <ThemedText type="body" color={colors.textSecondary}>
         {description}
       </ThemedText>
     </MotiView>
@@ -34,14 +35,15 @@ export default function DiagnosticCard({
 
 const styles = StyleSheet.create({
   blogItem: {
-    marginBottom: 25,
-    borderBottomWidth: 1,
+    marginBottom: ui.spacing.xl,
+    borderBottomWidth: ui.borders.width,
     borderBottomColor: "rgba(0,0,0,0.05)",
-    paddingBottom: 15,
+    paddingBottom: ui.spacing.lg,
   },
-  row: { flexDirection: "row", alignItems: "center", marginBottom: 6, gap: 8 },
-  category: { fontSize: 10, fontWeight: "800", letterSpacing: 1 },
-  dot: { width: 4, height: 4, borderRadius: 2 },
-  diagName: { fontSize: 18, fontWeight: "700", marginBottom: 6 },
-  diagDesc: { fontSize: 14, lineHeight: 22 },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: ui.spacing.sm,
+    gap: ui.spacing.sm,
+  },
 });

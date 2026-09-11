@@ -1,4 +1,5 @@
 import ThemedText from "@/src/components/shared/themed-text";
+import { ui } from "@/src/themes/ui";
 import { Benefits } from "@/src/types/shared/Benefits.type";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -87,13 +88,10 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
   });
 
   return (
-    <Animated.View
-      className="mx-4"
-      style={{ opacity: fadeAnim, transform: [{ scale }] }}
-    >
+    <Animated.View style={[styles.wrap, { opacity: fadeAnim, transform: [{ scale }] }]}>
       <View
-        className="w-full aspect-[5/3] rounded-[22px] overflow-hidden"
         style={[
+          styles.card,
           { shadowColor: glowColor },
           Platform.select({
             ios: {
@@ -123,23 +121,20 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
               colors={["transparent", "rgba(255,255,255,0.22)", "transparent"]}
               start={{ x: 0, y: 0.3 }}
               end={{ x: 1, y: 0.7 }}
-              style={{ flex: 1, width: "120%" }}
+              style={styles.shimmer}
             />
           </Animated.View>
         )}
 
-        <View className="flex-1 justify-between p-[22px]">
-          <View className="flex-row justify-between items-start">
-            <ThemedText
-              type="title"
-              style={[styles.tierName, { color: titleColor }]}
-            >
+        <View style={styles.inner}>
+          <View style={styles.headerRow}>
+            <ThemedText type="title" color={titleColor} style={styles.tierName}>
               {name}
             </ThemedText>
 
             <Image
               source={isBlack ? LogoWhite : Logo}
-              className="w-[110px] h-[26px]"
+              style={styles.logo}
               resizeMode="contain"
             />
           </View>
@@ -148,17 +143,12 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
             colors={chipColors as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className="w-11 h-8 rounded-md"
             style={styles.chip}
           />
 
-          <View className="gap-2">
-            <View className="flex-row justify-between items-center">
-              <ThemedText
-                type="semiBold"
-                color={bodyColor}
-                style={styles.benefitLabel}
-              >
+          <View style={styles.stats}>
+            <View style={styles.statsRow}>
+              <ThemedText type="semiBold" color={bodyColor}>
                 Beneficios usados
               </ThemedText>
               <ThemedText type="semiBold" color={bodyColor}>
@@ -175,12 +165,8 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
               fill={titleColor}
             />
 
-            <View className="flex-row justify-between items-center mt-0.5">
-              <ThemedText
-                type="caption"
-                color={bodyColor}
-                style={{ opacity: 0.8 }}
-              >
+            <View style={styles.statsRow}>
+              <ThemedText type="caption" color={bodyColor} style={styles.captionMuted}>
                 Válido hasta 31/12/2025
               </ThemedText>
               <ThemedText type="caption" color={titleColor}>
@@ -195,17 +181,50 @@ export function CardHome({ name, benefits, isLoading = false }: CardHomeProps) {
 }
 
 const styles = StyleSheet.create({
-  tierName: {
-    textTransform: "uppercase",
-    letterSpacing: 2,
-    fontSize: 22,
+  wrap: {
+    width: "100%",
+  },
+  card: {
+    width: "100%",
+    aspectRatio: 5 / 3,
+    borderRadius: ui.radii.xl,
+    overflow: "hidden",
+  },
+  inner: {
+    flex: 1,
+    justifyContent: "space-between",
+    padding: ui.spacing.xl,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  logo: {
+    width: 110,
+    height: 26,
+  },
+  shimmer: {
+    flex: 1,
+    width: "120%",
   },
   chip: {
-    width: 44,
-    height: 32,
-    borderRadius: 7,
+    width: ui.tapTarget,
+    height: ui.spacing.xxl,
+    borderRadius: ui.radii.sm,
   },
-  benefitLabel: {
-    fontSize: 13,
+  stats: {
+    gap: ui.spacing.sm,
+  },
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  tierName: {
+    textTransform: "uppercase",
+  },
+  captionMuted: {
+    opacity: 0.8,
   },
 });

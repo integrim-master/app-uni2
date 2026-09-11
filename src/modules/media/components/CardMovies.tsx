@@ -2,7 +2,6 @@ import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
 import { ui } from "@/src/themes/ui";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { CardMoviesProps } from "../types/movie";
@@ -18,7 +17,7 @@ export default function CardMovies({
   const { colors } = useTheme();
 
   const handlePress = () => {
-    onPress ? onPress() : router.push("/video" as any);
+    onPress?.();
   };
 
   return (

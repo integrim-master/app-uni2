@@ -1,8 +1,7 @@
 import ThemedText from "@/src/components/shared/themed-text";
 import { useTheme } from "@/src/context/ThemeContext";
-import { ui } from "@/src/themes/ui";
-import React from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import React, { useState } from "react";
+import { View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, {
   ICarouselInstance,
@@ -22,60 +21,46 @@ export const PromotionsCarousel = ({
   promotions: Promotion[];
   isLoading?: boolean;
 }) => {
-  const { width: screenWidth } = useWindowDimensions();
   const { colors } = useTheme();
   const ref = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue(0);
-
-  const itemWidth = Math.min(screenWidth * 0.82, 340);
+  const [width, setWidth] = useState(0);
   const canAutoPlay = promotions.length > 1;
 
-  if (isLoading) {
-    return <PromotionsCarouselSkeleton />;
-  }
-
-  if (!promotions?.length) {
-    return null;
-  }
+  if (isLoading) return <PromotionsCarouselSkeleton />;
+  if (!promotions?.length) return null;
 
   return (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
+    <View
+      className="mt-6"
+      onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
+    >
+      <View className="mb-3">
         <ThemedText type="subtitle" tone="accent">
           Promociones exclusivas
         </ThemedText>
       </View>
 
-      <Carousel
-        ref={ref}
-        width={itemWidth}
-        height={CARD_HEIGHT}
-        loop={canAutoPlay}
-        autoPlay={canAutoPlay}
-        autoPlayInterval={AUTO_PLAY_MS}
-        scrollAnimationDuration={700}
-        data={promotions}
-        onProgressChange={progress}
-        style={{ width: screenWidth }}
-        pagingEnabled
-        snapEnabled
-        mode="parallax"
-        modeConfig={{
-          parallaxScrollingScale: 0.92,
-          parallaxScrollingOffset: 28,
-        }}
-        renderItem={({ item }) => (
-          <View style={styles.slideWrap}>
-            <PromotionSlide
-              item={item}
-              width={itemWidth - 12}
-              height={CARD_HEIGHT}
-            />
-          </View>
-        )}
-      />
+      {width > 0 ? (
+        <Carousel
+          ref={ref}
+          width={width}
+          height={CARD_HEIGHT}
+          data={promotions}
+          loop={canAutoPlay}
+          autoPlay={canAutoPlay}
+          autoPlayInterval={AUTO_PLAY_MS}
+          scrollAnimationDuration={700}
+          onProgressChange={progress}
+          renderItem={({ item }) => (
+            <View className="flex-1">
+              <PromotionSlide item={item} />
+            </View>
+          )}
+        />
+      ) : null}
 
-      {canAutoPlay && (
+      {canAutoPlay ? (
         <Pagination.Basic
           progress={progress}
           data={promotions}
@@ -93,34 +78,13 @@ export const PromotionsCarousel = ({
           }}
           activeDotStyle={{
             backgroundColor: colors.primary,
-            width: ui.spacing.lg,
-            height: 6,
             borderRadius: 4,
+            width: 16,
+            height: 6,
           }}
-          containerStyle={styles.dots}
+          containerStyle={{ gap: 8, marginTop: 12 }}
         />
-      )}
+      ) : null}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  section: {
-    marginTop: ui.spacing.xl,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: ui.spacing.md,
-  },
-  slideWrap: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dots: {
-    gap: ui.spacing.sm,
-    marginTop: ui.spacing.md,
-  },
-});

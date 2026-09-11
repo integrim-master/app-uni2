@@ -16,7 +16,6 @@ export default function CitaCard({
   onPress?: () => void;
 }) {
   const { colors } = useTheme();
-  console.log(cita);
   return (
     <Card onPress={onPress} borderColor="transparent" style={styles.card}>
       {/* Encabezado */}

@@ -8,13 +8,20 @@ import type { BlogPost } from "@/src/modules/blog/types/blog.types";
 import { ui } from "@/src/themes/ui";
 import { useRouter } from "expo-router";
 import { MotiView, View } from "moti";
-import React from "react";
-import { FlatList, StyleSheet } from "react-native";
+import React, { useMemo } from "react";
+import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 
 export default function HybridBlogList() {
   const { colors } = useTheme();
   const router = useRouter();
-  const { data: blogPosts } = useBlogPosts();
+  const { data, isLoading } = useBlogPosts();
+
+  const blogPosts = useMemo(() => {
+    const list = data?.data ?? [];
+    return [...list].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+  }, [data?.data]);
 
   const renderItem = ({ item, index }: { item: BlogPost; index: number }) => {
     if (index === 0) {
@@ -29,9 +36,11 @@ export default function HybridBlogList() {
             item={item}
             onPress={() => router.push(`/blog/${item.id}`)}
           />
-          <ThemedText type="title" tone="primary" style={styles.moreTitle}>
-            Más artículos
-          </ThemedText>
+          {blogPosts.length > 1 ? (
+            <ThemedText type="title" tone="primary" style={styles.moreTitle}>
+              Más artículos
+            </ThemedText>
+          ) : null}
         </MotiView>
       );
     }
@@ -49,6 +58,14 @@ export default function HybridBlogList() {
       </MotiView>
     );
   };
+
+  if (isLoading) {
+    return (
+      <Screen style={styles.loading}>
+        <ActivityIndicator color={colors.primary} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
@@ -85,5 +102,10 @@ const styles = StyleSheet.create({
   },
   moreTitle: {
     marginTop: ui.spacing.xxl,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

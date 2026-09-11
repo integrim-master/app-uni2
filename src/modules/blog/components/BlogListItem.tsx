@@ -15,28 +15,34 @@ type Props = {
 
 export default function BlogListItem({ item, onPress }: Props) {
   const { colors } = useTheme();
+  const categoryName = item.category?.[0]?.name;
+
   return (
     <Pressable onPress={onPress} style={styles.rowPress}>
       <View style={styles.row}>
-        <Image
-          source={{ uri: item.image }}
-          style={styles.thumb}
-          contentFit="cover"
-        />
+        {item.image ? (
+          <Image
+            source={{ uri: item.image }}
+            style={styles.thumb}
+            contentFit="cover"
+          />
+        ) : (
+          <View style={[styles.thumb, { backgroundColor: colors.border }]} />
+        )}
         <View style={styles.copy}>
-          <ThemedText
-            type="label"
-            color={colors.secondary}
-            style={styles.category}
-          >
-            {item.category}
-          </ThemedText>
-          <ThemedText type="subtitle" numberOfLines={2} style={styles.title}>
+          {categoryName ? (
+            <ThemedText type="subtitle" color={colors.primary}>
+              {categoryName}
+            </ThemedText>
+          ) : null}
+          <ThemedText type="subtitle" numberOfLines={4}>
             {item.title}
           </ThemedText>
-          <ThemedText type="caption" tone="secondary">
-            {item.date} • 5 min lectura
-          </ThemedText>
+          {/* {item.date ? (
+            <ThemedText type="caption" tone="secondary">
+              {item.date}
+            </ThemedText>
+          ) : null} */}
         </View>
       </View>
     </Pressable>

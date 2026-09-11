@@ -167,7 +167,7 @@ export default function Badge({
 const styles = StyleSheet.create({
   badge: {
     borderWidth: ui.borders.hairline,
-    borderRadius: ui.radii.sm,
+    borderRadius: ui.radii.xl,
     alignItems: "center",
     justifyContent: "center",
   },

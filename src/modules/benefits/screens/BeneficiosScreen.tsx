@@ -5,8 +5,12 @@ import TabBar from "@/src/components/shared/TabBar";
 import ThemedText from "@/src/components/shared/themed-text";
 import ErrorScreen from "@/src/components/ui/ErrorScreen";
 import { useUser } from "@/src/modules/user/hooks/useUser";
+import { BENEFIT_STATUS_LABELS } from "@/src/constants/benefitStatus";
 import { ui } from "@/src/themes/ui";
-import { Benefits } from "@/src/types/shared/Benefits.type";
+import {
+  BenefitReedemed,
+  Benefits,
+} from "@/src/types/shared/Benefits.type";
 import { router, useFocusEffect } from "expo-router";
 import { AnimatePresence } from "moti";
 import React, { useState } from "react";
@@ -33,13 +37,31 @@ export default function BeneficiosScreen({
   const { mutate: mutateCancel } = useCancel();
   const { data: user } = useUser();
   const [activeBenefitId, setActiveBenefitId] = useState<string | null>(null);
-  const [benefitsRedemed, setBenefitsRedemed] = useState<any>(
-    membership?.benefit_redeem,
-  );
+  const [benefitsRedemed, setBenefitsRedemed] =
+    useState<BenefitReedemed | null>(null);
 
+  // La fuente de verdad de "cuál beneficio está activo" es el flag `active`
+  // que trae cada beneficio del backend, no el objeto global `benefit_redeem`
+  // (ese solo describe la última acción de canje, aunque ya haya sido
+  // confirmada y el beneficio ya no esté activo).
   useFocusEffect(
     React.useCallback(() => {
-      setBenefitsRedemed(membership?.benefit_redeem);
+      const currentActiveBenefit = membership?.benefits?.find(
+        (benefit) => benefit.active,
+      );
+
+      setActiveBenefitId(
+        currentActiveBenefit ? String(currentActiveBenefit.id) : null,
+      );
+      setBenefitsRedemed(
+        currentActiveBenefit
+          ? {
+              procedimiento: currentActiveBenefit.title,
+              id_procedimiento: String(currentActiveBenefit.id),
+              estado: BENEFIT_STATUS_LABELS.EN_ESPERA,
+            }
+          : null,
+      );
     }, [membership]),
   );
 
@@ -72,7 +94,7 @@ export default function BeneficiosScreen({
       setBenefitsRedemed({
         procedimiento: benefit.title,
         id_procedimiento: String(benefit.id),
-        estado: "En espera",
+        estado: BENEFIT_STATUS_LABELS.EN_ESPERA,
       });
       mutate(
         {

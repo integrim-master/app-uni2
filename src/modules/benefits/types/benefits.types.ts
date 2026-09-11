@@ -21,11 +21,13 @@ interface CancelBenefitBody {
 }
 
 interface BenefitApiResponse {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
-  precio: number | null;
+  precio: number | string | null;
   image: string;
+  active?: boolean;
+  button?: "enabled" | "disabled" | "cancel" | string;
 }
 
 interface BenefitRedemBody {

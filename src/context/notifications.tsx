@@ -52,7 +52,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const queryClient = useQueryClient();
   const [pushToken, setPushToken] = useState<string | null>(null);
-  
+
   const {
     data: notifications = [],
     refetch,
@@ -60,27 +60,35 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     isFetching,
   } = useNotificationsApi();
   const { mutate: markAsReadApi } = useMarkerReadNotifications();
+  console.log("notifications", notifications);
 
-  const queryKey = ["notifications"]; 
+  const queryKey = ["notifications"];
 
   const addNotification = (notification: Partial<NotificationsResponse>) => {
-    queryClient.setQueryData(queryKey, (oldData: NotificationsResponse[] | undefined) => {
-      const exists = oldData?.some((notif) => notif.id === notification.id);
-      if (exists) return oldData;
-      return [notification as NotificationsResponse, ...(oldData || [])];
-    });
+    queryClient.setQueryData(
+      queryKey,
+      (oldData: NotificationsResponse[] | undefined) => {
+        const exists = oldData?.some((notif) => notif.id === notification.id);
+        if (exists) return oldData;
+        return [notification as NotificationsResponse, ...(oldData || [])];
+      },
+    );
   };
 
   const markAsRead = (id_notification: string, user_id: number) => {
-    const previousNotifications = queryClient.getQueryData<Notification[]>(queryKey);
+    const previousNotifications =
+      queryClient.getQueryData<Notification[]>(queryKey);
 
-    queryClient.setQueryData(queryKey, (oldData: NotificationsResponse[] | undefined) => {
-      return oldData?.map((notif) =>
-        notif.id_notification === id_notification
-          ? { ...notif, read_at: new Date().toISOString() }
-          : notif
-      );
-    });
+    queryClient.setQueryData(
+      queryKey,
+      (oldData: NotificationsResponse[] | undefined) => {
+        return oldData?.map((notif) =>
+          notif.id_notification === id_notification
+            ? { ...notif, read_at: new Date().toISOString() }
+            : notif,
+        );
+      },
+    );
 
     markAsReadApi(
       { id_notification, user_id },
@@ -89,17 +97,20 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
           console.error("Error al marcar como leída:", error);
           queryClient.setQueryData(queryKey, previousNotifications);
         },
-      }
+      },
     );
   };
 
   const markAllAsRead = () => {
-    queryClient.setQueryData(queryKey, (oldData: Notification[] | undefined) => {
-      return oldData?.map((notif) => ({
-        ...notif,
-        read_at: new Date().toISOString(),
-      }));
-    });
+    queryClient.setQueryData(
+      queryKey,
+      (oldData: Notification[] | undefined) => {
+        return oldData?.map((notif) => ({
+          ...notif,
+          read_at: new Date().toISOString(),
+        }));
+      },
+    );
   };
 
   const clearNotifications = () => {
@@ -107,7 +118,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const unreadCount = notifications.filter((n: any) => !n.read_at).length;
- 
 
   return (
     <NotificationsContext.Provider

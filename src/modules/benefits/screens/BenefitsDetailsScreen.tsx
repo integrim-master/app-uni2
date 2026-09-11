@@ -1,3 +1,4 @@
+import { BENEFIT_STATUS_LABELS } from "@/src/constants/benefitStatus";
 import Badge from "@/src/components/shared/Badge";
 import PrimaryButton from "@/src/components/shared/PrimaryButton";
 import { Screen } from "@/src/components/shared/Screen";
@@ -14,29 +15,32 @@ import type { BenefitApiResponse } from "../types/benefits.types";
 
 type Props = {
   benefit?: BenefitApiResponse;
-  onRedeem?: (id: string, title_prod: string) => void;
+  onAction?: (action: "aplicar" | "cancelar") => void;
   isPending?: boolean;
-  isLoadingRedeem?: boolean;
-  sucessRedeem?: boolean;
+  isLoadingAction?: boolean;
 };
 
 export default function BenefitsDetailsScreen({
   benefit,
-  onRedeem,
+  onAction,
   isPending = false,
-  isLoadingRedeem = false,
-  sucessRedeem = false,
+  isLoadingAction = false,
 }: Props) {
   const { colors } = useTheme();
 
+  const numericPrice = benefit?.precio != null ? Number(benefit.precio) : 0;
   const priceLabel =
-    benefit?.precio != null && benefit.precio > 0
-      ? `$${benefit.precio.toLocaleString("es-CO")}`
+    !isNaN(numericPrice) && numericPrice > 0
+      ? `$${numericPrice.toLocaleString("es-CO")}`
       : "Incluido";
 
-  const handleRedeem = () => {
-    if (!benefit?.id || !onRedeem || isLoadingRedeem || sucessRedeem) return;
-    onRedeem(benefit.id, benefit.title);
+  const isCancel = benefit?.button === "cancel" || benefit?.active === true;
+  const isDisabled = benefit?.button === "disabled" || isPending || !benefit?.id;
+  const isButtonDisabled = isCancel ? false : isDisabled;
+
+  const handlePressAction = () => {
+    if (!benefit?.id || !onAction || isLoadingAction || isButtonDisabled) return;
+    onAction(isCancel ? "cancelar" : "aplicar");
   };
 
   return (
@@ -124,12 +128,28 @@ export default function BenefitsDetailsScreen({
                 />
               )}
 
-              <Badge
-                text={sucessRedeem ? "Redimido" : "Disponible"}
-                variant={sucessRedeem ? "neutral" : "success"}
-                size="small"
-                icon="check-circle"
-              />
+              {isCancel ? (
+                <Badge
+                  text={BENEFIT_STATUS_LABELS.EN_ESPERA}
+                  variant="warning"
+                  size="small"
+                  icon="hourglass-empty"
+                />
+              ) : benefit?.button === "disabled" ? (
+                <Badge
+                  text="No disponible"
+                  variant="neutral"
+                  size="small"
+                  icon="remove-circle-outline"
+                />
+              ) : (
+                <Badge
+                  text="Disponible"
+                  variant="success"
+                  size="small"
+                  icon="check-circle"
+                />
+              )}
             </View>
 
             <View
@@ -194,13 +214,20 @@ export default function BenefitsDetailsScreen({
           ]}
         >
           <PrimaryButton
-            title={sucessRedeem ? "Beneficio redimido" : "Redimir beneficio"}
-            onPress={handleRedeem}
-            loading={isLoadingRedeem}
-            disabled={isPending || !benefit?.id || sucessRedeem}
-            variant="primary"
+            title={isCancel ? "Cancelar beneficio" : "Redimir beneficio"}
+            onPress={handlePressAction}
+            loading={isLoadingAction}
+            disabled={isButtonDisabled}
+            variant={isCancel ? "secondary" : "primary"}
             size="md"
             style={styles.cta}
+            icon={
+              <MaterialIcons
+                name={isCancel ? "cancel" : "check-circle"}
+                size={16}
+                color={colors.cardText}
+              />
+            }
           />
         </View>
       </View>

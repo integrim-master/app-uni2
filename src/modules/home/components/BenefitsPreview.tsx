@@ -60,7 +60,10 @@ export default function BenefitsPreview({
           </ThemedText>
         </View>
       ) : (
-        <View style={styles.list}>
+        <View className="flex-col gap-4">
+          <ThemedText type="subtitle" tone="accent">
+            Beneficios disponibles
+          </ThemedText>
           {items.map((b) => (
             <View
               key={String(b.id)}

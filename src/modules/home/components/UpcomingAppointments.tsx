@@ -8,7 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
 import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import UpcomingAppointmentsSkeleton from "./UpcomingAppointmentsSkeleton";
 
 const MONTHS_SHORT = [
@@ -74,62 +74,57 @@ export default function UpcomingAppointments({ dates, isLoading }: Props) {
             Tus próximas citas
           </ThemedText>
 
-          <FlatList
-            data={dates.slice(0, 1)}
-            className="w-full "
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item, index }) => (
-              <MotiView
-                from={{ opacity: 0, translateY: 12 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{
-                  type: "timing",
-                  duration: 320,
-                  delay: index * 80,
+          {dates.slice(0, 1).map((item, index) => (
+            <MotiView
+              key={String(
+                item.id ?? `${item.fecha_cita}-${item.hora_cita}-${index}`,
+              )}
+              from={{ opacity: 0, translateY: 12 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{
+                type: "timing",
+                duration: 320,
+                delay: index * 80,
+              }}
+              style={styles.item}
+            >
+              <Card
+                onPress={() => {
+                  if (item.id) router.push(`/dates/${item.id}`);
                 }}
+                borderColor="transparent"
+                className="w-full"
+                style={styles.card}
+                accessibilityLabel={`Cita de ${item.Procedimiento}`}
               >
-                <Card
-                  onPress={() => {
-                    if (item.id) router.push(`/dates/${item.id}`);
-                  }}
-                  borderColor="transparent"
-                  style={styles.card}
-                  accessibilityLabel={`Cita de ${item.Procedimiento}`}
-                >
-                  <DateStamp fecha={item.fecha_cita} />
+                <DateStamp fecha={item.fecha_cita} />
 
-                  <View style={styles.body}>
-                    <ThemedText
-                      type="semiBold"
-                      color={colors.textStrong}
-                      numberOfLines={2}
-                      style={styles.title}
-                    >
-                      {item.Procedimiento}
-                    </ThemedText>
+                <View style={styles.body}>
+                  <ThemedText
+                    type="semiBold"
+                    color={colors.textStrong}
+                    numberOfLines={2}
+                    style={styles.title}
+                  >
+                    {item.Procedimiento}
+                  </ThemedText>
 
-                    {item.hora_cita ? (
-                      <View style={styles.metaRow}>
-                        <Ionicons
-                          name="time-outline"
-                          size={14}
-                          color={colors.textAccent}
-                        />
-                        <ThemedText type="caption" tone="secondary">
-                          {item.hora_cita}
-                        </ThemedText>
-                      </View>
-                    ) : null}
-                  </View>
-                </Card>
-              </MotiView>
-            )}
-            keyExtractor={(item, index) =>
-              String(item.id ?? `${item.fecha_cita}-${item.hora_cita}-${index}`)
-            }
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
+                  {item.hora_cita ? (
+                    <View style={styles.metaRow}>
+                      <Ionicons
+                        name="time-outline"
+                        size={14}
+                        color={colors.textAccent}
+                      />
+                      <ThemedText type="caption" tone="secondary">
+                        {item.hora_cita}
+                      </ThemedText>
+                    </View>
+                  ) : null}
+                </View>
+              </Card>
+            </MotiView>
+          ))}
         </View>
       </MotiView>
     </View>
@@ -143,7 +138,11 @@ const styles = StyleSheet.create({
   block: {
     gap: ui.spacing.md,
   },
+  item: {
+    width: "100%",
+  },
   card: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     padding: ui.spacing.lg,
@@ -168,8 +167,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: ui.spacing.sm,
-  },
-  separator: {
-    width: ui.spacing.sm,
   },
 });

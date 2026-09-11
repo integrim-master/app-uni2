@@ -2,7 +2,6 @@ import Badge from "@/src/components/shared/Badge";
 import ThemedText from "@/src/components/shared/themed-text";
 import { ui } from "@/src/themes/ui";
 import {
-  BenefitReedemed,
   Benefits,
   BenefitsListProps,
 } from "@/src/types/shared/Benefits.type";
@@ -63,7 +62,7 @@ export default function BenefitsList({
                 isPendingRedeem={isPendingRedeem}
                 data={item}
                 activeBenefitId={activeBenefitId}
-                benefitRedemed={benefitsRedemed as BenefitReedemed | undefined}
+                benefitRedemed={benefitsRedemed}
                 onPressRedeem={(benefit, action = "aplicar") =>
                   onBenefitRedemed(benefit, action)
                 }

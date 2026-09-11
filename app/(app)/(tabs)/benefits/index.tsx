@@ -1,9 +1,9 @@
 import { useBenefitAll } from "@/src/modules/benefits/hooks/useBenefitsAll";
 import BeneficiosScreen from "@/src/modules/benefits/screens/BeneficiosScreen";
 import {
-    Benefits,
-    BenefitUsed,
-    MembershipData,
+  Benefits,
+  BenefitUsed,
+  MembershipData,
 } from "@/src/types/shared/Benefits.type";
 import React, { useState } from "react";
 

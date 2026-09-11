@@ -135,7 +135,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return { needsTerms: false };
     } finally {
       setIsAuthTransitioning(false);
-      console.log("hideLoading");
       hideLoading();
     }
   };

@@ -26,6 +26,8 @@ export default function ItemUnique({
   // optimista mientras la mutación de "aplicar" está en vuelo y todavía no
   // se refresca la data del backend.
   const isThisBenefitActive = activeBenefitId === String(data.id);
+  console.log("activeBenefitId", activeBenefitId);
+  console.log("data.id", data.id);
   const isAnyBenefitActive = activeBenefitId !== null;
 
   const isActive = data.active || isThisBenefitActive;

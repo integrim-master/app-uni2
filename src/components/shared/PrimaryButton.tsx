@@ -1,3 +1,4 @@
+import { TYPE_SIZE } from "@/src/components/shared/themed-text";
 import React, { useRef } from "react";
 import {
   ActivityIndicator,
@@ -10,7 +11,6 @@ import {
   TextStyle,
   ViewStyle,
 } from "react-native";
-import { TYPE_SIZE } from "@/src/components/shared/themed-text";
 import { useTheme } from "../../context/ThemeContext";
 import { ui } from "../../themes/ui";
 

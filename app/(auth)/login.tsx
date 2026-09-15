@@ -7,9 +7,11 @@ import { useNotifications } from "@/src/context/notifications";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useTerms } from "@/src/modules/login/hooks/useTerms";
 import { ui } from "@/src/themes/ui";
+import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Linking,
   Platform,
@@ -69,6 +71,7 @@ const Login = () => {
     }
 
     try {
+      Keyboard.dismiss();
       const result = await signIn(
         {
           username: dataUser.username,
@@ -81,6 +84,7 @@ const Login = () => {
         setShowPrivacyModal(true);
       }
     } catch (error: any) {
+      Keyboard.dismiss();
       Toast.show({
         type: "error",
         text1: "Credenciales inválidas",
@@ -208,6 +212,13 @@ const Login = () => {
                 }}
                 loading={Boolean(isAuthTransitioning)}
               />
+              <View className="flex flex-row justify-center">
+                <Link href="/forgot-password">
+                  <ThemedText type="body" tone="secondary">
+                    ¿Olvidaste tu contraseña?
+                  </ThemedText>
+                </Link>
+              </View>
             </View>
           </View>
         </ScrollView>

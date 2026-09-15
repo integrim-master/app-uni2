@@ -1,7 +1,13 @@
 import api from "@/src/api/base";
 import {
   AcceptTermsResponse,
+  ForgotPasswordBody,
+  ForgotPasswordResponse,
   LoginResponse,
+  ResetPasswordBody,
+  ResetPasswordResponse,
+  VerifyOtpBody,
+  VerifyOtpResponse,
 } from "@/src/modules/login/types/login.types";
 import { MeApiResponse } from "@/src/modules/user/types/me.types";
 
@@ -31,6 +37,30 @@ export const AuthService = {
   AceptTerms: async () => {
     const response = await api.post<AcceptTermsResponse>(
       "/wp-json/careme/v1/me/terms",
+    );
+    return response.data;
+  },
+
+  forgotPassword: async (body: ForgotPasswordBody) => {
+    const response = await api.post<ForgotPasswordResponse>(
+      "/wp-json/careme/v1/auth/forgot-password",
+      body,
+    );
+    return response.data;
+  },
+
+  verifyOtp: async (body: VerifyOtpBody) => {
+    const response = await api.post<VerifyOtpResponse>(
+      "/wp-json/careme/v1/auth/verify-otp",
+      body,
+    );
+    return response.data;
+  },
+
+  resetPassword: async (body: ResetPasswordBody) => {
+    const response = await api.post<ResetPasswordResponse>(
+      "/wp-json/careme/v1/auth/reset-password",
+      body,
     );
     return response.data;
   },

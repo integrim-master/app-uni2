@@ -159,8 +159,8 @@ export default Sentry.wrap(function RootLayout() {
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: BG_COLOR }}>
         <QueryClientProvider client={queryClient}>
-          <BottomSheetModalProvider>
-            <ThemeProvider>
+          <ThemeProvider>
+            <BottomSheetModalProvider>
               <LoadingProvider>
                 <AuthProvider>
                   <NotificationsProvider>
@@ -171,8 +171,8 @@ export default Sentry.wrap(function RootLayout() {
                   </NotificationsProvider>
                 </AuthProvider>
               </LoadingProvider>
-            </ThemeProvider>
-          </BottomSheetModalProvider>
+            </BottomSheetModalProvider>
+          </ThemeProvider>
         </QueryClientProvider>
 
         <Toast config={toastConfig} />

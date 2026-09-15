@@ -40,5 +40,46 @@ interface AcceptTermsResponse {
   };
 }
 
-export { AcceptTermsResponse, LoginResponse };
+interface ForgotPasswordBody {
+  username: string;
+}
+
+interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+  phone_masked: string;
+}
+
+interface VerifyOtpBody {
+  username: string;
+  otp: string;
+}
+
+interface VerifyOtpResponse {
+  success: boolean;
+  message: string;
+  reset_token: string;
+  expires_in: number;
+}
+
+interface ResetPasswordBody {
+  reset_token: string;
+  password: string;
+}
+
+interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+export {
+  AcceptTermsResponse,
+  ForgotPasswordBody,
+  ForgotPasswordResponse,
+  LoginResponse,
+  ResetPasswordBody,
+  ResetPasswordResponse,
+  VerifyOtpBody,
+  VerifyOtpResponse,
+};
 
